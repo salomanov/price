@@ -1,0 +1,490 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Полиграфический калькулятор</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>Полиграфический калькулятор</h1>
+<button id="priceBtn" onclick="openSettings()">Прайс</button>
+</header>
+
+<div class="container">
+<div class="tabs">
+<button class="tab-btn" data-tab="visit">Визитки</button>
+<button class="tab-btn" data-tab="print">Печать</button>
+<button class="tab-btn" data-tab="wide">Широкоформат</button>
+<button class="tab-btn" data-tab="lam">Ламинация/переплёт</button>
+<button class="tab-btn" data-tab="bf">Буклеты/флаеры</button>
+<button class="tab-btn" data-tab="souvenir">Сувенирка</button>
+</div>
+
+<section id="tab-visit" class="tab-panel">
+<h3>Визитки</h3>
+<label>Тип печати</label>
+<div id="vTypeButtons" class="choice-row">
+<button type="button" class="choice-btn" data-vtype="digital">Цифровая</button>
+<button type="button" class="choice-btn" data-vtype="offset">Офсет</button>
+</div>
+<select id="vType" class="hidden">
+<option value="digital">Цифровая печать</option>
+<option value="offset">Офсетная печать</option>
+</select>
+<label>Тираж</label>
+<div id="vQtyButtons" class="choice-row"></div>
+<select id="vQty" class="hidden"></select>
+<label>Стороны</label>
+<div id="vSideButtons" class="choice-row">
+<button type="button" class="choice-btn" data-vside="single">4+0</button>
+<button type="button" class="choice-btn" data-vside="double">4+4</button>
+</div>
+<select id="vSide" class="hidden"><option value="single">4+0</option><option value="double">4+4</option></select>
+<label>Ламинация</label>
+<div class="choice-row">
+<button type="button" id="vLamBtn" class="choice-btn cta-toggle">Матовая ламинация</button>
+</div>
+<input type="checkbox" id="vLamCheck" class="hidden">
+<label>Скидка / наценка %</label><input id="vDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="vDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="vPrice" class="price"></div>
+<div class="row"><button id="visitBtn" onclick="saveVisit()">Добавить</button></div>
+</section>
+
+<section id="tab-print" class="tab-panel">
+<h3>Печать</h3>
+<label>Тип бумаги</label>
+<div id="pPaperButtons" class="choice-row"></div>
+<select id="pPaper" class="hidden">
+<option value="80">A4. Бумага 80 г/м²</option>
+<option value="115">Глянец/мат 115–200 г/м²</option>
+<option value="250">Глянец/мат 250–300 г/м²</option>
+</select>
+<label>Печать</label>
+<div id="pColorButtons" class="choice-row"></div>
+<select id="pColor" class="hidden"><option value="bw">Ч/б</option><option value="color">Цветная</option></select>
+<label>Формат</label>
+<div id="pFormatButtons" class="choice-row"></div>
+<select id="pFormat" class="hidden"><option value="A4">A4</option><option value="A3">A3</option></select>
+<label>Количество</label><input id="pQty" type="number" value="10">
+<label>Стороны</label>
+<div id="pSideButtons" class="choice-row"></div>
+<select id="pSide" class="hidden"><option value="1">1</option><option value="2">2</option></select>
+<label>Скидка / наценка %</label><input id="pDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="pDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="pPrice" class="price"></div>
+<div class="row"><button id="printBtn" onclick="savePrint()">Добавить</button></div>
+</section>
+
+<section id="tab-wide" class="tab-panel">
+<h3>Широкоформат</h3>
+<label>Материал</label>
+<div id="wMaterialButtons" class="choice-row"></div>
+<select id="wMaterial" class="hidden"><option value="film">Плёнка</option><option value="banner">Баннер</option><option value="plastic">Пластик</option></select>
+<label><input type="checkbox" id="wLam"> Ламинация</label>
+<label id="eyeWrap"><input type="checkbox" id="wEye"> Люверсы</label>
+<label id="eyeStepWrap">Шаг люверсов (см)</label><input id="wEyeStep" type="number" value="40">
+<label><input type="checkbox" id="wCut"> Обрезка</label>
+<label><input type="checkbox" id="wMount"> Проклейка</label>
+<label>Размер</label>
+<div id="wPresetButtons" class="choice-row"></div>
+<select id="wPreset" class="hidden" onchange="toggleCustom()"><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option><option value="custom">Произвольный</option></select>
+<div id="customSize" class="hidden"><label>Ширина (м)</label><input id="wWidth" type="number" value="1" step="0.01"><label>Высота (м)</label><input id="wHeight" type="number" value="1" step="0.01"></div>
+<label>Количество</label><input id="wQty" type="number" value="1">
+<label>Скидка / наценка %</label><input id="wDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="wDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="wPrice" class="price"></div>
+<div class="row"><button id="wideBtn" onclick="saveWide()">Добавить</button></div>
+</section>
+
+<section id="tab-lam" class="tab-panel">
+<h3>Ламинация и переплёт</h3>
+<label>Услуга</label>
+<div id="lTypeButtons" class="choice-row"></div>
+<select id="lType" class="hidden">
+<option value="lam_gloss">Ламинация глянцевая 100 мкм</option>
+<option value="lam_matte">Ламинация матовая 100 мкм</option>
+<option value="spiral_plastic">Переплёт на пластиковую пружину</option>
+<option value="spiral_metal">Переплёт на металлическую пружину</option>
+<option value="hard_cover">Твёрдый переплёт</option>
+</select>
+<label id="lSizeWrap">Размер</label>
+<div id="lSizeButtons" class="choice-row"></div>
+<select id="lSize" class="hidden">
+<option value="A4">A4</option>
+<option value="A3">A3</option>
+<option value="ltA4">Меньше A4</option>
+</select>
+<label id="lQtyLabel">Количество</label><input id="lQty" type="number" value="10">
+<div id="lSheetsWrap" class="hidden"><label>Листов в изделии</label><input id="lSheets" type="number" value="50"></div>
+<label>Скидка / наценка %</label><input id="lDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="lDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="lPrice" class="price"></div>
+<div class="row"><button id="lamBtn" onclick="saveLam()">Добавить</button></div>
+</section>
+
+<section id="tab-bf" class="tab-panel">
+<h3>Буклеты / флаеры</h3>
+<label>Изделие</label>
+<div id="bfTypeButtons" class="choice-row"></div>
+<select id="bfType" class="hidden">
+<option value="booklet_a4_offset">Буклет A4 (офсет)</option>
+<option value="booklet_a4_digital">Буклет A4 (цифра)</option>
+<option value="flyer_a6_offset">Флаер A6 (офсет)</option>
+<option value="flyer_a6_digital">Флаер A6 (цифра)</option>
+</select>
+<label>Тираж</label>
+<div id="bfQtyButtons" class="choice-row"></div>
+<select id="bfQty" class="hidden"></select>
+<label id="bfSideWrap">Стороны</label>
+<div id="bfSideButtons" class="choice-row"></div>
+<select id="bfSide" class="hidden">
+<option value="single">4+0</option>
+<option value="double">4+4</option>
+</select>
+<label>Скидка / наценка %</label><input id="bfDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="bfDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="bfPrice" class="price"></div>
+<div class="row"><button id="bfBtn" onclick="saveBf()">Добавить</button></div>
+</section>
+
+<section id="tab-souvenir" class="tab-panel">
+<h3>Сувенирная продукция</h3>
+<label>Категория</label>
+<div id="sTypeButtons" class="choice-row"></div>
+<select id="sType" class="hidden">
+<option value="mug">Кружки 300 мл</option>
+<option value="plate">Тарелки</option>
+<option value="tshirt">Футболки</option>
+<option value="magnet_acrylic">Фотомагниты акриловые</option>
+<option value="magnet_vinyl">Фотомагниты виниловые</option>
+<option value="badge">Значки</option>
+<option value="uvdtf">УФ‑DTF печать</option>
+</select>
+<div id="sMugWrap">
+<label>Тип кружки</label>
+<div id="sMugTypeButtons" class="choice-row"></div>
+<select id="sMugType" class="hidden">
+<option value="white">Белая</option>
+<option value="color">Цветная</option>
+<option value="chameleon">Хамелеон</option>
+</select>
+</div>
+<div id="sTshirtWrap" class="hidden">
+<label>Метод</label>
+<div id="sTshirtTypeButtons" class="choice-row"></div>
+<select id="sTshirtType" class="hidden">
+<option value="sub_1">Сублимация на нашей белой футболке (1 сторона)</option>
+<option value="sub_2">Сублимация на нашей белой футболке (2 стороны)</option>
+<option value="dtf_no">DTF без вашей футболки (минимум 300)</option>
+<option value="dtf_with">DTF с вашей футболкой (минимум 1300)</option>
+</select>
+</div>
+<div id="sBadgeWrap" class="hidden">
+<label>Диаметр</label>
+<div id="sBadgeSizeButtons" class="choice-row"></div>
+<select id="sBadgeSize" class="hidden"><option value="37">37 мм</option><option value="56">56 мм</option></select>
+</div>
+<div id="sMagQtyWrap" class="hidden">
+<label>Количество</label>
+<div id="sMagQtyButtons" class="choice-row"></div>
+<select id="sMagQty" class="hidden"></select>
+</div>
+<div id="sQtyWrap">
+<label>Количество</label><input id="sQty" type="number" value="1">
+</div>
+<div id="sMetersWrap" class="hidden">
+<label>Погонные метры</label><input id="sMeters" type="number" value="1" step="0.01">
+</div>
+<label>Скидка / наценка %</label><input id="sDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="sDiscount">
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="sPrice" class="price"></div>
+<div class="row"><button id="sBtn" onclick="saveSouvenir()">Добавить</button></div>
+</section>
+
+<div class="settings-modal" id="settingsModal">
+<div class="settings-content">
+<h3>Прейскурант</h3>
+<b>Визитки. Цифровая печать. Мелованная бумага 300 г</b>
+<div class="price-grid grid-3">
+<div class="head">Количество, шт</div><div class="head">Односторонние, руб</div><div class="head">Двусторонние, руб</div>
+<div>100</div><div><input id="vD100S" type="number" value="500"></div><div><input id="vD100D" type="number" value="700"></div>
+<div>200</div><div><input id="vD200S" type="number" value="800"></div><div><input id="vD200D" type="number" value="1200"></div>
+<div>300</div><div><input id="vD300S" type="number" value="1100"></div><div><input id="vD300D" type="number" value="1800"></div>
+<div>500</div><div><input id="vD500S" type="number" value="1500"></div><div><input id="vD500D" type="number" value="2500"></div>
+</div>
+<br>
+<b>Визитки с матовой ламинацией (100 мкм). Цифровая печать</b>
+<div class="price-grid grid-3">
+<div class="head">Количество, шт</div><div class="head">Односторонние, руб</div><div class="head">Двусторонние, руб</div>
+<div>50</div><div><input id="vLM50S" type="number" value="1000"></div><div><input id="vLM50D" type="number" value="1200"></div>
+<div>100</div><div><input id="vLM100S" type="number" value="1500"></div><div><input id="vLM100D" type="number" value="1800"></div>
+</div>
+<br>
+<b>Визитки. Офсетная печать. Мелованный картон 300 гр</b>
+<div class="price-grid grid-2">
+<div class="head">Количество, шт</div><div class="head">Стоимость, руб</div>
+<div>1000</div><div><input id="vO1000" type="number" value="2200"></div>
+<div>2000</div><div><input id="vO2000" type="number" value="4000"></div>
+<div>3000</div><div><input id="vO3000" type="number" value="5500"></div>
+<div>5000</div><div><input id="vO5000" type="number" value="8700"></div>
+<div>7000</div><div><input id="vO7000" type="number" value="11700"></div>
+<div>500</div><div><input id="vO500" type="number" value="1500"></div>
+</div>
+<hr>
+<b>Печать. Бумага 80 г/м² (A4)</b>
+<div class="price-grid grid-3">
+<div class="head">Диапазон</div><div class="head">Ч/б, руб</div><div class="head">Цветная, руб</div>
+<div>1–10</div><div><input id="p80_1_10_bw" type="number" value="10"></div><div><input id="p80_1_10_c" type="number" value="25"></div>
+<div>11–50</div><div><input id="p80_11_50_bw" type="number" value="8"></div><div><input id="p80_11_50_c" type="number" value="20"></div>
+<div>51–100</div><div><input id="p80_51_100_bw" type="number" value="6"></div><div><input id="p80_51_100_c" type="number" value="18"></div>
+<div>101–500</div><div><input id="p80_101_500_bw" type="number" value="5"></div><div><input id="p80_101_500_c" type="number" value="16"></div>
+</div>
+<br>
+<b>Печать. Глянец/мат 115–200 г/м² (A4/A3)</b>
+<div class="price-grid grid-3">
+<div class="head">Диапазон (A4 / A3)</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>1–4 / 1–2</div><div><input id="p115_a4_1_4" type="number" value="50"></div><div><input id="p115_a3_1_2" type="number" value="100"></div>
+<div>5–20 / 3–20</div><div><input id="p115_a4_5_20" type="number" value="30"></div><div><input id="p115_a3_3_20" type="number" value="60"></div>
+<div>20–100 / 20–100</div><div><input id="p115_a4_20_100" type="number" value="25"></div><div><input id="p115_a3_20_100" type="number" value="50"></div>
+<div>101–500 / 101–500</div><div><input id="p115_a4_101_500" type="number" value="23"></div><div><input id="p115_a3_101_500" type="number" value="46"></div>
+</div>
+<br>
+<b>Печать. Глянец/мат 250–300 г/м² (A4/A3)</b>
+<div class="price-grid grid-3">
+<div class="head">Диапазон (A4 / A3)</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>1–4 / 1–2</div><div><input id="p250_a4_1_4" type="number" value="60"></div><div><input id="p250_a3_1_2" type="number" value="100"></div>
+<div>5–20 / 3–20</div><div><input id="p250_a4_5_20" type="number" value="40"></div><div><input id="p250_a3_3_20" type="number" value="80"></div>
+<div>свыше 20 (до 500)</div><div><input id="p250_a4_21_500" type="number" value="30"></div><div><input id="p250_a3_21_500" type="number" value="60"></div>
+</div>
+<hr>
+<b>Ламинация глянцевая 100 мкм (пакетная)</b>
+<div class="price-grid grid-3">
+<div class="head">Количество</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>1–10</div><div><input id="lG_1_10_A4" type="number" value="60"></div><div><input id="lG_1_10_A3" type="number" value="120"></div>
+<div>11–30</div><div><input id="lG_11_30_A4" type="number" value="50"></div><div><input id="lG_11_30_A3" type="number" value="100"></div>
+<div>31–50</div><div><input id="lG_31_50_A4" type="number" value="40"></div><div><input id="lG_31_50_A3" type="number" value="70"></div>
+<div>от 50</div><div><input id="lG_50p_A4" type="number" value="30"></div><div><input id="lG_50p_A3" type="number" value="60"></div>
+</div>
+<div class="price-grid grid-2" style="margin-top:6px">
+<div class="head">Меньше A4</div><div class="head">Стоимость, руб</div>
+<div>1–10</div><div><input id="lG_ltA4_1_10" type="number" value="50"></div>
+<div>свыше 10</div><div><input id="lG_ltA4_10p" type="number" value="30"></div>
+</div>
+<br>
+<b>Ламинация матовая 100 мкм (пакетная)</b>
+<div class="price-grid grid-3">
+<div class="head">Количество</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>1–10</div><div><input id="lM_1_10_A4" type="number" value="120"></div><div><input id="lM_1_10_A3" type="number" value="200"></div>
+<div>11–50</div><div><input id="lM_11_50_A4" type="number" value="80"></div><div><input id="lM_11_50_A3" type="number" value="150"></div>
+<div>свыше 50</div><div><input id="lM_50p_A4" type="number" value="60"></div><div><input id="lM_50p_A3" type="number" value="120"></div>
+</div>
+<br>
+<b>Переплёт на пластиковую пружину</b>
+<div class="price-grid grid-3">
+<div class="head">Листов</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>до 50</div><div><input id="spP_0_50_A4" type="number" value="100"></div><div><input id="spP_0_50_A3" type="number" value="150"></div>
+<div>50–100</div><div><input id="spP_50_100_A4" type="number" value="150"></div><div><input id="spP_50_100_A3" type="number" value="200"></div>
+<div>100–200</div><div><input id="spP_100_200_A4" type="number" value="150"></div><div><input id="spP_100_200_A3" type="number" value="250"></div>
+<div>200–300</div><div><input id="spP_200_300_A4" type="number" value="250"></div><div><input id="spP_200_300_A3" type="number" value="350"></div>
+</div>
+<br>
+<b>Переплёт на металлическую пружину</b>
+<div class="price-grid grid-3">
+<div class="head">Листов</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
+<div>до 50</div><div><input id="spM_0_50_A4" type="number" value="150"></div><div><input id="spM_0_50_A3" type="number" value="200"></div>
+<div>50–100</div><div><input id="spM_50_100_A4" type="number" value="200"></div><div><input id="spM_50_100_A3" type="number" value="300"></div>
+</div>
+<div class="price-grid grid-2" style="margin-top:6px">
+<div class="head">Твёрдый переплёт (металбин)</div><div class="head">Стоимость, руб</div>
+<div>за 1 шт</div><div><input id="hard_cover" type="number" value="500"></div>
+</div>
+<hr>
+<b>Буклеты A4. Офсет</b>
+<div class="price-grid grid-2">
+<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
+<div>500</div><div><input id="bOff_500" type="number" value="8250"></div>
+<div>1000</div><div><input id="bOff_1000" type="number" value="9700"></div>
+</div>
+<br>
+<b>Буклеты A4. Цифровая печать</b>
+<div class="price-grid grid-2">
+<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
+<div>50</div><div><input id="bDig_50" type="number" value="2500"></div>
+<div>100</div><div><input id="bDig_100" type="number" value="4400"></div>
+</div>
+<br>
+<b>Флаер A6. Офсетная печать</b>
+<div class="price-grid grid-2">
+<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
+<div>1000</div><div><input id="fOff_1000" type="number" value="3600"></div>
+<div>2000</div><div><input id="fOff_2000" type="number" value="5800"></div>
+<div>3000</div><div><input id="fOff_3000" type="number" value="8100"></div>
+<div>5000 (4+4)</div><div><input id="fOff_5000_44" type="number" value="14000"></div>
+<div>5000 (4+0)</div><div><input id="fOff_5000_40" type="number" value="10000"></div>
+</div>
+<br>
+<b>Флаер A6. Цифровая печать</b>
+<div class="price-grid grid-3">
+<div class="head">Тираж</div><div class="head">Односторонние, руб</div><div class="head">Двусторонние, руб</div>
+<div>50</div><div><input id="fDig_50_S" type="number" value="400"></div><div><input id="fDig_50_D" type="number" value="800"></div>
+<div>100</div><div><input id="fDig_100_S" type="number" value="800"></div><div><input id="fDig_100_D" type="number" value="1600"></div>
+<div>200</div><div><input id="fDig_200_S" type="number" value="1300"></div><div><input id="fDig_200_D" type="number" value="2600"></div>
+<div>300</div><div><input id="fDig_300_S" type="number" value="2000"></div><div><input id="fDig_300_D" type="number" value="4000"></div>
+</div>
+<hr>
+<b>Кружки 300 мл</b>
+<div class="price-grid grid-2">
+<div class="head">Условие</div><div class="head">Цена, руб</div>
+<div>Белая, 1 шт</div><div><input id="mugW_1" type="number" value="500"></div>
+<div>Белая, 4–10</div><div><input id="mugW_4_10" type="number" value="400"></div>
+<div>Белая, 10–20</div><div><input id="mugW_10_20" type="number" value="350"></div>
+<div>Белая, 20–50</div><div><input id="mugW_20_50" type="number" value="300"></div>
+<div>Белая, свыше 50</div><div><input id="mugW_50p" type="number" value="250"></div>
+<div>Цветная, 1 шт</div><div><input id="mugC_1" type="number" value="600"></div>
+<div>Хамелеон, 1 шт</div><div><input id="mugCh_1" type="number" value="700"></div>
+</div>
+<br>
+<b>Печать на тарелках</b>
+<div class="price-grid grid-2">
+<div class="head">Условие</div><div class="head">Цена, руб</div>
+<div>Белая, 1 шт</div><div><input id="plate_1" type="number" value="1000"></div>
+</div>
+<br>
+<b>Печать на футболках (до 10 шт)</b>
+<div class="price-grid grid-2">
+<div class="head">Метод</div><div class="head">Цена за шт, руб</div>
+<div>Сублимация на нашей футболке (1 сторона)</div><div><input id="tshirt_sub_1" type="number" value="1300"></div>
+<div>Сублимация на нашей футболке (2 стороны)</div><div><input id="tshirt_sub_2" type="number" value="1600"></div>
+<div>DTF без футболки (минимум)</div><div><input id="tshirt_dtf_no" type="number" value="300"></div>
+<div>DTF с футболкой (минимум)</div><div><input id="tshirt_dtf_with" type="number" value="1300"></div>
+</div>
+<br>
+<b>Фотомагниты акриловые (70×45 / 57×57)</b>
+<div class="price-grid grid-2">
+<div class="head">Количество</div><div class="head">Цена за шт, руб</div>
+<div>10</div><div><input id="magA_10" type="number" value="80"></div>
+<div>50</div><div><input id="magA_50" type="number" value="50"></div>
+<div>100</div><div><input id="magA_100" type="number" value="40"></div>
+<div>150</div><div><input id="magA_150" type="number" value="30"></div>
+<div>200</div><div><input id="magA_200" type="number" value="25"></div>
+</div>
+<br>
+<b>Фотомагниты виниловые (70×100)</b>
+<div class="price-grid grid-2">
+<div class="head">Количество</div><div class="head">Цена за шт, руб</div>
+<div>16</div><div><input id="magV_16" type="number" value="30"></div>
+<div>48</div><div><input id="magV_48" type="number" value="28"></div>
+<div>96</div><div><input id="magV_96" type="number" value="19"></div>
+<div>192</div><div><input id="magV_192" type="number" value="16"></div>
+<div>384</div><div><input id="magV_384" type="number" value="14"></div>
+</div>
+<br>
+<b>Значки</b>
+<div class="price-grid grid-3">
+<div class="head">Количество</div><div class="head">37 мм, руб</div><div class="head">56 мм, руб</div>
+<div>1–3</div><div><input id="badge37_1_3" type="number" value="100"></div><div><input id="badge56_1_3" type="number" value="130"></div>
+<div>4–10</div><div><input id="badge37_4_10" type="number" value="85"></div><div><input id="badge56_4_10" type="number" value="95"></div>
+<div>11–19</div><div><input id="badge37_11_19" type="number" value="80"></div><div><input id="badge56_11_19" type="number" value="90"></div>
+<div>20–99</div><div><input id="badge37_20_99" type="number" value="75"></div><div><input id="badge56_20_99" type="number" value="85"></div>
+<div>100–299</div><div><input id="badge37_100_299" type="number" value="70"></div><div><input id="badge56_100_299" type="number" value="80"></div>
+<div>300–499</div><div><input id="badge37_300_499" type="number" value="65"></div><div><input id="badge56_300_499" type="number" value="75"></div>
+<div>500–999</div><div><input id="badge37_500_999" type="number" value="55"></div><div><input id="badge56_500_999" type="number" value="65"></div>
+</div>
+<br>
+<b>УФ‑DTF печать</b>
+<div class="price-grid grid-2">
+<div class="head">Параметр</div><div class="head">Стоимость, руб</div>
+<div>Погонный метр (ширина 29 см)</div><div><input id="uvdtf_per_m" type="number" value="1500"></div>
+<div>Минимальный заказ (за лист A4)</div><div><input id="uvdtf_min" type="number" value="500"></div>
+</div>
+<hr>
+<b>Широкоформат (общие настройки)</b>
+<label>Плёнка ₽/м²</label><input id="priceFilm" type="number" value="550">
+<label>Баннер ₽/м²</label><input id="priceBanner" type="number" value="500">
+<label>Пластик ₽/м²</label><input id="pricePlastic" type="number" value="900">
+<label>Ламинация ₽/м²</label><input id="priceLamW" type="number" value="400">
+<label>Люверсы ₽/шт</label><input id="priceEye" type="number" value="15">
+<label>Обрезка ₽/пог.м</label><input id="priceCut" type="number" value="15">
+<label>Проклейка ₽/пог.м</label><input id="priceMount" type="number" value="70">
+<div class="row"><button onclick="closeSettings()">Закрыть</button></div>
+</div>
+</div>
+
+<!-- ЗАКАЗ -->
+<div class="order">
+<div class="order-head">
+<div>Позиция</div>
+<div>Цена</div>
+<div></div>
+</div>
+<div id="order" class="order-body"></div>
+<div><b>Итого: <span id="total">0 ₽</span></b></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+
