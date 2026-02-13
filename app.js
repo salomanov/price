@@ -18,6 +18,8 @@ const pColor=document.getElementById('pColor');
 const pFormat=document.getElementById('pFormat');
 const pQty=document.getElementById('pQty');
 const pSide=document.getElementById('pSide');
+const pCut=document.getElementById('pCut');
+const pCutQuick=document.getElementById('pCutQuick');
 const pPaperButtons=document.getElementById('pPaperButtons');
 const pColorButtons=document.getElementById('pColorButtons');
 const pFormatButtons=document.getElementById('pFormatButtons');
@@ -101,6 +103,13 @@ const priceMount=document.getElementById('priceMount');
 
 const order=document.getElementById('order');
 const total=document.getElementById('total');
+const orderPanel=document.querySelector('.order');
+const orderToggle=document.getElementById('orderToggle');
+const orderDetails=document.getElementById('orderDetails');
+const copyOrderBtn=document.getElementById('copyOrderBtn');
+const designPrice=document.getElementById('designPrice');
+const designAddBtn=document.getElementById('designAddBtn');
+const designCalcPrice=document.getElementById('designCalcPrice');
 
 let orders=[];
 let editIndex=null;
@@ -206,6 +215,58 @@ function bindDiscountQuick(){
     input.addEventListener('change',refresh);
     refresh();
   });
+}
+
+function bindPrintCutQuick(){
+  if(!pCutQuick || !pCut)return;
+  const btns=[...pCutQuick.querySelectorAll('[data-pcut]')];
+  const refresh=()=>{
+    const current=Number(String(pCut.value).replace(',','.'));
+    btns.forEach(btn=>btn.classList.toggle('active',Number(btn.dataset.pcut)===current));
+  };
+  pCutQuick.addEventListener('click',(e)=>{
+    const btn=e.target.closest('[data-pcut]');
+    if(!btn)return;
+    pCut.value=btn.dataset.pcut;
+    pCut.dispatchEvent(new Event('input',{bubbles:true}));
+    refresh();
+  });
+  pCut.addEventListener('input',refresh);
+  pCut.addEventListener('change',refresh);
+  refresh();
+}
+
+function bindDesignService(){
+  if(!designPrice || !designAddBtn)return;
+  const quick=[...document.querySelectorAll('[data-design]')];
+
+  const refresh=()=>{
+    const current=Number(String(designPrice.value).replace(',','.'));
+    quick.forEach(btn=>btn.classList.toggle('active',Number(btn.dataset.design)===current));
+    if(designCalcPrice){
+      designCalcPrice.innerText=current>0?`Цена: ${Math.round(current)} ₽`:'Цена: -';
+    }
+    designAddBtn.disabled=!(current>0);
+  };
+
+  quick.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      designPrice.value=btn.dataset.design;
+      refresh();
+    });
+  });
+
+  designPrice.addEventListener('input',refresh);
+  designPrice.addEventListener('change',refresh);
+  designAddBtn.addEventListener('click',saveDesign);
+  refresh();
+}
+
+function saveDesign(){
+  if(!designPrice)return;
+  const price=Math.round(num(designPrice,0));
+  if(price<=0)return;
+  saveItem({type:'design',title:'Дизайн',desc:'Услуга дизайна',price,params:{price}});
 }
 
 const tabButtons=[...document.querySelectorAll('.tab-btn')];
@@ -362,8 +423,11 @@ function computePrintPrice(){
   if(perSide===null)return null;
   const qty=parseInt(pQty.value,10);
   const sides=num(pSide,1);
-  return Math.round(perSide*qty*sides*(1+(num(pDiscount,0)/100)));
+  const printBase=perSide*qty*sides;
+  const cutAdd=Math.max(0,num(pCut,0));
+  return Math.round((printBase+cutAdd)*(1+(num(pDiscount,0)/100)));
 }
+
 
 function updateLaminationControls(){
   const type=lType.value;
@@ -374,7 +438,6 @@ function updateLaminationControls(){
   lQtyLabel.textContent=isSpiral?'Количество изделий':'Количество';
   syncAllChoices();
 }
-
 function computeLaminationPrice(){
   const type=lType.value;
   const qty=Math.max(1,parseInt(lQty.value,10)||1);
@@ -662,9 +725,12 @@ function savePrint(){
   if(price===null)return;
   const paperLabel=pPaper.options[pPaper.selectedIndex].text;
   const colorLabel=(pColor.value==='bw'?'ч/б':'цветная');
-  const desc=`${paperLabel}, ${pFormat.value}, ${colorLabel}, ${pQty.value} шт`;
-  saveItem({type:'print',title:'Печать',desc,price,params:{paper:pPaper.value,color:pColor.value,format:pFormat.value,qty:pQty.value,side:pSide.value,disc:pDiscount.value}});
+  const cutVal=Math.max(0,num(pCut,0));
+  const cutLabel=cutVal>0?`, резка: ${Math.round(cutVal)} ₽`:'';
+  const desc=`${paperLabel}, ${pFormat.value}, ${colorLabel}, ${pQty.value} шт${cutLabel}`;
+  saveItem({type:'print',title:'Печать',desc,price,params:{paper:pPaper.value,color:pColor.value,format:pFormat.value,qty:pQty.value,side:pSide.value,cut:pCut.value,disc:pDiscount.value}});
 }
+
 
 function saveWide(){
   const price=computeWidePrice();
@@ -672,7 +738,6 @@ function saveWide(){
     params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,
     lam:wLam.checked,eye:wEye.checked,eyeStep:wEyeStep.value,cut:wCut.checked,mount:wMount.checked}});
 }
-
 function saveLam(){
   const price=computeLaminationPrice();
   if(price===null)return;
@@ -714,6 +779,7 @@ function saveItem(item){
   editIndex=null;
   visitBtn.innerText=printBtn.innerText=wideBtn.innerText='Добавить';
   lamBtn.innerText=bfBtn.innerText=sBtn.innerText='Добавить';
+  if(designAddBtn)designAddBtn.innerText='Добавить';
 }
 
 function editItem(i){
@@ -738,7 +804,8 @@ function editItem(i){
     pFormat.value=o.params.format;
     pQty.value=o.params.qty;
     pSide.value=o.params.side;
-    pDiscount.value=o.params.disc;
+      if(pCut)pCut.value=(o.params.cut??0);
+      pDiscount.value=o.params.disc;
     printBtn.innerText='Изменить';
   }
   if(o.type==='wide'){
@@ -758,6 +825,11 @@ function editItem(i){
     toggleCustom();
     wideBtn.innerText='Изменить';
   }
+  if(o.type==='design'){
+    switchTab('design');
+    if(designPrice)designPrice.value=o.params.price;
+    if(designAddBtn)designAddBtn.innerText='Изменить';
+  }
   calc();
 }
 
@@ -766,6 +838,60 @@ function delItem(i){
   render();
 }
 
+function buildOrderCopyText(){
+  const lines=['Заказ:'];
+  orders.forEach((o,i)=>{
+    lines.push(`${i+1}. ${o.title} — ${o.desc} — ${o.price} ₽`);
+  });
+  lines.push('');
+  lines.push(`Итого: ${total.innerText}`);
+  return lines.join('\n');
+}
+
+async function copyOrderText(){
+  if(!orders.length)return;
+  const text=buildOrderCopyText();
+  let ok=false;
+
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      ok=true;
+    }
+  }catch(_e){}
+
+  if(!ok){
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed';
+    ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ok=document.execCommand('copy');}catch(_e){ok=false;}
+    document.body.removeChild(ta);
+  }
+
+  if(copyOrderBtn){
+    const prev=copyOrderBtn.innerText;
+    copyOrderBtn.innerText=ok?'Скопировано':'Не удалось скопировать';
+    setTimeout(()=>{copyOrderBtn.innerText=prev;},1200);
+  }
+}
+function updateOrderToggle(){
+  if(!orderToggle || !orderPanel)return;
+  const isCollapsed=orderPanel.classList.contains('collapsed');
+  orderToggle.innerText=`${isCollapsed?'Показать':'Скрыть'} позиции (${orders.length})`;
+}
+
+function bindOrderToggle(){
+  if(!orderToggle || !orderPanel || !orderDetails)return;
+  orderToggle.addEventListener('click',()=>{
+    orderPanel.classList.toggle('collapsed');
+    updateOrderToggle();
+  });
+  updateOrderToggle();
+}
 function render(){
   order.innerHTML='';
   let sum=0;
@@ -774,10 +900,12 @@ function render(){
     order.innerHTML+=`<div class="order-row"><div>${o.title}<br><small>${o.desc}</small></div><div>${o.price} ₽</div><div><span class=edit onclick=editItem(${i})>✎</span><span class=del onclick=delItem(${i})>✖</span></div></div>`;
   });
   total.innerText=sum+' ₽';
+  if(copyOrderBtn)copyOrderBtn.disabled=orders.length===0;
+  updateOrderToggle();
 }
 
 function bindCalc(){
-  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pDiscount,wMaterial,wLam,wEye,wEyeStep,wCut,wMount,wPreset,wWidth,wHeight,wQty,wDiscount,
+  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,wMaterial,wLam,wEye,wEyeStep,wCut,wMount,wPreset,wWidth,wHeight,wQty,wDiscount,
     lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
     priceFilm,priceBanner,pricePlastic,priceLamW,priceEye,priceCut,priceMount];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
@@ -854,8 +982,33 @@ if(settingsModal){
 switchTab('visit');
 bindCalc();
 bindDiscountQuick();
+bindPrintCutQuick();
+bindDesignService();
+bindOrderToggle();
+if(copyOrderBtn)copyOrderBtn.addEventListener('click',copyOrderText);
 calc();
 
 window.switchTab=switchTab;
 window.openSettings=openSettings;
 window.closeSettings=closeSettings;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg: #0b0f14;
     --panel: #141a22;
     --panel-2: #10161d;
@@ -246,7 +246,37 @@ select:focus-visible {
     right: 0;
     background: #0c1219;
     padding: 12px 16px;
-    border-top: 1px solid var(--line)
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.order-toggle {
+    align-self: flex-start;
+    border: 1px solid var(--line);
+    background: #0d131a;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer
+}
+
+.order-toggle:hover {
+    filter: brightness(1.08)
+}
+
+.order-toggle:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px
+}
+
+.order-details {
+    display: block
+}
+
+.order.collapsed .order-details {
+    display: none
 }
 
 .order-head,
@@ -269,7 +299,10 @@ select:focus-visible {
 .order-body {
     display: flex;
     flex-direction: column;
-    gap: 6px
+    gap: 6px;
+    overflow-y: auto;
+    max-height: 240px;
+    padding-right: 4px
 }
 
 .order-row {
@@ -334,4 +367,46 @@ button:disabled {
 .price-grid input {
     width: 100%;
     box-sizing: border-box
+}
+
+
+
+
+
+
+
+
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+    padding-top: 8px
+}
+
+.order-copy {
+    border: 1px solid var(--accent);
+    background: rgba(99, 211, 255, .08);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .12s ease
+}
+
+.order-copy:hover {
+    filter: brightness(1.12)
+}
+
+.order-copy:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px
+}
+
+.order-copy:disabled {
+    opacity: .45;
+    cursor: not-allowed
 }
