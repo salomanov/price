@@ -110,12 +110,19 @@
 <h3>Широкоформат</h3>
 <label>Материал</label>
 <div id="wMaterialButtons" class="choice-row"></div>
-<select id="wMaterial" class="hidden"><option value="film">Плёнка</option><option value="banner">Баннер</option><option value="plastic">Пластик</option></select>
+<select id="wMaterial" class="hidden">
+<option value="film_gloss">Плёнка глянцевая</option>
+<option value="film_clear">Плёнка прозрачная</option>
+<option value="film_perf">Плёнка перфорированная</option>
+<option value="film_backlit">Бэклит (светорассеивающая)</option>
+<option value="plastic_3">Плёнка на пластик 3 мм</option>
+<option value="plastic_5">Плёнка на пластик 5 мм</option>
+<option value="plotter_white_china">Плоттер: белая пленка (Китай)</option>
+<option value="plotter_white_oracal">Плоттер: белая пленка (ORACAL)</option>
+<option value="plotter_color_oracal">Плоттер: цветная пленка (ORACAL)</option>
+</select>
 <label><input type="checkbox" id="wLam"> Ламинация</label>
-<label id="eyeWrap"><input type="checkbox" id="wEye"> Люверсы</label>
-<label id="eyeStepWrap">Шаг люверсов (см)</label><input id="wEyeStep" type="number" value="40">
-<label><input type="checkbox" id="wCut"> Обрезка</label>
-<label><input type="checkbox" id="wMount"> Проклейка</label>
+<label><input type="checkbox" id="wCut"> Резка в размер</label>
 <label>Размер</label>
 <div id="wPresetButtons" class="choice-row"></div>
 <select id="wPreset" class="hidden" onchange="toggleCustom()"><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option><option value="custom">Произвольный</option></select>
@@ -483,14 +490,21 @@
 <div>Минимальный заказ (за лист A4)</div><div><input id="uvdtf_min" type="number" value="500"></div>
 </div>
 <hr>
-<b>Широкоформат (общие настройки)</b>
-<label>Плёнка ₽/м²</label><input id="priceFilm" type="number" value="550">
-<label>Баннер ₽/м²</label><input id="priceBanner" type="number" value="500">
-<label>Пластик ₽/м²</label><input id="pricePlastic" type="number" value="900">
-<label>Ламинация ₽/м²</label><input id="priceLamW" type="number" value="400">
-<label>Люверсы ₽/шт</label><input id="priceEye" type="number" value="15">
-<label>Обрезка ₽/пог.м</label><input id="priceCut" type="number" value="15">
-<label>Проклейка ₽/пог.м</label><input id="priceMount" type="number" value="70">
+<b>Широкоформат (по прайсу, стр. 5)</b>
+<label>Плёнка глянцевая ₽/м²</label><input id="priceWideFilmGloss" type="number" value="1000">
+<label>Плёнка прозрачная ₽/м²</label><input id="priceWideFilmClear" type="number" value="1000">
+<label>Плёнка перфорированная ₽/м²</label><input id="priceWideFilmPerf" type="number" value="2000">
+<label>Бэклит ₽/м²</label><input id="priceWideFilmBacklit" type="number" value="2000">
+<label>Ламинация плёнки ₽/м²</label><input id="priceWideLamFilm" type="number" value="650">
+<label>Пластик 3 мм без ламинации ₽/м²</label><input id="priceWidePlastic3" type="number" value="3300">
+<label>Пластик 3 мм с ламинацией ₽/м²</label><input id="priceWidePlastic3Lam" type="number" value="3900">
+<label>Пластик 5 мм без ламинации ₽/м²</label><input id="priceWidePlastic5" type="number" value="4300">
+<label>Пластик 5 мм с ламинацией ₽/м²</label><input id="priceWidePlastic5Lam" type="number" value="5000">
+<label>Плоттер: белая пленка (Китай) ₽/м²</label><input id="priceWidePlotterWhiteChina" type="number" value="1700">
+<label>Плоттер: белая пленка (ORACAL) ₽/м²</label><input id="priceWidePlotterWhiteOracal" type="number" value="2000">
+<label>Плоттер: цветная пленка (ORACAL) ₽/м²</label><input id="priceWidePlotterColorOracal" type="number" value="2000">
+<label>Резка в размер ₽/пог.м</label><input id="priceWideCut" type="number" value="30">
+<label>Минимальная стоимость изделия ₽/шт</label><input id="priceWideMinItem" type="number" value="300">
 <div class="row"><button onclick="closeSettings()">Закрыть</button></div>
 </div>
 </div>
@@ -515,6 +529,7 @@
 <script src="app.js"></script>
 </body>
 </html>
+
 
 
 

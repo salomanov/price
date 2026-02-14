@@ -93,13 +93,20 @@ const sTshirtTypeButtons=document.getElementById('sTshirtTypeButtons');
 const sBadgeSizeButtons=document.getElementById('sBadgeSizeButtons');
 const sMagQtyButtons=document.getElementById('sMagQtyButtons');
 
-const priceFilm=document.getElementById('priceFilm');
-const priceBanner=document.getElementById('priceBanner');
-const pricePlastic=document.getElementById('pricePlastic');
-const priceLamW=document.getElementById('priceLamW');
-const priceEye=document.getElementById('priceEye');
-const priceCut=document.getElementById('priceCut');
-const priceMount=document.getElementById('priceMount');
+const priceWideFilmGloss=document.getElementById('priceWideFilmGloss');
+const priceWideFilmClear=document.getElementById('priceWideFilmClear');
+const priceWideFilmPerf=document.getElementById('priceWideFilmPerf');
+const priceWideFilmBacklit=document.getElementById('priceWideFilmBacklit');
+const priceWideLamFilm=document.getElementById('priceWideLamFilm');
+const priceWidePlastic3=document.getElementById('priceWidePlastic3');
+const priceWidePlastic3Lam=document.getElementById('priceWidePlastic3Lam');
+const priceWidePlastic5=document.getElementById('priceWidePlastic5');
+const priceWidePlastic5Lam=document.getElementById('priceWidePlastic5Lam');
+const priceWidePlotterWhiteChina=document.getElementById('priceWidePlotterWhiteChina');
+const priceWidePlotterWhiteOracal=document.getElementById('priceWidePlotterWhiteOracal');
+const priceWidePlotterColorOracal=document.getElementById('priceWidePlotterColorOracal');
+const priceWideCut=document.getElementById('priceWideCut');
+const priceWideMinItem=document.getElementById('priceWideMinItem');
 
 const order=document.getElementById('order');
 const total=document.getElementById('total');
@@ -657,30 +664,50 @@ function getWideDims(){
   return {w:1,h:1};
 }
 
-function computeWidePrice(){
-  const dims=getWideDims();
-  const area=dims.w*dims.h;
-  const per=2*(dims.w+dims.h);
-  let matPrice=num(priceFilm);
-  if(wMaterial.value==='banner')matPrice=num(priceBanner);
-  if(wMaterial.value==='plastic')matPrice=num(pricePlastic);
-  let wBase=area*matPrice*num(wQty,0);
-  if(wLam.checked)wBase+=area*num(priceLamW)*num(wQty,0);
-  if(wMaterial.value==='banner'){
-    eyeWrap.style.display='block';
-    eyeStepWrap.style.display='block';
-    if(wEye.checked){
-      const step=Math.max(num(wEyeStep,40),1);
-      wBase+=Math.ceil((per*100)/step)*num(priceEye)*num(wQty,0);
-    }
-  }else{
-    wEye.checked=false;
-    eyeWrap.style.display='none';
-    eyeStepWrap.style.display='none';
+function updateWideControls(){
+  const disallowLam=(wMaterial.value==='plotter_white_china' || wMaterial.value==='plotter_white_oracal' || wMaterial.value==='plotter_color_oracal');
+  if(wLam){
+    wLam.disabled=disallowLam;
+    if(disallowLam)wLam.checked=false;
+    const lamLabel=wLam.closest('label');
+    if(lamLabel)lamLabel.style.opacity=disallowLam?'0.6':'1';
   }
-  if(wCut.checked)wBase+=per*num(priceCut)*num(wQty,0);
-  if(wMount.checked)wBase+=per*num(priceMount)*num(wQty,0);
-  return Math.round(wBase*(1+(num(wDiscount,0)/100)));
+}
+
+function getWideMaterialRate(){
+  switch(wMaterial.value){
+    case 'film_gloss': return {rate:num(priceWideFilmGloss,1000), lamByRate:true};
+    case 'film_clear': return {rate:num(priceWideFilmClear,1000), lamByRate:true};
+    case 'film_perf': return {rate:num(priceWideFilmPerf,2000), lamByRate:true};
+    case 'film_backlit': return {rate:num(priceWideFilmBacklit,2000), lamByRate:true};
+    case 'plastic_3': return {rate:wLam.checked?num(priceWidePlastic3Lam,3900):num(priceWidePlastic3,3300), lamByRate:false};
+    case 'plastic_5': return {rate:wLam.checked?num(priceWidePlastic5Lam,5000):num(priceWidePlastic5,4300), lamByRate:false};
+    case 'plotter_white_china': return {rate:num(priceWidePlotterWhiteChina,1700), lamByRate:false};
+    case 'plotter_white_oracal': return {rate:num(priceWidePlotterWhiteOracal,2000), lamByRate:false};
+    case 'plotter_color_oracal': return {rate:num(priceWidePlotterColorOracal,2000), lamByRate:false};
+    default: return {rate:num(priceWideFilmGloss,1000), lamByRate:true};
+  }
+}
+
+function computeWidePrice(){
+  updateWideControls();
+  const dims=getWideDims();
+  const area=Math.max(0,dims.w*dims.h);
+  const per=Math.max(0,2*(dims.w+dims.h));
+  const qty=Math.max(1,parseInt(wQty.value,10)||1);
+  const mat=getWideMaterialRate();
+
+  let perItem=area*mat.rate;
+  if(mat.lamByRate && wLam.checked){
+    perItem+=area*num(priceWideLamFilm,650);
+  }
+  if(wCut && wCut.checked){
+    perItem+=per*num(priceWideCut,30);
+  }
+
+  const minPerItem=num(priceWideMinItem,300);
+  const total=Math.max(perItem,minPerItem)*qty;
+  return Math.round(total*(1+(num(wDiscount,0)/100)));
 }
 
 function calc(){
@@ -734,9 +761,9 @@ function savePrint(){
 
 function saveWide(){
   const price=computeWidePrice();
-  saveItem({type:'wide',title:'Широкоформат',desc:`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} шт`,price,
-    params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,
-    lam:wLam.checked,eye:wEye.checked,eyeStep:wEyeStep.value,cut:wCut.checked,mount:wMount.checked}});
+  const desc=`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} шт`;
+  saveItem({type:'wide',title:'Широкоформат',desc,price,
+    params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,lam:wLam.checked,cut:wCut.checked}});
 }
 function saveLam(){
   const price=computeLaminationPrice();
@@ -804,8 +831,8 @@ function editItem(i){
     pFormat.value=o.params.format;
     pQty.value=o.params.qty;
     pSide.value=o.params.side;
-      if(pCut)pCut.value=(o.params.cut??0);
-      pDiscount.value=o.params.disc;
+    if(pCut)pCut.value=(o.params.cut??0);
+    pDiscount.value=o.params.disc;
     printBtn.innerText='Изменить';
   }
   if(o.type==='wide'){
@@ -817,12 +844,10 @@ function editItem(i){
     wHeight.value=p.h;
     wQty.value=p.qty;
     wDiscount.value=p.disc;
-    wLam.checked=p.lam;
-    wEye.checked=p.eye;
-    wEyeStep.value=p.eyeStep;
-    wCut.checked=p.cut;
-    wMount.checked=p.mount;
+    if(wLam)wLam.checked=!!p.lam;
+    if(wCut)wCut.checked=!!p.cut;
     toggleCustom();
+    updateWideControls();
     wideBtn.innerText='Изменить';
   }
   if(o.type==='design'){
@@ -832,7 +857,6 @@ function editItem(i){
   }
   calc();
 }
-
 function delItem(i){
   orders.splice(i,1);
   render();
@@ -905,9 +929,9 @@ function render(){
 }
 
 function bindCalc(){
-  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,wMaterial,wLam,wEye,wEyeStep,wCut,wMount,wPreset,wWidth,wHeight,wQty,wDiscount,
+  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
     lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
-    priceFilm,priceBanner,pricePlastic,priceLamW,priceEye,priceCut,priceMount];
+    priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
 
   vType.addEventListener('change',()=>{populateVisitQty();calc();});
@@ -942,6 +966,7 @@ function bindCalc(){
     calc();
   });
   pPaper.addEventListener('change',()=>{updatePrintControls();calc();});
+  wMaterial.addEventListener('change',()=>{updateWideControls();calc();});
   lType.addEventListener('change',()=>{updateLaminationControls();calc();});
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
   sType.addEventListener('change',()=>{updateSouvenirControls();calc();});
@@ -949,7 +974,6 @@ function bindCalc(){
   const priceInputs=[...settingsModal.querySelectorAll('input')];
   priceInputs.forEach(el=>el.addEventListener('input',calc));
 }
-
 setupChoice(pPaper,pPaperButtons,'ppaper');
 setupChoice(pColor,pColorButtons,'pcolor');
 setupChoice(pFormat,pFormatButtons,'pformat');
@@ -991,6 +1015,8 @@ calc();
 window.switchTab=switchTab;
 window.openSettings=openSettings;
 window.closeSettings=closeSettings;
+
+
 
 
 
