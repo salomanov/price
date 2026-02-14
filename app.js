@@ -275,7 +275,6 @@ function saveDesign(){
   if(price<=0)return;
   saveItem({type:'design',title:'Дизайн',desc:'Услуга дизайна',price,params:{price}});
 }
-
 const tabButtons=[...document.querySelectorAll('.tab-btn')];
 const tabPanels=[...document.querySelectorAll('.tab-panel')];
 function switchTab(name){
