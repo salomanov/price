@@ -1,4 +1,5 @@
 ﻿const priceBtn=document.getElementById('priceBtn');
+const themeBtn=document.getElementById('themeBtn');
 const settingsModal=document.getElementById('settingsModal');
 
 const vType=document.getElementById('vType');
@@ -28,6 +29,28 @@ const pDiscount=document.getElementById('pDiscount');
 const pPrice=document.getElementById('pPrice');
 const printBtn=document.getElementById('printBtn');
 
+const cMode=document.getElementById('cMode');
+const cSize=document.getElementById('cSize');
+const cTier=document.getElementById('cTier');
+const cModeButtons=document.getElementById('cModeButtons');
+const cSizeButtons=document.getElementById('cSizeButtons');
+const cTierButtons=document.getElementById('cTierButtons');
+const cFixedWrap=document.getElementById('cFixedWrap');
+const cCustomWrap=document.getElementById('cCustomWrap');
+const cHeight=document.getElementById('cHeight');
+const cWidth=document.getElementById('cWidth');
+const cRate=document.getElementById('cRate');
+const cFrame=document.getElementById('cFrame');
+const cFramePrice=document.getElementById('cFramePrice');
+const cRoundStep=document.getElementById('cRoundStep');
+const cApply20=document.getElementById('cApply20');
+const cPrice=document.getElementById('cPrice');
+const canvasBtn=document.getElementById('canvasBtn');
+
+const cFormulaRate=document.getElementById('c_formula_rate');
+const cFormulaFrame=document.getElementById('c_formula_frame');
+const cFormulaRound=document.getElementById('c_formula_round');
+
 const wMaterial=document.getElementById('wMaterial');
 const wLam=document.getElementById('wLam');
 const wEye=document.getElementById('wEye');
@@ -41,7 +64,9 @@ const wQty=document.getElementById('wQty');
 const wDiscount=document.getElementById('wDiscount');
 const wPrice=document.getElementById('wPrice');
 const wideBtn=document.getElementById('wideBtn');
-const wMaterialButtons=document.getElementById('wMaterialButtons');
+const wFilmButtons=document.getElementById('wFilmButtons');
+const wPlasticButtons=document.getElementById('wPlasticButtons');
+const wCutFilmButtons=document.getElementById('wCutFilmButtons');
 const wPresetButtons=document.getElementById('wPresetButtons');
 const customSize=document.getElementById('customSize');
 const eyeWrap=document.getElementById('eyeWrap');
@@ -117,6 +142,7 @@ const copyOrderBtn=document.getElementById('copyOrderBtn');
 const designPrice=document.getElementById('designPrice');
 const designAddBtn=document.getElementById('designAddBtn');
 const designCalcPrice=document.getElementById('designCalcPrice');
+const numPad=document.getElementById('numPad');
 
 let orders=[];
 let editIndex=null;
@@ -129,9 +155,7 @@ const VISIT_QTY={
 
 const BF_QTY={
   booklet_a4_offset:[500,1000],
-  booklet_a4_digital:[50,100],
-  flyer_a6_offset:[1000,2000,3000,5000],
-  flyer_a6_digital:[50,100,200,300]
+  flyer_a6_offset:[1000,2000,3000,5000]
 };
 
 const MAG_QTY={
@@ -283,6 +307,30 @@ function switchTab(name){
   tabPanels.forEach(p=>p.classList.toggle('active',p.id===`tab-${name}`));
 }
 
+
+function setupThemeToggle(){
+  if(!themeBtn)return;
+  const storageKey='calculatorTheme';
+
+  const applyTheme=(theme)=>{
+    const light=(theme==='light');
+    document.body.classList.toggle('light-theme',light);
+    themeBtn.innerText=light?'\u0422\u0451\u043c\u043d\u0430\u044f \u0442\u0435\u043c\u0430':'\u0421\u0432\u0435\u0442\u043b\u0430\u044f \u0442\u0435\u043c\u0430';
+  };
+
+  let saved='dark';
+  try{
+    saved=localStorage.getItem(storageKey)||'dark';
+  }catch(_e){}
+  applyTheme(saved);
+
+  themeBtn.addEventListener('click',()=>{
+    const next=document.body.classList.contains('light-theme')?'dark':'light';
+    applyTheme(next);
+    try{localStorage.setItem(storageKey,next);}catch(_e){}
+  });
+}
+
 function openSettings(){
   if(settingsModal)settingsModal.classList.add('active');
 }
@@ -346,6 +394,79 @@ function computeVisitPrice(){
   }
   if(!base)return null;
   return Math.round(base*(1+(num(vDiscount,0)/100)));
+}
+
+
+function updateCanvasControls(){
+  if(!cMode)return;
+  const isCustom=cMode.value==='custom';
+  if(cFixedWrap)cFixedWrap.classList.toggle('hidden',isCustom);
+  if(cCustomWrap)cCustomWrap.classList.toggle('hidden',!isCustom);
+
+  if(isCustom){
+    if(cFormulaRate && cRate)cRate.value=cFormulaRate.value;
+    if(cFormulaFrame && cFramePrice)cFramePrice.value=cFormulaFrame.value;
+    if(cFormulaRound && cRoundStep)cRoundStep.value=cFormulaRound.value;
+  }
+  syncAllChoices();
+}
+
+function ceilToStep(value, step){
+  const s=Math.max(1,step||1);
+  return Math.ceil(value/s)*s;
+}
+
+function computeCanvasPrice(){
+  if(!cMode)return null;
+
+  if(cMode.value==='fixed'){
+    const size=cSize.value;
+    const tier=cTier.value;
+    const base=priceInput(`c_${size}_${tier}`);
+    if(!base)return null;
+    return Math.round(base);
+  }
+
+  const h=Math.max(1,num(cHeight,0));
+  const w=Math.max(1,num(cWidth,0));
+  const rate=Math.max(0,num(cRate,0));
+  const frameRate=Math.max(0,num(cFramePrice,0));
+  const step=Math.max(1,num(cRoundStep,50));
+  if(!h || !w || !rate)return null;
+
+  let sum=0;
+  if(cFrame && cFrame.checked){
+    sum=((((h+4)*(w+4))/10000)*rate)+(((h+w)*2)*frameRate/100);
+  }else{
+    sum=((h*w)/10000)*rate;
+  }
+
+  let result=ceilToStep(sum,step);
+  if(cApply20 && cApply20.checked){
+    result=ceilToStep(result-(result*20/100),step);
+  }
+  return Math.round(result);
+}
+
+function saveCanvas(){
+  const price=computeCanvasPrice();
+  if(price===null)return;
+
+  let desc='';
+  if(cMode.value==='fixed'){
+    const tierLabel=cTier.options[cTier.selectedIndex].text;
+    desc=`${cSize.value} ??, ${tierLabel}`;
+  }else{
+    const frameLabel=(cFrame && cFrame.checked)?', \u043f\u043e\u0434\u0440\u0430\u043c\u043d\u0438\u043a':'';
+    const d20=(cApply20 && cApply20.checked)?', \u0441\u043a\u0438\u0434\u043a\u0430 20%':'';
+    desc=`${Math.round(num(cHeight,0))}x${Math.round(num(cWidth,0))} ??${frameLabel}${d20}`;
+  }
+
+  saveItem({type:'canvas',title:'\u041f\u0435\u0447\u0430\u0442\u044c \u043d\u0430 \u0445\u043e\u043b\u0441\u0442\u0435',desc,price,params:{
+    mode:cMode.value,size:cSize.value,tier:cTier.value,
+    h:cHeight.value,w:cWidth.value,rate:cRate.value,frame:!!(cFrame&&cFrame.checked),
+    framePrice:cFramePrice.value,roundStep:cRoundStep.value,apply20:!!(cApply20&&cApply20.checked)
+  }});
 }
 
 function updatePrintControls(){
@@ -524,9 +645,8 @@ function populateBfQty(){
   else bfQty.value=list[0]?String(list[0]):'';
   renderChoice(choiceBindings.find(b=>b.selectEl===bfQty));
   const isFlyerOffset=(bfType.value==='flyer_a6_offset');
-  const isFlyerDigital=(bfType.value==='flyer_a6_digital');
-  bfSideWrap.classList.toggle('hidden',!(isFlyerOffset||isFlyerDigital));
-  bfSide.disabled=!(isFlyerOffset||isFlyerDigital);
+  bfSideWrap.classList.toggle('hidden',!isFlyerOffset);
+  bfSide.disabled=!isFlyerOffset;
   [...bfSideButtons.querySelectorAll('.choice-btn')].forEach(btn=>{btn.disabled=bfSide.disabled;});
   syncAllChoices();
 }
@@ -536,7 +656,6 @@ function computeBfPrice(){
   const qty=parseInt(bfQty.value,10);
   let base=null;
   if(type==='booklet_a4_offset')base=priceInput(`bOff_${qty}`);
-  if(type==='booklet_a4_digital')base=priceInput(`bDig_${qty}`);
   if(type==='flyer_a6_offset'){
     if(qty===5000){
       base=bfSide.value==='double'?priceInput('fOff_5000_44'):priceInput('fOff_5000_40');
@@ -544,7 +663,6 @@ function computeBfPrice(){
       base=priceInput(`fOff_${qty}`);
     }
   }
-  if(type==='flyer_a6_digital')base=priceInput(`fDig_${qty}_${bfSide.value==='single'?'S':'D'}`);
   if(!base)return null;
   return Math.round(base*(1+(num(bfDiscount,0)/100)));
 }
@@ -664,6 +782,30 @@ function getWideDims(){
   return {w:1,h:1};
 }
 
+
+function syncWideMaterialButtons(){
+  const current=wMaterial.value;
+  document.querySelectorAll('[data-wmaterial]').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.wmaterial===current);
+  });
+}
+
+function bindWideMaterialButtons(){
+  const containers=[wFilmButtons,wPlasticButtons,wCutFilmButtons];
+  containers.forEach(container=>{
+    if(!container)return;
+    container.addEventListener('click',(e)=>{
+      const btn=e.target.closest('[data-wmaterial]');
+      if(!btn)return;
+      wMaterial.value=btn.dataset.wmaterial;
+      wMaterial.dispatchEvent(new Event('change',{bubbles:true}));
+      syncWideMaterialButtons();
+      calc();
+    });
+  });
+  syncWideMaterialButtons();
+}
+
 function updateWideControls(){
   const disallowLam=(wMaterial.value==='plotter_white_china' || wMaterial.value==='plotter_white_oracal' || wMaterial.value==='plotter_color_oracal');
   if(wLam){
@@ -719,6 +861,12 @@ function calc(){
   const printPrice=computePrintPrice();
   if(printPrice===null){pPrice.innerText='Цена: -';printBtn.disabled=true;}else{pPrice.innerText='Цена: '+printPrice+' ₽';printBtn.disabled=false;}
 
+  const canvasPrice=computeCanvasPrice();
+  if(cPrice && canvasBtn){
+    if(canvasPrice===null){cPrice.innerText='\u0426\u0435\u043d\u0430: -';canvasBtn.disabled=true;}else{cPrice.innerText='\u0426\u0435\u043d\u0430: '+canvasPrice+' \u20bd';canvasBtn.disabled=false;}
+  }
+
+
   const lamPrice=computeLaminationPrice();
   if(lamPrice===null){lPrice.innerText='Цена: -';lamBtn.disabled=true;}else{lPrice.innerText='Цена: '+lamPrice+' ₽';lamBtn.disabled=false;}
 
@@ -762,7 +910,7 @@ function savePrint(){
 function saveWide(){
   const price=computeWidePrice();
   const desc=`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} шт`;
-  saveItem({type:'wide',title:'Широкоформат',desc,price,
+  saveItem({type:'wide',title:'\u041b\u0430\u0442\u0435\u043a\u0441\u043d\u0430\u044f \u043f\u0435\u0447\u0430\u0442\u044c',desc,price,
     params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,lam:wLam.checked,cut:wCut.checked}});
 }
 function saveLam(){
@@ -806,7 +954,8 @@ function saveItem(item){
   editIndex=null;
   visitBtn.innerText=printBtn.innerText=wideBtn.innerText='Добавить';
   lamBtn.innerText=bfBtn.innerText=sBtn.innerText='Добавить';
-  if(designAddBtn)designAddBtn.innerText='Добавить';
+  if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
+  if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
 }
 
 function editItem(i){
@@ -828,6 +977,7 @@ function editItem(i){
     pPaper.value=o.params.paper;
     pColor.value=o.params.color;
     updatePrintControls();
+updateCanvasControls();
     pFormat.value=o.params.format;
     pQty.value=o.params.qty;
     pSide.value=o.params.side;
@@ -850,6 +1000,22 @@ function editItem(i){
     updateWideControls();
     wideBtn.innerText='Изменить';
   }
+  if(o.type==='canvas'){
+    switchTab('canvas');
+    const p=o.params;
+    if(cMode)cMode.value=p.mode||'fixed';
+    if(cSize)cSize.value=p.size||'30x45';
+    if(cTier)cTier.value=p.tier||'retail';
+    if(cHeight)cHeight.value=p.h||30;
+    if(cWidth)cWidth.value=p.w||40;
+    if(cRate)cRate.value=p.rate||2500;
+    if(cFrame)cFrame.checked=!!p.frame;
+    if(cFramePrice)cFramePrice.value=p.framePrice||500;
+    if(cRoundStep)cRoundStep.value=p.roundStep||50;
+    if(cApply20)cApply20.checked=!!p.apply20;
+    updateCanvasControls();
+    if(canvasBtn)canvasBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+  }
   if(o.type==='design'){
     switchTab('design');
     if(designPrice)designPrice.value=o.params.price;
@@ -860,6 +1026,141 @@ function editItem(i){
 function delItem(i){
   orders.splice(i,1);
   render();
+}
+
+
+function setupNumericKeypad(){
+  if(!numPad)return;
+  const dragHandle=document.getElementById('numPadDrag');
+  let activeInput=null;
+  let dragging=false;
+  let dragOffsetX=0;
+  let dragOffsetY=0;
+  let movedManually=false;
+
+  const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
+
+  const placeNearInput=(input)=>{
+    if(!input)return;
+    const rect=input.getBoundingClientRect();
+    const width=numPad.offsetWidth||260;
+    const height=numPad.offsetHeight||240;
+    let left=rect.left;
+    let top=rect.bottom+8;
+
+    if(left+width>window.innerWidth-8)left=window.innerWidth-width-8;
+    if(top+height>window.innerHeight-8)top=rect.top-height-8;
+
+    left=clamp(left,8,Math.max(8,window.innerWidth-width-8));
+    top=clamp(top,8,Math.max(8,window.innerHeight-height-8));
+
+    numPad.style.left=`${left}px`;
+    numPad.style.top=`${top}px`;
+    numPad.style.right='auto';
+    numPad.style.bottom='auto';
+  };
+
+  const show=(input)=>{
+    if(!input || input.disabled || input.readOnly)return;
+    const changedInput=activeInput!==input;
+    activeInput=input;
+    if(changedInput)movedManually=false;
+    numPad.classList.remove('hidden');
+    numPad.setAttribute('aria-hidden','false');
+    if(!movedManually){
+      requestAnimationFrame(()=>placeNearInput(input));
+    }
+  };
+
+  const hide=()=>{
+    activeInput=null;
+    dragging=false;
+    numPad.classList.add('hidden');
+    numPad.setAttribute('aria-hidden','true');
+  };
+
+  const applyValue=(next)=>{
+    if(!activeInput)return;
+    activeInput.value=next;
+    activeInput.dispatchEvent(new Event('input',{bubbles:true}));
+    activeInput.dispatchEvent(new Event('change',{bubbles:true}));
+  };
+
+  const insert=(chunk)=>{
+    if(!activeInput)return;
+    const cur=String(activeInput.value||'');
+    if(chunk==='-'){
+      applyValue(cur.startsWith('-')?cur.slice(1):('-'+cur));
+      return;
+    }
+    if(chunk==='.' && cur.includes('.'))return;
+    applyValue(cur+chunk);
+  };
+
+  document.addEventListener('focusin',(e)=>{
+    const input=e.target.closest('input[type="number"]');
+    if(input)show(input);
+  });
+
+  document.addEventListener('keydown',(e)=>{
+    if(!activeInput)return;
+    if(e.target===activeInput)hide();
+  });
+
+  document.addEventListener('mousedown',(e)=>{
+    if(!numPad.contains(e.target) && !e.target.closest('input[type="number"]'))hide();
+  });
+
+  if(dragHandle){
+    dragHandle.addEventListener('mousedown',(e)=>{
+      if(numPad.classList.contains('hidden'))return;
+      const rect=numPad.getBoundingClientRect();
+      dragging=true;
+      movedManually=true;
+      dragOffsetX=e.clientX-rect.left;
+      dragOffsetY=e.clientY-rect.top;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove',(e)=>{
+      if(!dragging)return;
+      const width=numPad.offsetWidth||260;
+      const height=numPad.offsetHeight||240;
+      const left=clamp(e.clientX-dragOffsetX,8,Math.max(8,window.innerWidth-width-8));
+      const top=clamp(e.clientY-dragOffsetY,8,Math.max(8,window.innerHeight-height-8));
+      numPad.style.left=`${left}px`;
+      numPad.style.top=`${top}px`;
+      numPad.style.right='auto';
+      numPad.style.bottom='auto';
+    });
+
+    document.addEventListener('mouseup',()=>{dragging=false;});
+  }
+
+  window.addEventListener('resize',()=>{
+    if(activeInput && !numPad.classList.contains('hidden') && !movedManually){
+      placeNearInput(activeInput);
+    }
+  });
+
+  numPad.addEventListener('click',(e)=>{
+    const btn=e.target.closest('[data-numkey]');
+    if(!btn || !activeInput)return;
+    const key=btn.dataset.numkey;
+    if(key==='back'){
+      applyValue(String(activeInput.value||'').slice(0,-1));
+      return;
+    }
+    if(key==='clear'){
+      applyValue('');
+      return;
+    }
+    if(key==='close' || key==='enter'){
+      hide();
+      return;
+    }
+    insert(key);
+  });
 }
 
 function buildOrderCopyText(){
@@ -929,7 +1230,7 @@ function render(){
 }
 
 function bindCalc(){
-  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
+  const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,cMode,cSize,cTier,cHeight,cWidth,cRate,cFrame,cFramePrice,cRoundStep,cApply20,cFormulaRate,cFormulaFrame,cFormulaRound,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
     lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
@@ -966,19 +1267,27 @@ function bindCalc(){
     calc();
   });
   pPaper.addEventListener('change',()=>{updatePrintControls();calc();});
-  wMaterial.addEventListener('change',()=>{updateWideControls();calc();});
+  if(cMode)cMode.addEventListener('change',()=>{updateCanvasControls();calc();});
+  wMaterial.addEventListener('change',()=>{updateWideControls();syncWideMaterialButtons();calc();});
   lType.addEventListener('change',()=>{updateLaminationControls();calc();});
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
   sType.addEventListener('change',()=>{updateSouvenirControls();calc();});
 
   const priceInputs=[...settingsModal.querySelectorAll('input')];
   priceInputs.forEach(el=>el.addEventListener('input',calc));
+  const formulaInputs=[cFormulaRate,cFormulaFrame,cFormulaRound];
+  formulaInputs.forEach(el=>{
+    if(!el)return;
+    el.addEventListener('input',()=>{if(cMode && cMode.value==='custom'){updateCanvasControls();calc();}});
+  });
 }
 setupChoice(pPaper,pPaperButtons,'ppaper');
 setupChoice(pColor,pColorButtons,'pcolor');
 setupChoice(pFormat,pFormatButtons,'pformat');
 setupChoice(pSide,pSideButtons,'pside');
-setupChoice(wMaterial,wMaterialButtons,'wmaterial');
+setupChoice(cMode,cModeButtons,'cmode');
+setupChoice(cSize,cSizeButtons,'csize');
+setupChoice(cTier,cTierButtons,'ctier');
 setupChoice(wPreset,wPresetButtons,'wpreset');
 setupChoice(lType,lTypeButtons,'ltype');
 setupChoice(lSize,lSizeButtons,'lsize');
@@ -993,6 +1302,7 @@ setupChoice(sMagQty,sMagQtyButtons,'smagqty');
 
 populateVisitQty();
 updatePrintControls();
+updateCanvasControls();
 updateLaminationControls();
 populateBfQty();
 updateSouvenirControls();
@@ -1003,18 +1313,22 @@ if(settingsModal){
   settingsModal.addEventListener('click',(e)=>{if(e.target===settingsModal)closeSettings();});
 }
 
+setupThemeToggle();
 switchTab('visit');
 bindCalc();
 bindDiscountQuick();
 bindPrintCutQuick();
+bindWideMaterialButtons();
 bindDesignService();
 bindOrderToggle();
+setupNumericKeypad();
 if(copyOrderBtn)copyOrderBtn.addEventListener('click',copyOrderText);
 calc();
 
 window.switchTab=switchTab;
 window.openSettings=openSettings;
 window.closeSettings=closeSettings;
+
 
 
 

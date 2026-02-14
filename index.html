@@ -9,16 +9,20 @@
 <body>
 <header>
 <h1>Полиграфический калькулятор</h1>
+<div class="header-actions">
+<button id="themeBtn" type="button">Светлая тема</button>
 <button id="priceBtn" onclick="openSettings()">Прайс</button>
+</div>
 </header>
 
 <div class="container">
 <div class="tabs">
 <button class="tab-btn" data-tab="visit">Визитки</button>
 <button class="tab-btn" data-tab="print">Печать</button>
-<button class="tab-btn" data-tab="wide">Широкоформат</button>
+<button class="tab-btn" data-tab="canvas">Печать на холсте</button>
+<button class="tab-btn" data-tab="wide">Латексная печать</button>
 <button class="tab-btn" data-tab="lam">Ламинация/переплёт</button>
-<button class="tab-btn" data-tab="bf">Буклеты/флаеры</button>
+<button class="tab-btn" data-tab="bf">Офсет</button>
 <button class="tab-btn" data-tab="souvenir">Сувенирка</button>
 <button class="tab-btn" data-tab="design">Дизайн</button>
 </div>
@@ -50,10 +54,10 @@
 <input type="checkbox" id="vLamCheck" class="hidden">
 <label>Скидка / наценка %</label><input id="vDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="vDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -92,10 +96,10 @@
 </div>
 <label>Скидка / наценка %</label><input id="pDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="pDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -106,10 +110,74 @@
 <div class="row"><button id="printBtn" onclick="savePrint()">Добавить</button></div>
 </section>
 
+
+<section id="tab-canvas" class="tab-panel">
+<h3>Печать на холсте</h3>
+<label>Режим расчета</label>
+<div id="cModeButtons" class="choice-row"></div>
+<select id="cMode" class="hidden">
+<option value="fixed">Готовые размеры</option>
+<option value="custom">Произвольный размер</option>
+</select>
+
+<div id="cFixedWrap">
+<label>Размер</label>
+<div id="cSizeButtons" class="choice-row"></div>
+<select id="cSize" class="hidden">
+<option value="30x45">30x45</option>
+<option value="40x60">40x60</option>
+<option value="50x70">50x70</option>
+<option value="60x90">60x90</option>
+</select>
+<label>Категория цены</label>
+<div id="cTierButtons" class="choice-row"></div>
+<select id="cTier" class="hidden">
+<option value="retail">Розница</option>
+<option value="opt">Опт</option>
+<option value="self">Сами</option>
+</select>
+</div>
+
+<div id="cCustomWrap" class="hidden">
+<label>Высота, см</label><input id="cHeight" type="number" value="30" min="1" step="any">
+<label>Ширина, см</label><input id="cWidth" type="number" value="40" min="1" step="any">
+<label>Цена за м², руб</label><input id="cRate" type="number" value="2500" min="0" step="any">
+<label><input id="cFrame" type="checkbox" checked> Подрамник</label>
+<label>Цена подрамника, руб/м</label><input id="cFramePrice" type="number" value="500" min="0" step="any">
+<label>Округление до, руб</label><input id="cRoundStep" type="number" value="50" min="1" step="any">
+<label><input id="cApply20" type="checkbox"> Скидка 20% (как в файле)</label>
+</div>
+
+<div id="cPrice" class="price"></div>
+<div class="row"><button id="canvasBtn" type="button" onclick="saveCanvas()">Добавить</button></div>
+</section>
+
 <section id="tab-wide" class="tab-panel">
-<h3>Широкоформат</h3>
-<label>Материал</label>
-<div id="wMaterialButtons" class="choice-row"></div>
+<h3>Латексная печать</h3>
+<div class="wide-group">
+<div class="wide-group-title">Печать на пленке</div>
+<div id="wFilmButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wmaterial="film_gloss">Глянцевая</button>
+<button type="button" class="choice-btn" data-wmaterial="film_clear">Прозрачная</button>
+<button type="button" class="choice-btn" data-wmaterial="film_perf">Перфорированная</button>
+<button type="button" class="choice-btn" data-wmaterial="film_backlit">Бэклит</button>
+</div>
+</div>
+<div class="wide-group">
+<div class="wide-group-title">Печать на пластике</div>
+<div id="wPlasticButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wmaterial="plastic_3">Пластик 3 мм</button>
+<button type="button" class="choice-btn" data-wmaterial="plastic_5">Пластик 5 мм</button>
+</div>
+</div>
+<div class="wide-group">
+<div class="wide-group-title">Резка пленки</div>
+<div id="wCutFilmButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wmaterial="plotter_white_china">Белая (Китай)</button>
+<button type="button" class="choice-btn" data-wmaterial="plotter_white_oracal">Белая (ORACAL)</button>
+<button type="button" class="choice-btn" data-wmaterial="plotter_color_oracal">Цветная (ORACAL)</button>
+</div>
+</div>
 <select id="wMaterial" class="hidden">
 <option value="film_gloss">Плёнка глянцевая</option>
 <option value="film_clear">Плёнка прозрачная</option>
@@ -121,7 +189,7 @@
 <option value="plotter_white_oracal">Плоттер: белая пленка (ORACAL)</option>
 <option value="plotter_color_oracal">Плоттер: цветная пленка (ORACAL)</option>
 </select>
-<label><input type="checkbox" id="wLam"> Ламинация</label>
+<label><input type="checkbox" id="wLam"> Ламинация пленки</label>
 <label><input type="checkbox" id="wCut"> Резка в размер</label>
 <label>Размер</label>
 <div id="wPresetButtons" class="choice-row"></div>
@@ -130,10 +198,10 @@
 <label>Количество</label><input id="wQty" type="number" value="1">
 <label>Скидка / наценка %</label><input id="wDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="wDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -166,10 +234,10 @@
 <div id="lSheetsWrap" class="hidden"><label>Листов в изделии</label><input id="lSheets" type="number" value="50"></div>
 <label>Скидка / наценка %</label><input id="lDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="lDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -181,14 +249,12 @@
 </section>
 
 <section id="tab-bf" class="tab-panel">
-<h3>Буклеты / флаеры</h3>
+<h3>Офсет</h3>
 <label>Изделие</label>
 <div id="bfTypeButtons" class="choice-row"></div>
 <select id="bfType" class="hidden">
 <option value="booklet_a4_offset">Буклет A4 (офсет)</option>
-<option value="booklet_a4_digital">Буклет A4 (цифра)</option>
 <option value="flyer_a6_offset">Флаер A6 (офсет)</option>
-<option value="flyer_a6_digital">Флаер A6 (цифра)</option>
 </select>
 <label>Тираж</label>
 <div id="bfQtyButtons" class="choice-row"></div>
@@ -201,10 +267,10 @@
 </select>
 <label>Скидка / наценка %</label><input id="bfDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="bfDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -265,10 +331,10 @@
 </div>
 <label>Скидка / наценка %</label><input id="sDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="sDiscount">
-<button type="button" class="choice-btn" data-discount="-5">-5%</button>
-<button type="button" class="choice-btn" data-discount="-10">-10%</button>
-<button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
 <button type="button" class="choice-btn" data-discount="0">0%</button>
 <button type="button" class="choice-btn" data-discount="5">5%</button>
 <button type="button" class="choice-btn" data-discount="10">10%</button>
@@ -349,6 +415,21 @@
 <div>свыше 20 (до 500)</div><div><input id="p250_a4_21_500" type="number" value="30"></div><div><input id="p250_a3_21_500" type="number" value="60"></div>
 </div>
 <hr>
+<hr>
+<b>Холст (по файлу Холст.xlsx)</b>
+<div class="price-grid grid-4">
+<div class="head">Размер</div><div class="head">Розница</div><div class="head">Опт</div><div class="head">Сами</div>
+<div>30x45</div><div><input id="c_30x45_retail" type="number" value="1200"></div><div><input id="c_30x45_opt" type="number" value="1000"></div><div><input id="c_30x45_self" type="number" value="750"></div>
+<div>40x60</div><div><input id="c_40x60_retail" type="number" value="1700"></div><div><input id="c_40x60_opt" type="number" value="1400"></div><div><input id="c_40x60_self" type="number" value="1100"></div>
+<div>50x70</div><div><input id="c_50x70_retail" type="number" value="2200"></div><div><input id="c_50x70_opt" type="number" value="1800"></div><div><input id="c_50x70_self" type="number" value="1400"></div>
+<div>60x90</div><div><input id="c_60x90_retail" type="number" value="3000"></div><div><input id="c_60x90_opt" type="number" value="2400"></div><div><input id="c_60x90_self" type="number" value="2000"></div>
+</div>
+<div class="price-grid grid-2" style="margin-top:6px">
+<div class="head">Параметр</div><div class="head">Значение</div>
+<div>Цена за м² (формула)</div><div><input id="c_formula_rate" type="number" value="2500"></div>
+<div>Цена подрамника, руб/м</div><div><input id="c_formula_frame" type="number" value="500"></div>
+<div>Округление до, руб</div><div><input id="c_formula_round" type="number" value="50"></div>
+</div>
 <b>Ламинация глянцевая 100 мкм (пакетная)</b>
 <div class="price-grid grid-3">
 <div class="head">Количество</div><div class="head">A4, руб</div><div class="head">A3, руб</div>
@@ -398,13 +479,7 @@
 <div>1000</div><div><input id="bOff_1000" type="number" value="9700"></div>
 </div>
 <br>
-<b>Буклеты A4. Цифровая печать</b>
-<div class="price-grid grid-2">
-<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
-<div>50</div><div><input id="bDig_50" type="number" value="2500"></div>
-<div>100</div><div><input id="bDig_100" type="number" value="4400"></div>
-</div>
-<br>
+
 <b>Флаер A6. Офсетная печать</b>
 <div class="price-grid grid-2">
 <div class="head">Тираж</div><div class="head">Стоимость, руб</div>
@@ -415,15 +490,7 @@
 <div>5000 (4+0)</div><div><input id="fOff_5000_40" type="number" value="10000"></div>
 </div>
 <br>
-<b>Флаер A6. Цифровая печать</b>
-<div class="price-grid grid-3">
-<div class="head">Тираж</div><div class="head">Односторонние, руб</div><div class="head">Двусторонние, руб</div>
-<div>50</div><div><input id="fDig_50_S" type="number" value="400"></div><div><input id="fDig_50_D" type="number" value="800"></div>
-<div>100</div><div><input id="fDig_100_S" type="number" value="800"></div><div><input id="fDig_100_D" type="number" value="1600"></div>
-<div>200</div><div><input id="fDig_200_S" type="number" value="1300"></div><div><input id="fDig_200_D" type="number" value="2600"></div>
-<div>300</div><div><input id="fDig_300_S" type="number" value="2000"></div><div><input id="fDig_300_D" type="number" value="4000"></div>
-</div>
-<hr>
+
 <b>Кружки 300 мл</b>
 <div class="price-grid grid-2">
 <div class="head">Условие</div><div class="head">Цена, руб</div>
@@ -490,7 +557,7 @@
 <div>Минимальный заказ (за лист A4)</div><div><input id="uvdtf_min" type="number" value="500"></div>
 </div>
 <hr>
-<b>Широкоформат (по прайсу, стр. 5)</b>
+<b>Латексная печать (по прайсу, стр. 5)</b>
 <label>Плёнка глянцевая ₽/м²</label><input id="priceWideFilmGloss" type="number" value="1000">
 <label>Плёнка прозрачная ₽/м²</label><input id="priceWideFilmClear" type="number" value="1000">
 <label>Плёнка перфорированная ₽/м²</label><input id="priceWideFilmPerf" type="number" value="2000">
@@ -500,15 +567,36 @@
 <label>Пластик 3 мм с ламинацией ₽/м²</label><input id="priceWidePlastic3Lam" type="number" value="3900">
 <label>Пластик 5 мм без ламинации ₽/м²</label><input id="priceWidePlastic5" type="number" value="4300">
 <label>Пластик 5 мм с ламинацией ₽/м²</label><input id="priceWidePlastic5Lam" type="number" value="5000">
-<label>Плоттер: белая пленка (Китай) ₽/м²</label><input id="priceWidePlotterWhiteChina" type="number" value="1700">
-<label>Плоттер: белая пленка (ORACAL) ₽/м²</label><input id="priceWidePlotterWhiteOracal" type="number" value="2000">
-<label>Плоттер: цветная пленка (ORACAL) ₽/м²</label><input id="priceWidePlotterColorOracal" type="number" value="2000">
+<label>Резка пленки: белая (Китай) ₽/м²</label><input id="priceWidePlotterWhiteChina" type="number" value="1700">
+<label>Резка пленки: белая (ORACAL) ₽/м²</label><input id="priceWidePlotterWhiteOracal" type="number" value="2000">
+<label>Резка пленки: цветная (ORACAL) ₽/м²</label><input id="priceWidePlotterColorOracal" type="number" value="2000">
 <label>Резка в размер ₽/пог.м</label><input id="priceWideCut" type="number" value="30">
 <label>Минимальная стоимость изделия ₽/шт</label><input id="priceWideMinItem" type="number" value="300">
 <div class="row"><button onclick="closeSettings()">Закрыть</button></div>
 </div>
 </div>
 
+<div id="numPad" class="num-pad hidden" aria-hidden="true">
+<div id="numPadDrag" class="num-pad-drag">Keyboard</div>
+<div class="num-pad-grid">
+<button type="button" data-numkey="7">7</button>
+<button type="button" data-numkey="8">8</button>
+<button type="button" data-numkey="9">9</button>
+<button type="button" data-numkey="back">⌫</button>
+<button type="button" data-numkey="4">4</button>
+<button type="button" data-numkey="5">5</button>
+<button type="button" data-numkey="6">6</button>
+<button type="button" data-numkey="clear">C</button>
+<button type="button" data-numkey="1">1</button>
+<button type="button" data-numkey="2">2</button>
+<button type="button" data-numkey="3">3</button>
+<button type="button" data-numkey="close">✕</button>
+<button type="button" data-numkey="-">-</button>
+<button type="button" data-numkey="0">0</button>
+<button type="button" data-numkey=".">.</button>
+<button type="button" data-numkey="enter">OK</button>
+</div>
+</div>
 <!-- ЗАКАЗ -->
 <div class="order collapsed">
 <button id="orderToggle" class="order-toggle" type="button">Показать позиции (0)</button>
@@ -529,6 +617,11 @@
 <script src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 
 

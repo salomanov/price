@@ -6,13 +6,32 @@
     --text: #e6edf3;
     --muted: #a7b3c2;
     --accent: #63d3ff;
-    --accent-2: #63d3ff
+    --accent-2: #63d3ff;
+    --header-bg: #0c1219;
+    --order-bg: #0c1219;
+    --control-bg: #0d131a;
+    --price-btn-bg: #334155
+}
+
+body.light-theme {
+    --bg: #edf3f8;
+    --panel: #ffffff;
+    --panel-2: #f4f7fb;
+    --line: #ccd7e4;
+    --text: #142031;
+    --muted: #5f7288;
+    --accent: #0ea5e9;
+    --accent-2: #0ea5e9;
+    --header-bg: #ffffff;
+    --order-bg: #ffffff;
+    --control-bg: #ffffff;
+    --price-btn-bg: #e2e8f0
 }
 
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: radial-gradient(1200px 600px at 20% -10%, rgba(99, 211, 255, .12), transparent 60%), linear-gradient(180deg, #0b0f14, #0b0f14);
+    background: radial-gradient(1200px 600px at 20% -10%, rgba(99, 211, 255, .12), transparent 60%), linear-gradient(180deg, var(--bg), var(--bg));
     color: var(--text)
 }
 
@@ -21,7 +40,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background: #0c1219;
+    background: var(--header-bg);
     border-bottom: 1px solid var(--line)
 }
 
@@ -31,10 +50,15 @@ header h1 {
     letter-spacing: .3px
 }
 
+.header-actions {
+    display: flex;
+    gap: 8px
+}
+
 header button {
-    background: #334155;
+    background: var(--price-btn-bg);
     border: none;
-    color: #fff;
+    color: var(--text);
     border-radius: 8px;
     padding: 6px 10px;
     cursor: pointer
@@ -79,7 +103,7 @@ button:disabled {
     border-radius: 12px;
     border: none;
     background: #2563eb;
-    color: #fff;
+    color: var(--text);
     font-size: 16px;
     cursor: pointer;
     margin-bottom: 12px
@@ -133,9 +157,19 @@ button:disabled {
     margin-top: 6px
 }
 
+.wide-group {
+    margin-top: 10px
+}
+
+.wide-group-title {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 4px
+}
+
 .choice-btn {
     border: 1px solid var(--line);
-    background: #0d131a;
+    background: var(--control-bg);
     color: var(--text);
     border-radius: 10px;
     padding: 8px 12px;
@@ -211,7 +245,7 @@ select {
     padding: 9px 10px;
     border-radius: 10px;
     border: 1px solid var(--line);
-    background: #0d131a;
+    background: var(--control-bg);
     color: var(--text);
     font-family: Arial, sans-serif
 }
@@ -244,7 +278,7 @@ select:focus-visible {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #0c1219;
+    background: var(--order-bg);
     padding: 12px 16px;
     border-top: 1px solid var(--line);
     display: flex;
@@ -255,7 +289,7 @@ select:focus-visible {
 .order-toggle {
     align-self: flex-start;
     border: 1px solid var(--line);
-    background: #0d131a;
+    background: var(--control-bg);
     color: var(--text);
     border-radius: 10px;
     padding: 8px 12px;
@@ -359,6 +393,10 @@ button:disabled {
     grid-template-columns: 1.2fr 1fr
 }
 
+.price-grid.grid-4 {
+    grid-template-columns: 1.1fr 1fr 1fr 1fr
+}
+
 .price-grid .head {
     font-weight: 600;
     color: var(--muted)
@@ -368,7 +406,8 @@ button:disabled {
     width: 100%;
     box-sizing: border-box
 }
-
+
+
 
 
 
@@ -410,3 +449,64 @@ button:disabled {
     opacity: .45;
     cursor: not-allowed
 }
+
+
+.num-pad {
+    position: fixed;
+    left: 16px;
+    top: 120px;
+    z-index: 40;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px;
+    width: 260px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, .35)
+}
+
+.num-pad-drag {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding: 4px 6px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    cursor: move;
+    user-select: none
+}
+
+.num-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px
+}
+
+.num-pad-grid button {
+    border: 1px solid var(--line);
+    background: var(--control-bg);
+    color: var(--text);
+    border-radius: 8px;
+    min-height: 38px;
+    font-size: 16px;
+    cursor: pointer
+}
+
+.num-pad-grid button:hover {
+    filter: brightness(1.08)
+}
+
+.num-pad-grid button:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px
+}
+
+@media (max-width: 900px) {
+    .num-pad {
+        left: 10px;
+        right: 10px;
+        top: auto;
+        bottom: 96px;
+        width: auto
+    }
+}
+
