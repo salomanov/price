@@ -20,6 +20,7 @@
 <button class="tab-btn" data-tab="lam">Ламинация/переплёт</button>
 <button class="tab-btn" data-tab="bf">Буклеты/флаеры</button>
 <button class="tab-btn" data-tab="souvenir">Сувенирка</button>
+<button class="tab-btn" data-tab="design">Дизайн</button>
 </div>
 
 <section id="tab-visit" class="tab-panel">
@@ -78,10 +79,17 @@
 <label>Формат</label>
 <div id="pFormatButtons" class="choice-row"></div>
 <select id="pFormat" class="hidden"><option value="A4">A4</option><option value="A3">A3</option></select>
-<label>Количество</label><input id="pQty" type="number" value="10">
+<label>Количество</label><input id="pQty" type="number" value="1">
 <label>Стороны</label>
 <div id="pSideButtons" class="choice-row"></div>
 <select id="pSide" class="hidden"><option value="1">1</option><option value="2">2</option></select>
+<label>Резка по размеру, руб</label><input id="pCut" type="number" value="0" step="any" min="0">
+<div id="pCutQuick" class="choice-row">
+<button type="button" class="choice-btn" data-pcut="0">0</button>
+<button type="button" class="choice-btn" data-pcut="50">50</button>
+<button type="button" class="choice-btn" data-pcut="100">100</button>
+<button type="button" class="choice-btn" data-pcut="200">200</button>
+</div>
 <label>Скидка / наценка %</label><input id="pDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="pDiscount">
 <button type="button" class="choice-btn" data-discount="-5">-5%</button>
@@ -147,7 +155,7 @@
 <option value="A3">A3</option>
 <option value="ltA4">Меньше A4</option>
 </select>
-<label id="lQtyLabel">Количество</label><input id="lQty" type="number" value="10">
+<label id="lQtyLabel">Количество</label><input id="lQty" type="number" value="1">
 <div id="lSheetsWrap" class="hidden"><label>Листов в изделии</label><input id="lSheets" type="number" value="50"></div>
 <label>Скидка / наценка %</label><input id="lDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="lDiscount">
@@ -264,6 +272,20 @@
 <div class="row"><button id="sBtn" onclick="saveSouvenir()">Добавить</button></div>
 </section>
 
+<section id="tab-design" class="tab-panel">
+<h3>Дизайн</h3>
+<label>Стоимость услуги, руб</label>
+<input id="designPrice" type="number" value="0" step="any" min="0" placeholder="Своя сумма">
+<div class="choice-row">
+<button type="button" class="choice-btn" data-design="300">300</button>
+<button type="button" class="choice-btn" data-design="500">500</button>
+<button type="button" class="choice-btn" data-design="700">700</button>
+<button type="button" class="choice-btn" data-design="1000">1000</button>
+<button type="button" class="choice-btn" data-design="1500">1500</button>
+</div>
+<div id="designCalcPrice" class="price"></div>
+<div class="row"><button id="designAddBtn" type="button">Добавить</button></div>
+</section>
 <div class="settings-modal" id="settingsModal">
 <div class="settings-content">
 <h3>Прейскурант</h3>
@@ -474,17 +496,36 @@
 </div>
 
 <!-- ЗАКАЗ -->
-<div class="order">
+<div class="order collapsed">
+<button id="orderToggle" class="order-toggle" type="button">Показать позиции (0)</button>
+<div id="orderDetails" class="order-details">
 <div class="order-head">
 <div>Позиция</div>
 <div>Цена</div>
 <div></div>
 </div>
 <div id="order" class="order-body"></div>
+</div>
+<div class="order-footer">
 <div><b>Итого: <span id="total">0 ₽</span></b></div>
+<button id="copyOrderBtn" class="order-copy" type="button">Копировать список</button>
+</div>
 </div>
 
 <script src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
