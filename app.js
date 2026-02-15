@@ -139,6 +139,7 @@ const orderPanel=document.querySelector('.order');
 const orderToggle=document.getElementById('orderToggle');
 const orderDetails=document.getElementById('orderDetails');
 const copyOrderBtn=document.getElementById('copyOrderBtn');
+const copyOrderMailBtn=document.getElementById('copyOrderMailBtn');
 const designPrice=document.getElementById('designPrice');
 const designAddBtn=document.getElementById('designAddBtn');
 const designCalcPrice=document.getElementById('designCalcPrice');
@@ -1164,13 +1165,44 @@ function setupNumericKeypad(){
 }
 
 function buildOrderCopyText(){
-  const lines=['Заказ:'];
-  orders.forEach((o,i)=>{
-    lines.push(`${i+1}. ${o.title} — ${o.desc} — ${o.price} ₽`);
+  let date=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  date=date.replace(/\s*\u0433\.?$/i,'');
+  const lines=[`**\uD83D\uDCC4 \u0412\u0430\u0448 \u0437\u0430\u043A\u0430\u0437**`,`__\uD83D\uDCC5 ${date} \u0433.__`,''];
+
+  orders.forEach((o)=>{
+    lines.push(`\u25B8 **${o.title}**`);
+    lines.push(`    ${o.desc}`);
+    lines.push(`    \u0421\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C: **${o.price} \u20BD**`);
+    lines.push('');
   });
-  lines.push('');
-  lines.push(`Итого: ${total.innerText}`);
+
+  lines.push('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+  lines.push(`**\u0418\u0422\u041E\u0413\u041E: ${total.innerText}**`);
   return lines.join('\n');
+}
+
+function buildOrderCopyMailHtml(){
+  let date=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  date=date.replace(/\s*\u0433\.?$/i,'');
+  const rows=['<div><b>\uD83D\uDCC4 \u0412\u0430\u0448 \u0437\u0430\u043A\u0430\u0437</b></div>',`<div><i>\uD83D\uDCC5 ${date} \u0433.</i></div>`,'<div>&nbsp;</div>'];
+
+  orders.forEach((o)=>{
+    rows.push(`<div>\u25B8 <b>${o.title}</b></div>`);
+    rows.push(`<div>&nbsp;&nbsp;&nbsp;&nbsp;${o.desc}</div>`);
+    rows.push(`<div>&nbsp;&nbsp;&nbsp;&nbsp;\u0421\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C: <b>${o.price} \u20BD</b></div>`);
+    rows.push('<div>&nbsp;</div>');
+  });
+
+  rows.push('<div>\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</div>');
+  rows.push(`<div><b>\u0418\u0422\u041E\u0413\u041E: ${total.innerText}</b></div>`);
+  return rows.join('');
+}
+
+function setCopyBtnState(btn, ok){
+  if(!btn)return;
+  const prev=btn.innerText;
+  btn.innerText=ok?'\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c';
+  setTimeout(()=>{btn.innerText=prev;},1200);
 }
 
 async function copyOrderText(){
@@ -1197,12 +1229,51 @@ async function copyOrderText(){
     document.body.removeChild(ta);
   }
 
-  if(copyOrderBtn){
-    const prev=copyOrderBtn.innerText;
-    copyOrderBtn.innerText=ok?'Скопировано':'Не удалось скопировать';
-    setTimeout(()=>{copyOrderBtn.innerText=prev;},1200);
-  }
+  setCopyBtnState(copyOrderBtn, ok);
 }
+
+async function copyOrderMail(){
+
+  if(!orders.length)return;
+  const html=buildOrderCopyMailHtml();
+  const text=html.replace(/<[^>]*>/g,'');
+  let ok=false;
+
+  try{
+    if(navigator.clipboard && window.isSecureContext && window.ClipboardItem){
+      const item=new ClipboardItem({
+        'text/html': new Blob([html],{type:'text/html'}),
+        'text/plain': new Blob([text],{type:'text/plain'})
+      });
+      await navigator.clipboard.write([item]);
+      ok=true;
+    }
+  }catch(_e){}
+
+  if(!ok){
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+        ok=true;
+      }
+    }catch(_e){}
+  }
+
+  if(!ok){
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed';
+    ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ok=document.execCommand('copy');}catch(_e){ok=false;}
+    document.body.removeChild(ta);
+  }
+
+  setCopyBtnState(copyOrderMailBtn, ok);
+}
+
 function updateOrderToggle(){
   if(!orderToggle || !orderPanel)return;
   const isCollapsed=orderPanel.classList.contains('collapsed');
@@ -1226,6 +1297,7 @@ function render(){
   });
   total.innerText=sum+' ₽';
   if(copyOrderBtn)copyOrderBtn.disabled=orders.length===0;
+  if(copyOrderMailBtn)copyOrderMailBtn.disabled=orders.length===0;
   updateOrderToggle();
 }
 
@@ -1323,6 +1395,7 @@ bindDesignService();
 bindOrderToggle();
 setupNumericKeypad();
 if(copyOrderBtn)copyOrderBtn.addEventListener('click',copyOrderText);
+if(copyOrderMailBtn)copyOrderMailBtn.addEventListener('click',copyOrderMail);
 calc();
 
 window.switchTab=switchTab;

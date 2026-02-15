@@ -21,6 +21,8 @@
 <button class="tab-btn" data-tab="print">Печать</button>
 <button class="tab-btn" data-tab="canvas">Печать на холсте</button>
 <button class="tab-btn" data-tab="wide">Латексная печать</button>
+<button class="tab-btn" data-tab="widefmt">Широкоформатка</button>
+<button class="tab-btn" data-tab="contour">Печать + контурная резка</button>
 <button class="tab-btn" data-tab="lam">Ламинация/переплёт</button>
 <button class="tab-btn" data-tab="bf">Офсет</button>
 <button class="tab-btn" data-tab="souvenir">Сувенирка</button>
@@ -41,15 +43,19 @@
 <label>Тираж</label>
 <div id="vQtyButtons" class="choice-row"></div>
 <select id="vQty" class="hidden"></select>
+<div id="vSideWrap">
 <label>Стороны</label>
 <div id="vSideButtons" class="choice-row">
 <button type="button" class="choice-btn" data-vside="single">4+0</button>
 <button type="button" class="choice-btn" data-vside="double">4+4</button>
 </div>
+</div>
 <select id="vSide" class="hidden"><option value="single">4+0</option><option value="double">4+4</option></select>
+<div id="vLamWrap">
 <label>Ламинация</label>
 <div class="choice-row">
 <button type="button" id="vLamBtn" class="choice-btn cta-toggle">Матовая ламинация</button>
+</div>
 </div>
 <input type="checkbox" id="vLamCheck" class="hidden">
 <label>Скидка / наценка %</label><input id="vDiscount" type="number" value="0" step="any">
@@ -76,9 +82,12 @@
 <option value="80">A4. Бумага 80 г/м²</option>
 <option value="115">Глянец/мат 115–200 г/м²</option>
 <option value="250">Глянец/мат 250–300 г/м²</option>
+<option value="self">Самоклеящая бумага</option>
 </select>
+<div id="pColorWrap">
 <label>Печать</label>
 <div id="pColorButtons" class="choice-row"></div>
+</div>
 <select id="pColor" class="hidden"><option value="bw">Ч/б</option><option value="color">Цветная</option></select>
 <label>Формат</label>
 <div id="pFormatButtons" class="choice-row"></div>
@@ -152,49 +161,75 @@
 <div class="row"><button id="canvasBtn" type="button" onclick="saveCanvas()">Добавить</button></div>
 </section>
 
+
 <section id="tab-wide" class="tab-panel">
 <h3>Латексная печать</h3>
-<div class="wide-group">
-<div class="wide-group-title">Печать на пленке</div>
+<label>Материал</label>
+<div id="wMainButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wmain="film">Пленка</button>
+<button type="button" class="choice-btn" data-wmain="plastic">Пластик</button>
+<button type="button" class="choice-btn" data-wmain="backlit">Беклит</button>
+<button type="button" class="choice-btn" data-wmain="canvas">Холст</button>
+<button type="button" class="choice-btn" data-wmain="plotter">Плоттерка</button>
+</div>
+
+<div id="wFilmGroup" class="wide-group hidden">
+<div class="wide-group-title">Пленка</div>
 <div id="wFilmButtons" class="choice-row">
 <button type="button" class="choice-btn" data-wmaterial="film_gloss">Глянцевая</button>
 <button type="button" class="choice-btn" data-wmaterial="film_clear">Прозрачная</button>
 <button type="button" class="choice-btn" data-wmaterial="film_perf">Перфорированная</button>
-<button type="button" class="choice-btn" data-wmaterial="film_backlit">Бэклит</button>
 </div>
 </div>
-<div class="wide-group">
-<div class="wide-group-title">Печать на пластике</div>
+
+<div id="wPlasticGroup" class="wide-group hidden">
+<div class="wide-group-title">Пластик</div>
 <div id="wPlasticButtons" class="choice-row">
 <button type="button" class="choice-btn" data-wmaterial="plastic_3">Пластик 3 мм</button>
 <button type="button" class="choice-btn" data-wmaterial="plastic_5">Пластик 5 мм</button>
 </div>
 </div>
-<div class="wide-group">
-<div class="wide-group-title">Резка пленки</div>
+
+<div id="wPlotterGroup" class="wide-group hidden">
+<div class="wide-group-title">Плоттерка / резка по контуру</div>
 <div id="wCutFilmButtons" class="choice-row">
 <button type="button" class="choice-btn" data-wmaterial="plotter_white_china">Белая (Китай)</button>
 <button type="button" class="choice-btn" data-wmaterial="plotter_white_oracal">Белая (ORACAL)</button>
 <button type="button" class="choice-btn" data-wmaterial="plotter_color_oracal">Цветная (ORACAL)</button>
 </div>
 </div>
+
 <select id="wMaterial" class="hidden">
-<option value="film_gloss">Плёнка глянцевая</option>
-<option value="film_clear">Плёнка прозрачная</option>
-<option value="film_perf">Плёнка перфорированная</option>
-<option value="film_backlit">Бэклит (светорассеивающая)</option>
-<option value="plastic_3">Плёнка на пластик 3 мм</option>
-<option value="plastic_5">Плёнка на пластик 5 мм</option>
-<option value="plotter_white_china">Плоттер: белая пленка (Китай)</option>
-<option value="plotter_white_oracal">Плоттер: белая пленка (ORACAL)</option>
-<option value="plotter_color_oracal">Плоттер: цветная пленка (ORACAL)</option>
+<option value="" selected>Выберите материал</option>
+<option value="film_gloss">Пленка глянцевая</option>
+<option value="film_clear">Пленка прозрачная</option>
+<option value="film_perf">Пленка перфорированная</option>
+<option value="latex_backlit">Беклит</option>
+<option value="latex_canvas">Холст (только печать)</option>
+<option value="plastic_3">Печать на пластике 3 мм</option>
+<option value="plastic_5">Печать на пластике 5 мм</option>
+<option value="plotter_white_china">Плоттерка: белая пленка (Китай)</option>
+<option value="plotter_white_oracal">Плоттерка: белая пленка (ORACAL)</option>
+<option value="plotter_color_oracal">Плоттерка: цветная пленка (ORACAL)</option>
 </select>
-<label><input type="checkbox" id="wLam"> Ламинация пленки</label>
-<label><input type="checkbox" id="wCut"> Резка в размер</label>
+
+<div id="wPostWrap" class="hidden">
+<label>Пост обработка</label>
+<div class="choice-row">
+<button type="button" id="wLamBtn" class="choice-btn cta-toggle">Ламинация пленки</button>
+<button type="button" id="wCutBtn" class="choice-btn cta-toggle">Резка в размер</button>
+</div>
+</div>
+<input type="checkbox" id="wLam" class="hidden">
+<input type="checkbox" id="wCut" class="hidden">
+
+<div id="wSizeWrap" class="hidden">
 <label>Размер</label>
 <div id="wPresetButtons" class="choice-row"></div>
-<select id="wPreset" class="hidden" onchange="toggleCustom()"><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option><option value="custom">Произвольный</option></select>
-<div id="customSize" class="hidden"><label>Ширина (м)</label><input id="wWidth" type="number" value="1" step="0.01"><label>Высота (м)</label><input id="wHeight" type="number" value="1" step="0.01"></div>
+<select id="wPreset" class="hidden" onchange="toggleCustom()"><option value="custom" selected>Произвольный</option><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option></select>
+<div id="customSize"><label>Ширина (м)</label><input id="wWidth" type="number" value="1" step="0.01"><label>Высота (м)</label><input id="wHeight" type="number" value="1" step="0.01"></div>
+</div>
+
 <label>Количество</label><input id="wQty" type="number" value="1">
 <label>Скидка / наценка %</label><input id="wDiscount" type="number" value="0" step="any">
 <div class="choice-row discount-quick" data-target="wDiscount">
@@ -212,16 +247,111 @@
 <div class="row"><button id="wideBtn" onclick="saveWide()">Добавить</button></div>
 </section>
 
+<section id="tab-widefmt" class="tab-panel">
+<h3>Широкоформатка</h3>
+<label>Тип</label>
+<div id="wfMainButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wfmain="banner">&#1041;&#1072;&#1085;&#1085;&#1077;&#1088;</button>
+<button type="button" class="choice-btn" data-wfmain="paper">&#1041;&#1091;&#1084;&#1072;&#1075;&#1072;</button>
+</div>
+<div id="wfBannerWrap" class="hidden">
+<div class="wide-group-title">&#1041;&#1072;&#1085;&#1085;&#1077;&#1088;</div>
+<div id="wfBannerButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wftype="banner_440">440 (&#1050;&#1080;&#1090;&#1072;&#1081;)</button>
+<button type="button" class="choice-btn" data-wftype="banner_cast">&#1051;&#1080;&#1090;&#1086;&#1081;</button>
+<button type="button" class="choice-btn" data-wftype="banner_latex">&#1051;&#1072;&#1090;&#1077;&#1082;&#1089;</button>
+</div>
+<div class="wide-group-title" style="margin-top:8px">&#1059;&#1089;&#1083;&#1091;&#1075;&#1080; &#1082; &#1073;&#1072;&#1085;&#1085;&#1077;&#1088;&#1091;</div>
+<div class="choice-row">
+<button type="button" id="wfEyeletsBtn" class="choice-btn cta-toggle">&#1051;&#1102;&#1074;&#1077;&#1088;&#1089;&#1099;</button>
+<button type="button" id="wfWeldBtn" class="choice-btn cta-toggle">&#1055;&#1088;&#1086;&#1082;&#1083;&#1077;&#1081;&#1082;&#1072;</button>
+<button type="button" id="wfTrimBtn" class="choice-btn cta-toggle">&#1054;&#1073;&#1088;&#1077;&#1079;&#1082;&#1072;</button>
+</div>
+<label id="wfEyeletsWrap" class="hidden">&#1064;&#1072;&#1075; &#1083;&#1102;&#1074;&#1077;&#1088;&#1089;&#1086;&#1074;, &#1089;&#1084;</label><input id="wfEyelets" class="hidden" type="number" value="40" step="1" min="0">
+<input id="wfEyeletsEnabled" type="checkbox" class="hidden">
+<input id="wfWeldLen" type="checkbox" class="hidden">
+<input id="wfTrimLen" type="checkbox" class="hidden">
+</div>
+
+<div id="wfPaperWrap" class="hidden">
+<div class="wide-group-title">&#1041;&#1091;&#1084;&#1072;&#1075;&#1072;</div>
+<label>&#1058;&#1080;&#1087; &#1073;&#1091;&#1084;&#1072;&#1075;&#1080;</label>
+<div id="wfPaperMainButtons" class="choice-row">
+<button type="button" class="choice-btn" data-wfpaper="plain">&#1054;&#1073;&#1099;&#1095;&#1085;&#1072;&#1103;</button>
+<button type="button" class="choice-btn" data-wfpaper="photo">&#1060;&#1086;&#1090;&#1086;&#1073;&#1091;&#1084;&#1072;&#1075;&#1072;</button>
+</div>
+<div id="wfPhotoButtons" class="choice-row hidden" style="margin-top:6px">
+<button type="button" class="choice-btn" data-wftype="paper_photo_matte">&#1052;&#1072;&#1090;&#1086;&#1074;&#1072;&#1103;</button>
+<button type="button" class="choice-btn" data-wftype="paper_photo_gloss">&#1043;&#1083;&#1103;&#1085;&#1094;&#1077;&#1074;&#1072;&#1103;</button>
+<button type="button" class="choice-btn" data-wftype="paper_photo_satin">&#1057;&#1072;&#1090;&#1080;&#1085;</button>
+</div>
+<label id="wfPaperFormatLabel" class="hidden">&#1060;&#1086;&#1088;&#1084;&#1072;&#1090;</label>
+<div id="wfPaperFormatWrap" class="hidden"><div id="wfPaperFormatButtons" class="choice-row"></div></div>
+<select id="wfPaperFormat" class="hidden">
+<option value="A3">A3</option>
+<option value="A2">A2</option>
+<option value="A1">A1</option>
+<option value="A0">A0</option>
+</select>
+</div>
+
+<select id="wfType" class="hidden">
+<option value="" selected>Выберите тип</option>
+<option value="banner_440">Баннер сольвентный 440 (Китай)</option>
+<option value="banner_cast">Баннер сольвентный литой</option>
+<option value="banner_latex">Баннер интерьерный латексный</option>
+<option value="paper_photo_matte">Фотобумага матовая</option>
+<option value="paper_photo_gloss">Фотобумага глянцевая</option>
+<option value="paper_photo_satin">Фотобумага сатин</option>
+<option value="paper_plain">Обычная бумага</option>
+</select>
+<div id="wfSizeWrap">
+<label>&#1056;&#1072;&#1079;&#1084;&#1077;&#1088;</label>
+<div id="wfPresetButtons" class="choice-row"></div>
+<select id="wfPreset" class="hidden"><option value="custom" selected>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081;</option><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option><option value="A3">A3</option></select>
+<div id="wfCustomSize"><label>&#1064;&#1080;&#1088;&#1080;&#1085;&#1072; (&#1084;)</label><input id="wfWidth" type="number" value="1" step="0.01"><label>&#1042;&#1099;&#1089;&#1086;&#1090;&#1072; (&#1084;)</label><input id="wfHeight" type="number" value="1" step="0.01"></div>
+</div>
+
+<label id="wfQtyLabel">Количество</label>
+<input id="wfQty" type="number" value="1" step="any" min="0">
+<label>Скидка / наценка %</label><input id="wfDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="wfDiscount">
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="wfPrice" class="price"></div>
+<div class="row"><button id="wfBtn" onclick="saveWideFmt()">Добавить</button></div>
+</section>
+
+<section id="tab-contour" class="tab-panel">
+<h3>Печать + контурная резка</h3>
+<div class="price">Раздел подготовлен. Заполним параметры отдельно.</div>
+</section>
+
 <section id="tab-lam" class="tab-panel">
 <h3>Ламинация и переплёт</h3>
+<label>&#1056;&#1072;&#1079;&#1076;&#1077;&#1083;</label>
+<div id="lModeButtons" class="choice-row"></div>
+<select id="lMode" class="hidden">
+<option value="" selected>&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;</option>
+<option value="lam">&#1051;&#1072;&#1084;&#1080;&#1085;&#1072;&#1094;&#1080;&#1103;</option>
+<option value="bind">&#1055;&#1077;&#1088;&#1077;&#1087;&#1083;&#1105;&#1090;</option>
+</select>
 <label>Услуга</label>
 <div id="lTypeButtons" class="choice-row"></div>
 <select id="lType" class="hidden">
-<option value="lam_gloss">Ламинация глянцевая 100 мкм</option>
-<option value="lam_matte">Ламинация матовая 100 мкм</option>
-<option value="spiral_plastic">Переплёт на пластиковую пружину</option>
-<option value="spiral_metal">Переплёт на металлическую пружину</option>
-<option value="hard_cover">Твёрдый переплёт</option>
+<option value="lam_gloss">Глянцевая 100 мкм</option>
+<option value="lam_matte">Матовая 100 мкм</option>
+<option value="spiral_plastic">Пластиковая пружина</option>
+<option value="spiral_metal">Металлическая пружина</option>
+<option value="hard_cover">Твёрдый</option>
 </select>
 <label id="lSizeWrap">Размер</label>
 <div id="lSizeButtons" class="choice-row"></div>
@@ -253,8 +383,10 @@
 <label>Изделие</label>
 <div id="bfTypeButtons" class="choice-row"></div>
 <select id="bfType" class="hidden">
-<option value="booklet_a4_offset">Буклет A4 (офсет)</option>
-<option value="flyer_a6_offset">Флаер A6 (офсет)</option>
+<option value="booklet_a4_offset">&#1041;&#1091;&#1082;&#1083;&#1077;&#1090; A4 (&#1086;&#1092;&#1089;&#1077;&#1090;)</option>
+<option value="flyer_a6_offset">&#1060;&#1083;&#1072;&#1077;&#1088; A6 (&#1086;&#1092;&#1089;&#1077;&#1090;)</option>
+<option value="euro_offset">&#1045;&#1074;&#1088;&#1086;&#1092;&#1083;&#1072;&#1077;&#1088; 99&#215;210 (&#1086;&#1092;&#1089;&#1077;&#1090;)</option>
+<option value="flyer_a5_offset">&#1060;&#1083;&#1072;&#1077;&#1088; A5 (&#1086;&#1092;&#1089;&#1077;&#1090;)</option>
 </select>
 <label>Тираж</label>
 <div id="bfQtyButtons" class="choice-row"></div>
@@ -416,6 +548,13 @@
 </div>
 <hr>
 <hr>
+<br>
+<b>Печать. Самоклеящая бумага (A4/A3)</b>
+<div class="price-grid grid-2">
+<div class="head">Формат</div><div class="head">Цена за лист, руб</div>
+<div>A4</div><div><input id="pSelf_A4" type="number" value="60"></div>
+<div>A3</div><div><input id="pSelf_A3" type="number" value="120"></div>
+</div>
 <b>Холст (по файлу Холст.xlsx)</b>
 <div class="price-grid grid-4">
 <div class="head">Размер</div><div class="head">Розница</div><div class="head">Опт</div><div class="head">Сами</div>
@@ -472,22 +611,42 @@
 <div>за 1 шт</div><div><input id="hard_cover" type="number" value="500"></div>
 </div>
 <hr>
-<b>Буклеты A4. Офсет</b>
+<b>&#1041;&#1091;&#1082;&#1083;&#1077;&#1090;&#1099; A4. &#1054;&#1092;&#1089;&#1077;&#1090;</b>
 <div class="price-grid grid-2">
-<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
+<div class="head">&#1058;&#1080;&#1088;&#1072;&#1078;</div><div class="head">&#1057;&#1090;&#1086;&#1080;&#1084;&#1086;&#1089;&#1090;&#1100;, &#1088;&#1091;&#1073;</div>
 <div>500</div><div><input id="bOff_500" type="number" value="8250"></div>
 <div>1000</div><div><input id="bOff_1000" type="number" value="9700"></div>
 </div>
 <br>
 
-<b>Флаер A6. Офсетная печать</b>
+<b>&#1060;&#1083;&#1072;&#1077;&#1088; A6. &#1054;&#1092;&#1089;&#1077;&#1090;&#1085;&#1072;&#1103; &#1087;&#1077;&#1095;&#1072;&#1090;&#1100;</b>
 <div class="price-grid grid-2">
-<div class="head">Тираж</div><div class="head">Стоимость, руб</div>
+<div class="head">&#1058;&#1080;&#1088;&#1072;&#1078;</div><div class="head">&#1057;&#1090;&#1086;&#1080;&#1084;&#1086;&#1089;&#1090;&#1100;, &#1088;&#1091;&#1073;</div>
 <div>1000</div><div><input id="fOff_1000" type="number" value="3600"></div>
 <div>2000</div><div><input id="fOff_2000" type="number" value="5800"></div>
 <div>3000</div><div><input id="fOff_3000" type="number" value="8100"></div>
 <div>5000 (4+4)</div><div><input id="fOff_5000_44" type="number" value="14000"></div>
 <div>5000 (4+0)</div><div><input id="fOff_5000_40" type="number" value="10000"></div>
+</div>
+<br>
+
+<b>&#1045;&#1074;&#1088;&#1086;&#1092;&#1083;&#1072;&#1077;&#1088; 99&#215;210. &#1054;&#1092;&#1089;&#1077;&#1090;</b>
+<div class="price-grid grid-2">
+<div class="head">&#1058;&#1080;&#1088;&#1072;&#1078;</div><div class="head">&#1057;&#1090;&#1086;&#1080;&#1084;&#1086;&#1089;&#1090;&#1100;, &#1088;&#1091;&#1073;</div>
+<div>1000</div><div><input id="eOff_1000" type="number" value="5200"></div>
+<div>2000</div><div><input id="eOff_2000" type="number" value="6600"></div>
+<div>3000</div><div><input id="eOff_3000" type="number" value="9700"></div>
+</div>
+<br>
+
+<b>&#1060;&#1083;&#1072;&#1077;&#1088; A5. &#1054;&#1092;&#1089;&#1077;&#1090;</b>
+<div class="price-grid grid-2">
+<div class="head">&#1058;&#1080;&#1088;&#1072;&#1078;</div><div class="head">&#1057;&#1090;&#1086;&#1080;&#1084;&#1086;&#1089;&#1090;&#1100;, &#1088;&#1091;&#1073;</div>
+<div>500</div><div><input id="fA5Off_500" type="number" value="4300"></div>
+<div>1000</div><div><input id="fA5Off_1000" type="number" value="5700"></div>
+<div>2000</div><div><input id="fA5Off_2000" type="number" value="9400"></div>
+<div>10000 (4+4)</div><div><input id="fA5Off_10000_44" type="number" value="23300"></div>
+<div>10000 (4+0)</div><div><input id="fA5Off_10000_40" type="number" value="17000"></div>
 </div>
 <br>
 
@@ -561,7 +720,8 @@
 <label>Плёнка глянцевая ₽/м²</label><input id="priceWideFilmGloss" type="number" value="1000">
 <label>Плёнка прозрачная ₽/м²</label><input id="priceWideFilmClear" type="number" value="1000">
 <label>Плёнка перфорированная ₽/м²</label><input id="priceWideFilmPerf" type="number" value="2000">
-<label>Бэклит ₽/м²</label><input id="priceWideFilmBacklit" type="number" value="2000">
+<label>Бэклит (латекс) ₽/м²</label><input id="priceWideFilmBacklit" type="number" value="2000">
+<label>Холст (латекс) ₽/м²</label><input id="priceWideCanvas" type="number" value="3000">
 <label>Ламинация плёнки ₽/м²</label><input id="priceWideLamFilm" type="number" value="650">
 <label>Пластик 3 мм без ламинации ₽/м²</label><input id="priceWidePlastic3" type="number" value="3300">
 <label>Пластик 3 мм с ламинацией ₽/м²</label><input id="priceWidePlastic3Lam" type="number" value="3900">
@@ -572,12 +732,33 @@
 <label>Резка пленки: цветная (ORACAL) ₽/м²</label><input id="priceWidePlotterColorOracal" type="number" value="2000">
 <label>Резка в размер ₽/пог.м</label><input id="priceWideCut" type="number" value="30">
 <label>Минимальная стоимость изделия ₽/шт</label><input id="priceWideMinItem" type="number" value="300">
+<br>
+<b>Широкоформатка (стр. 3)</b>
+<label>Баннер 440 (Китай) ₽/м²</label><input id="wf_banner_440" type="number" value="450">
+<label>Баннер литой ₽/м²</label><input id="wf_banner_cast" type="number" value="550">
+<label>Баннер интерьерный латекс ₽/м²</label><input id="wf_banner_latex" type="number" value="1200">
+<label>Люверс 10 мм ₽/шт</label><input id="wf_post_eyelet" type="number" value="20">
+<label>Проклейка полотна ₽/пог.м</label><input id="wf_post_weld" type="number" value="100">
+<label>Обрезка по периметру ₽/пог.м</label><input id="wf_post_trim" type="number" value="30">
+<label>A1 фотобумага (1-2 шт) ₽/шт</label><input id="wf_water_a1_photo_1_2" type="number" value="420">
+<label>A2 фотобумага (1-2 шт) ₽/шт</label><input id="wf_water_a2_photo_1_2" type="number" value="240">
+<label>A2 фотобумага (от 3 шт) ₽/шт</label><input id="wf_water_a2_photo_3p" type="number" value="210">
+<label>A3 фотобумага ₽/шт</label><input id="wf_water_a3_photo" type="number" value="150">
+<label>A1 обычная (1-2 шт) ₽/шт</label><input id="wf_water_a1_plain_1_2" type="number" value="200">
+<label>A1 обычная (от 3 шт) ₽/шт</label><input id="wf_water_a1_plain_3p" type="number" value="150">
+<label>A2 обычная (1-2 шт) ₽/шт</label><input id="wf_water_a2_plain_1_2" type="number" value="100">
+<label>A2 обычная (от 3 шт) ₽/шт</label><input id="wf_water_a2_plain_3p" type="number" value="75">
+<label>A0 &#1086;&#1073;&#1099;&#1095;&#1085;&#1072;&#1103; (1-2 &#1096;&#1090;) &#8381;/&#1096;&#1090;</label><input id="wf_water_a0_plain_1_2" type="number" value="400">
+<label>A0 &#1086;&#1073;&#1099;&#1095;&#1085;&#1072;&#1103; (&#1086;&#1090; 3 &#1096;&#1090;) &#8381;/&#1096;&#1090;</label><input id="wf_water_a0_plain_3p" type="number" value="300">
+<label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1086;&#1073;&#1099;&#1095;&#1085;&#1072;&#1103; &#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_plain_m2" type="number" value="300">
+<label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1092;&#1086;&#1090;&#1086;&#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#1084;&#1072;&#1090;/&#1075;&#1083;&#1103;&#1085;&#1077;&#1094; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_photo_m2" type="number" value="840">
+<label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1092;&#1086;&#1090;&#1086;&#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#1089;&#1072;&#1090;&#1080;&#1085; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_satin_m2" type="number" value="1680">
 <div class="row"><button onclick="closeSettings()">Закрыть</button></div>
 </div>
 </div>
 
 <div id="numPad" class="num-pad hidden" aria-hidden="true">
-<div id="numPadDrag" class="num-pad-drag">Keyboard</div>
+<div id="numPadDrag" class="num-pad-drag"><span>Клавиатура</span><button id="numPadClose" class="num-pad-close" type="button" aria-label="Закрыть">X</button></div>
 <div class="num-pad-grid">
 <button type="button" data-numkey="7">7</button>
 <button type="button" data-numkey="8">8</button>
@@ -593,7 +774,7 @@
 <button type="button" data-numkey="close">✕</button>
 <button type="button" data-numkey="-">-</button>
 <button type="button" data-numkey="0">0</button>
-<button type="button" data-numkey=".">.</button>
+<button type="button" data-numkey=",">,</button>
 <button type="button" data-numkey="enter">OK</button>
 </div>
 </div>
@@ -610,7 +791,8 @@
 </div>
 <div class="order-footer">
 <div><b>Итого: <span id="total">0 ₽</span></b></div>
-<button id="copyOrderBtn" class="order-copy" type="button">Копировать список</button>
+<button id="copyOrderBtn" class="order-copy" type="button">&#1050;&#1086;&#1087;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; &#1084;&#1077;&#1089;&#1089;&#1077;&#1085;&#1076;&#1078;&#1077;&#1088;</button>
+<button id="copyOrderMailBtn" class="order-copy" type="button">&#1050;&#1086;&#1087;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; &#1087;&#1086;&#1095;&#1090;&#1072;</button>
 </div>
 </div>
 
