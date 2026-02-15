@@ -148,13 +148,21 @@
 </div>
 
 <div id="cCustomWrap" class="hidden">
-<label>Высота, см</label><input id="cHeight" type="number" value="30" min="1" step="any">
-<label>Ширина, см</label><input id="cWidth" type="number" value="40" min="1" step="any">
-<label>Цена за м², руб</label><input id="cRate" type="number" value="2500" min="0" step="any">
-<label><input id="cFrame" type="checkbox" checked> Подрамник</label>
-<label>Цена подрамника, руб/м</label><input id="cFramePrice" type="number" value="500" min="0" step="any">
-<label>Округление до, руб</label><input id="cRoundStep" type="number" value="50" min="1" step="any">
-<label><input id="cApply20" type="checkbox"> Скидка 20% (как в файле)</label>
+<label>??????, ??</label><input id="cHeight" type="number" value="30" min="1" step="any">
+<label>??????, ??</label><input id="cWidth" type="number" value="40" min="1" step="any">
+<label>???? ?? ??, ???</label><input id="cRate" type="number" value="2500" min="0" step="any">
+<label>?????????</label>
+<div id="cFrameButtons" class="choice-row">
+<button type="button" class="choice-btn cta-toggle" data-cframe="on">?????????</button>
+</div>
+<input id="cFrame" type="checkbox" checked class="hidden">
+<label>???? ??????????, ???/?</label><input id="cFramePrice" type="number" value="500" min="0" step="any">
+<label>?????????? ??, ???</label><input id="cRoundStep" type="number" value="50" min="1" step="any">
+<label>??????</label>
+<div id="cApply20Buttons" class="choice-row">
+<button type="button" class="choice-btn cta-toggle" data-cdisc20="on">?????? 20%</button>
+</div>
+<input id="cApply20" type="checkbox" class="hidden">
 </div>
 
 <div id="cPrice" class="price"></div>

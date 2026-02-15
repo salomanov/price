@@ -40,9 +40,11 @@ const cCustomWrap=document.getElementById('cCustomWrap');
 const cHeight=document.getElementById('cHeight');
 const cWidth=document.getElementById('cWidth');
 const cRate=document.getElementById('cRate');
+const cFrameButtons=document.getElementById('cFrameButtons');
 const cFrame=document.getElementById('cFrame');
 const cFramePrice=document.getElementById('cFramePrice');
 const cRoundStep=document.getElementById('cRoundStep');
+const cApply20Buttons=document.getElementById('cApply20Buttons');
 const cApply20=document.getElementById('cApply20');
 const cPrice=document.getElementById('cPrice');
 const canvasBtn=document.getElementById('canvasBtn');
@@ -53,10 +55,10 @@ const cFormulaRound=document.getElementById('c_formula_round');
 
 const wMaterial=document.getElementById('wMaterial');
 const wLam=document.getElementById('wLam');
-const wEye=document.getElementById('wEye');
-const wEyeStep=document.getElementById('wEyeStep');
+const wLamBtn=document.getElementById('wLamBtn');
 const wCut=document.getElementById('wCut');
-const wMount=document.getElementById('wMount');
+const wCutBtn=document.getElementById('wCutBtn');
+const wPostWrap=document.getElementById('wPostWrap');
 const wPreset=document.getElementById('wPreset');
 const wWidth=document.getElementById('wWidth');
 const wHeight=document.getElementById('wHeight');
@@ -64,14 +66,18 @@ const wQty=document.getElementById('wQty');
 const wDiscount=document.getElementById('wDiscount');
 const wPrice=document.getElementById('wPrice');
 const wideBtn=document.getElementById('wideBtn');
+const wMainButtons=document.getElementById('wMainButtons');
+const wFilmGroup=document.getElementById('wFilmGroup');
+const wPlasticGroup=document.getElementById('wPlasticGroup');
+const wPlotterGroup=document.getElementById('wPlotterGroup');
+const wSizeWrap=document.getElementById('wSizeWrap');
 const wFilmButtons=document.getElementById('wFilmButtons');
 const wPlasticButtons=document.getElementById('wPlasticButtons');
 const wCutFilmButtons=document.getElementById('wCutFilmButtons');
 const wPresetButtons=document.getElementById('wPresetButtons');
 const customSize=document.getElementById('customSize');
-const eyeWrap=document.getElementById('eyeWrap');
-const eyeStepWrap=document.getElementById('eyeStepWrap');
 
+const lMode=document.getElementById('lMode');
 const lType=document.getElementById('lType');
 const lSize=document.getElementById('lSize');
 const lSizeWrap=document.getElementById('lSizeWrap');
@@ -82,6 +88,7 @@ const lSheets=document.getElementById('lSheets');
 const lDiscount=document.getElementById('lDiscount');
 const lPrice=document.getElementById('lPrice');
 const lamBtn=document.getElementById('lamBtn');
+const lModeButtons=document.getElementById('lModeButtons');
 const lTypeButtons=document.getElementById('lTypeButtons');
 const lSizeButtons=document.getElementById('lSizeButtons');
 
@@ -122,6 +129,7 @@ const priceWideFilmGloss=document.getElementById('priceWideFilmGloss');
 const priceWideFilmClear=document.getElementById('priceWideFilmClear');
 const priceWideFilmPerf=document.getElementById('priceWideFilmPerf');
 const priceWideFilmBacklit=document.getElementById('priceWideFilmBacklit');
+const priceWideCanvas=document.getElementById('priceWideCanvas');
 const priceWideLamFilm=document.getElementById('priceWideLamFilm');
 const priceWidePlastic3=document.getElementById('priceWidePlastic3');
 const priceWidePlastic3Lam=document.getElementById('priceWidePlastic3Lam');
@@ -132,6 +140,57 @@ const priceWidePlotterWhiteOracal=document.getElementById('priceWidePlotterWhite
 const priceWidePlotterColorOracal=document.getElementById('priceWidePlotterColorOracal');
 const priceWideCut=document.getElementById('priceWideCut');
 const priceWideMinItem=document.getElementById('priceWideMinItem');
+
+const wfMainButtons=document.getElementById('wfMainButtons');
+const wfBannerWrap=document.getElementById('wfBannerWrap');
+const wfPaperWrap=document.getElementById('wfPaperWrap');
+const wfType=document.getElementById('wfType');
+const wfQty=document.getElementById('wfQty');
+const wfQtyLabel=document.getElementById('wfQtyLabel');
+const wfDiscount=document.getElementById('wfDiscount');
+const wfPrice=document.getElementById('wfPrice');
+const wfBtn=document.getElementById('wfBtn');
+const wfBannerButtons=document.getElementById('wfBannerButtons');
+const wfPaperMainButtons=document.getElementById('wfPaperMainButtons');
+const wfPhotoButtons=document.getElementById('wfPhotoButtons');
+const wfPreset=document.getElementById('wfPreset');
+const wfPresetButtons=document.getElementById('wfPresetButtons');
+const wfSizeWrap=document.getElementById('wfSizeWrap');
+const wfCustomSize=document.getElementById('wfCustomSize');
+const wfWidth=document.getElementById('wfWidth');
+const wfHeight=document.getElementById('wfHeight');
+const wfEyeletsWrap=document.getElementById('wfEyeletsWrap');
+const wfEyelets=document.getElementById('wfEyelets');
+const wfEyeletsEnabled=document.getElementById('wfEyeletsEnabled');
+const wfWeldLen=document.getElementById('wfWeldLen');
+const wfTrimLen=document.getElementById('wfTrimLen');
+const wfEyeletsBtn=document.getElementById('wfEyeletsBtn');
+const wfWeldBtn=document.getElementById('wfWeldBtn');
+const wfTrimBtn=document.getElementById('wfTrimBtn');
+const wfPaperFormat=document.getElementById('wfPaperFormat');
+const wfPaperFormatButtons=document.getElementById('wfPaperFormatButtons');
+const wfPaperFormatWrap=document.getElementById('wfPaperFormatWrap');
+const wfPaperFormatLabel=document.getElementById('wfPaperFormatLabel');
+
+const wfBanner440=document.getElementById('wf_banner_440');
+const wfBannerCast=document.getElementById('wf_banner_cast');
+const wfBannerLatex=document.getElementById('wf_banner_latex');
+const wfPostEyelet=document.getElementById('wf_post_eyelet');
+const wfPostWeld=document.getElementById('wf_post_weld');
+const wfPostTrim=document.getElementById('wf_post_trim');
+const wfWaterA1Photo12=document.getElementById('wf_water_a1_photo_1_2');
+const wfWaterA2Photo12=document.getElementById('wf_water_a2_photo_1_2');
+const wfWaterA2Photo3p=document.getElementById('wf_water_a2_photo_3p');
+const wfWaterA3Photo=document.getElementById('wf_water_a3_photo');
+const wfWaterA1Plain12=document.getElementById('wf_water_a1_plain_1_2');
+const wfWaterA1Plain3p=document.getElementById('wf_water_a1_plain_3p');
+const wfWaterA2Plain12=document.getElementById('wf_water_a2_plain_1_2');
+const wfWaterA2Plain3p=document.getElementById('wf_water_a2_plain_3p');
+const wfWaterA0Plain12=document.getElementById('wf_water_a0_plain_1_2');
+const wfWaterA0Plain3p=document.getElementById('wf_water_a0_plain_3p');
+const wfWaterCustomPlainM2=document.getElementById('wf_water_custom_plain_m2');
+const wfWaterCustomPhotoM2=document.getElementById('wf_water_custom_photo_m2');
+const wfWaterCustomSatinM2=document.getElementById('wf_water_custom_satin_m2');
 
 const order=document.getElementById('order');
 const total=document.getElementById('total');
@@ -156,7 +215,9 @@ const VISIT_QTY={
 
 const BF_QTY={
   booklet_a4_offset:[500,1000],
-  flyer_a6_offset:[1000,2000,3000,5000]
+  flyer_a6_offset:[1000,2000,3000,5000],
+  euro_offset:[1000,2000,3000],
+  flyer_a5_offset:[500,1000,2000,10000]
 };
 
 const MAG_QTY={
@@ -165,7 +226,8 @@ const MAG_QTY={
 };
 
 function num(el, fallback=0){
-  const v=parseFloat(el.value);
+  const raw=String(el?.value ?? '').replace(',', '.');
+  const v=parseFloat(raw);
   return Number.isFinite(v)?v:fallback;
 }
 
@@ -200,7 +262,7 @@ function setupChoice(selectEl, containerEl, key){
 function renderChoice(binding){
   if(!binding)return;
   const {selectEl,containerEl,key}=binding;
-  containerEl.innerHTML=[...selectEl.options].map(o=>`<button type="button" class="choice-btn" data-choice-${key}="${o.value}">${o.text}</button>`).join('');
+  containerEl.innerHTML=[...selectEl.options].filter(o=>o.value!=='').map(o=>`<button type="button" class="choice-btn" data-choice-${key}="${o.value}">${o.text}</button>`).join('');
   syncChoice(binding);
 }
 
@@ -398,6 +460,17 @@ function computeVisitPrice(){
 }
 
 
+function syncCanvasToggleButtons(){
+  if(cFrameButtons){
+    const btn=cFrameButtons.querySelector('[data-cframe]');
+    if(btn)btn.classList.toggle('active',!!(cFrame&&cFrame.checked));
+  }
+  if(cApply20Buttons){
+    const btn=cApply20Buttons.querySelector('[data-cdisc20]');
+    if(btn)btn.classList.toggle('active',!!(cApply20&&cApply20.checked));
+  }
+}
+
 function updateCanvasControls(){
   if(!cMode)return;
   const isCustom=cMode.value==='custom';
@@ -409,6 +482,7 @@ function updateCanvasControls(){
     if(cFormulaFrame && cFramePrice)cFramePrice.value=cFormulaFrame.value;
     if(cFormulaRound && cRoundStep)cRoundStep.value=cFormulaRound.value;
   }
+  syncCanvasToggleButtons();
   syncAllChoices();
 }
 
@@ -456,11 +530,11 @@ function saveCanvas(){
   let desc='';
   if(cMode.value==='fixed'){
     const tierLabel=cTier.options[cTier.selectedIndex].text;
-    desc=`${cSize.value} ??, ${tierLabel}`;
+    desc=`${cSize.value} \u0441\u043c, ${tierLabel}`;
   }else{
     const frameLabel=(cFrame && cFrame.checked)?', \u043f\u043e\u0434\u0440\u0430\u043c\u043d\u0438\u043a':'';
     const d20=(cApply20 && cApply20.checked)?', \u0441\u043a\u0438\u0434\u043a\u0430 20%':'';
-    desc=`${Math.round(num(cHeight,0))}x${Math.round(num(cWidth,0))} ??${frameLabel}${d20}`;
+    desc=`${Math.round(num(cHeight,0))}x${Math.round(num(cWidth,0))} \u0441\u043c${frameLabel}${d20}`;
   }
 
   saveItem({type:'canvas',title:'\u041f\u0435\u0447\u0430\u0442\u044c \u043d\u0430 \u0445\u043e\u043b\u0441\u0442\u0435',desc,price,params:{
@@ -528,6 +602,12 @@ function getPrintPricePerSide(){
     ],qty);
   }
 
+  if(paper==='self'){
+    if(color!=='color')return null;
+    if(format==='A4')return priceInput('pSelf_A4');
+    return priceInput('pSelf_A3');
+  }
+
   if(paper==='250'){
     if(color!=='color')return null;
     if(format==='A4'){
@@ -559,15 +639,38 @@ function computePrintPrice(){
 
 
 function updateLaminationControls(){
+  const mode=(lMode?lMode.value:'');
+  const hasMode=(mode==='lam' || mode==='bind');
+  const allowed=(mode==='lam')?['lam_gloss','lam_matte']:['spiral_plastic','spiral_metal','hard_cover'];
+
+  if(lTypeButtons)lTypeButtons.classList.toggle('hidden',!hasMode);
+  if(lTypeButtons){
+    [...lTypeButtons.querySelectorAll('[data-choice-ltype]')].forEach(btn=>{
+      const show=hasMode && allowed.includes(btn.dataset.choiceLtype);
+      btn.classList.toggle('hidden',!show);
+    });
+  }
+
+  if(!hasMode){
+    if(lSizeWrap)lSizeWrap.classList.add('hidden');
+    if(lSheetsWrap)lSheetsWrap.classList.add('hidden');
+    if(lQtyLabel)lQtyLabel.textContent='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
+    syncAllChoices();
+    return;
+  }
+
+  if(!allowed.includes(lType.value))lType.value=allowed[0];
   const type=lType.value;
   const isSpiral=(type==='spiral_plastic' || type==='spiral_metal');
   lSizeWrap.classList.toggle('hidden',type==='hard_cover');
   lSize.disabled=(type==='hard_cover');
   lSheetsWrap.classList.toggle('hidden',!isSpiral);
-  lQtyLabel.textContent=isSpiral?'Количество изделий':'Количество';
+  lQtyLabel.textContent=isSpiral?'\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0438\u0437\u0434\u0435\u043b\u0438\u0439':'\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
   syncAllChoices();
 }
 function computeLaminationPrice(){
+  const mode=(lMode?lMode.value:'');
+  if(mode!=='lam' && mode!=='bind')return null;
   const type=lType.value;
   const qty=Math.max(1,parseInt(lQty.value,10)||1);
   const sheets=Math.max(1,parseInt(lSheets.value,10)||1);
@@ -645,9 +748,11 @@ function populateBfQty(){
   if(list.includes(current))bfQty.value=String(current);
   else bfQty.value=list[0]?String(list[0]):'';
   renderChoice(choiceBindings.find(b=>b.selectEl===bfQty));
-  const isFlyerOffset=(bfType.value==='flyer_a6_offset');
-  bfSideWrap.classList.toggle('hidden',!isFlyerOffset);
-  bfSide.disabled=!isFlyerOffset;
+  const type=bfType.value;
+  const qty=parseInt(bfQty.value,10)||0;
+  const needSide=((type==='flyer_a6_offset' && qty===5000) || (type==='flyer_a5_offset' && qty===10000));
+  bfSideWrap.classList.toggle('hidden',!needSide);
+  bfSide.disabled=!needSide;
   [...bfSideButtons.querySelectorAll('.choice-btn')].forEach(btn=>{btn.disabled=bfSide.disabled;});
   syncAllChoices();
 }
@@ -656,7 +761,9 @@ function computeBfPrice(){
   const type=bfType.value;
   const qty=parseInt(bfQty.value,10);
   let base=null;
+
   if(type==='booklet_a4_offset')base=priceInput(`bOff_${qty}`);
+
   if(type==='flyer_a6_offset'){
     if(qty===5000){
       base=bfSide.value==='double'?priceInput('fOff_5000_44'):priceInput('fOff_5000_40');
@@ -664,6 +771,17 @@ function computeBfPrice(){
       base=priceInput(`fOff_${qty}`);
     }
   }
+
+  if(type==='euro_offset')base=priceInput(`eOff_${qty}`);
+
+  if(type==='flyer_a5_offset'){
+    if(qty===10000){
+      base=bfSide.value==='double'?priceInput('fA5Off_10000_44'):priceInput('fA5Off_10000_40');
+    }else{
+      base=priceInput(`fA5Off_${qty}`);
+    }
+  }
+
   if(!base)return null;
   return Math.round(base*(1+(num(bfDiscount,0)/100)));
 }
@@ -784,6 +902,25 @@ function getWideDims(){
 }
 
 
+function getWideMainByMaterial(mat){
+  if(!mat)return '';
+  if(mat.startsWith('film_'))return 'film';
+  if(mat.startsWith('plastic_'))return 'plastic';
+  if(mat.startsWith('plotter_'))return 'plotter';
+  if(mat==='latex_backlit')return 'backlit';
+  if(mat==='latex_canvas')return 'canvas';
+  return '';
+}
+
+function syncWideMainButtons(){
+  const main=getWideMainByMaterial(wMaterial.value);
+  if(wMainButtons){
+    [...wMainButtons.querySelectorAll('[data-wmain]')].forEach(btn=>{
+      btn.classList.toggle('active',btn.dataset.wmain===main);
+    });
+  }
+}
+
 function syncWideMaterialButtons(){
   const current=wMaterial.value;
   document.querySelectorAll('[data-wmaterial]').forEach(btn=>{
@@ -791,49 +928,106 @@ function syncWideMaterialButtons(){
   });
 }
 
+function syncWideToggleButtons(){
+  if(wLamBtn){
+    wLamBtn.classList.toggle('active',!!(wLam && wLam.checked));
+    wLamBtn.disabled=!!(wLam && wLam.disabled);
+  }
+  if(wCutBtn){
+    wCutBtn.classList.toggle('active',!!(wCut && wCut.checked));
+    wCutBtn.disabled=!!(wCut && wCut.disabled);
+  }
+}
+
 function bindWideMaterialButtons(){
-  const containers=[wFilmButtons,wPlasticButtons,wCutFilmButtons];
-  containers.forEach(container=>{
+  if(wMainButtons){
+    wMainButtons.addEventListener('click',(e)=>{
+      const btn=e.target.closest('[data-wmain]');
+      if(!btn)return;
+      const map={
+        film:'film_gloss',
+        plastic:'plastic_3',
+        backlit:'latex_backlit',
+        canvas:'latex_canvas',
+        plotter:'plotter_white_oracal'
+      };
+      wMaterial.value=map[btn.dataset.wmain]||'';
+      updateWideControls();
+      syncWideMainButtons();
+      syncWideMaterialButtons();
+      calc();
+    });
+  }
+
+  [wFilmButtons,wPlasticButtons,wCutFilmButtons].forEach(container=>{
     if(!container)return;
     container.addEventListener('click',(e)=>{
       const btn=e.target.closest('[data-wmaterial]');
       if(!btn)return;
       wMaterial.value=btn.dataset.wmaterial;
-      wMaterial.dispatchEvent(new Event('change',{bubbles:true}));
+      updateWideControls();
+      syncWideMainButtons();
       syncWideMaterialButtons();
       calc();
     });
   });
+
+  syncWideMainButtons();
   syncWideMaterialButtons();
 }
 
 function updateWideControls(){
-  const disallowLam=(wMaterial.value==='plotter_white_china' || wMaterial.value==='plotter_white_oracal' || wMaterial.value==='plotter_color_oracal');
+  const mat=wMaterial.value||'';
+  const main=getWideMainByMaterial(mat);
+
+  if(wFilmGroup)wFilmGroup.classList.toggle('hidden',main!=='film');
+  if(wPlasticGroup)wPlasticGroup.classList.toggle('hidden',main!=='plastic');
+  if(wPlotterGroup)wPlotterGroup.classList.toggle('hidden',main!=='plotter');
+  if(wSizeWrap)wSizeWrap.classList.toggle('hidden',!mat);
+
+  const allowLam=(main==='film' || main==='plastic');
   if(wLam){
-    wLam.disabled=disallowLam;
-    if(disallowLam)wLam.checked=false;
-    const lamLabel=wLam.closest('label');
-    if(lamLabel)lamLabel.style.opacity=disallowLam?'0.6':'1';
+    wLam.disabled=!allowLam;
+    if(!allowLam)wLam.checked=false;
   }
+  if(wCut){
+    wCut.disabled=!allowLam;
+    if(!allowLam)wCut.checked=false;
+  }
+  if(wPostWrap)wPostWrap.classList.toggle('hidden',!allowLam);
+  if(customSize)customSize.classList.toggle('hidden',!wPreset || wPreset.value!=='custom');
+
+  syncWideMainButtons();
+  syncWideToggleButtons();
 }
 
 function getWideMaterialRate(){
   switch(wMaterial.value){
-    case 'film_gloss': return {rate:num(priceWideFilmGloss,1000), lamByRate:true};
-    case 'film_clear': return {rate:num(priceWideFilmClear,1000), lamByRate:true};
-    case 'film_perf': return {rate:num(priceWideFilmPerf,2000), lamByRate:true};
-    case 'film_backlit': return {rate:num(priceWideFilmBacklit,2000), lamByRate:true};
-    case 'plastic_3': return {rate:wLam.checked?num(priceWidePlastic3Lam,3900):num(priceWidePlastic3,3300), lamByRate:false};
-    case 'plastic_5': return {rate:wLam.checked?num(priceWidePlastic5Lam,5000):num(priceWidePlastic5,4300), lamByRate:false};
-    case 'plotter_white_china': return {rate:num(priceWidePlotterWhiteChina,1700), lamByRate:false};
-    case 'plotter_white_oracal': return {rate:num(priceWidePlotterWhiteOracal,2000), lamByRate:false};
-    case 'plotter_color_oracal': return {rate:num(priceWidePlotterColorOracal,2000), lamByRate:false};
-    default: return {rate:num(priceWideFilmGloss,1000), lamByRate:true};
+    case 'film_gloss': return {rate:num(priceWideFilmGloss,1000), lamAddRate:num(priceWideLamFilm,650)};
+    case 'film_clear': return {rate:num(priceWideFilmClear,1000), lamAddRate:num(priceWideLamFilm,650)};
+    case 'film_perf': return {rate:num(priceWideFilmPerf,2000), lamAddRate:num(priceWideLamFilm,650)};
+    case 'latex_backlit': return {rate:num(priceWideFilmBacklit,2000), lamAddRate:0};
+    case 'latex_canvas': return {rate:num(priceWideCanvas,3000), lamAddRate:0};
+    case 'plastic_3': {
+      const base=num(priceWidePlastic3,3300);
+      const withLam=num(priceWidePlastic3Lam,3900);
+      return {rate:base, lamAddRate:Math.max(0,withLam-base)};
+    }
+    case 'plastic_5': {
+      const base=num(priceWidePlastic5,4300);
+      const withLam=num(priceWidePlastic5Lam,5000);
+      return {rate:base, lamAddRate:Math.max(0,withLam-base)};
+    }
+    case 'plotter_white_china': return {rate:num(priceWidePlotterWhiteChina,1700), lamAddRate:0};
+    case 'plotter_white_oracal': return {rate:num(priceWidePlotterWhiteOracal,2000), lamAddRate:0};
+    case 'plotter_color_oracal': return {rate:num(priceWidePlotterColorOracal,2000), lamAddRate:0};
+    default: return {rate:num(priceWideFilmGloss,1000), lamAddRate:num(priceWideLamFilm,650)};
   }
 }
 
 function computeWidePrice(){
   updateWideControls();
+  if(!wMaterial.value)return null;
   const dims=getWideDims();
   const area=Math.max(0,dims.w*dims.h);
   const per=Math.max(0,2*(dims.w+dims.h));
@@ -841,8 +1035,8 @@ function computeWidePrice(){
   const mat=getWideMaterialRate();
 
   let perItem=area*mat.rate;
-  if(mat.lamByRate && wLam.checked){
-    perItem+=area*num(priceWideLamFilm,650);
+  if(wLam && wLam.checked && mat.lamAddRate>0){
+    perItem+=area*mat.lamAddRate;
   }
   if(wCut && wCut.checked){
     perItem+=per*num(priceWideCut,30);
@@ -853,7 +1047,216 @@ function computeWidePrice(){
   return Math.round(total*(1+(num(wDiscount,0)/100)));
 }
 
+
+function getWfDims(){
+  if(!wfPreset || wfPreset.value==='custom')return {w:num(wfWidth,1),h:num(wfHeight,1)};
+  if(wfPreset.value==='A0')return {w:0.841,h:1.189};
+  if(wfPreset.value==='A1')return {w:0.594,h:0.841};
+  if(wfPreset.value==='A2')return {w:0.420,h:0.594};
+  if(wfPreset.value==='A3')return {w:0.297,h:0.420};
+  return {w:1,h:1};
+}
+
+function getWfMainByType(type){
+  if(!type)return '';
+  if(type.startsWith('banner_'))return 'banner';
+  if(type.startsWith('paper_'))return 'paper';
+  return '';
+}
+
+function syncWideFmtMainButtons(){
+  const main=getWfMainByType(wfType?wfType.value:'');
+  if(wfMainButtons){
+    [...wfMainButtons.querySelectorAll('[data-wfmain]')].forEach(btn=>{
+      btn.classList.toggle('active',btn.dataset.wfmain===main);
+    });
+  }
+}
+
+function syncWideFmtTypeButtons(){
+  if(!wfType)return;
+  const current=wfType.value;
+  document.querySelectorAll('[data-wftype]').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.wftype===current);
+  });
+}
+
+function bindWideFmtTypeButtons(){
+  if(wfMainButtons){
+    wfMainButtons.addEventListener('click',(e)=>{
+      const btn=e.target.closest('[data-wfmain]');
+      if(!btn)return;
+      wfType.value=(btn.dataset.wfmain==='banner')?'banner_440':'paper_plain';
+      updateWideFmtControls();
+      syncWideFmtMainButtons();
+      syncWideFmtTypeButtons();
+      calc();
+    });
+  }
+
+  if(wfPaperMainButtons){
+    wfPaperMainButtons.addEventListener('click',(e)=>{
+      const btn=e.target.closest('[data-wfpaper]');
+      if(!btn)return;
+      wfType.value=(btn.dataset.wfpaper==='plain')?'paper_plain':'paper_photo_matte';
+      updateWideFmtControls();
+      syncWideFmtMainButtons();
+      syncWideFmtTypeButtons();
+      calc();
+    });
+  }
+
+  [wfBannerButtons,wfPhotoButtons].forEach(container=>{
+    if(!container)return;
+    container.addEventListener('click',(e)=>{
+      const btn=e.target.closest('[data-wftype]');
+      if(!btn)return;
+      wfType.value=btn.dataset.wftype;
+      updateWideFmtControls();
+      syncWideFmtMainButtons();
+      syncWideFmtTypeButtons();
+      calc();
+    });
+  });
+
+  syncWideFmtMainButtons();
+  syncWideFmtTypeButtons();
+}
+
+function syncWideFmtPostButtons(){
+  if(wfEyeletsBtn && wfEyeletsEnabled)wfEyeletsBtn.classList.toggle('active',!!wfEyeletsEnabled.checked);
+  if(wfWeldBtn && wfWeldLen)wfWeldBtn.classList.toggle('active',!!wfWeldLen.checked);
+  if(wfTrimBtn && wfTrimLen)wfTrimBtn.classList.toggle('active',!!wfTrimLen.checked);
+  if(wfEyeletsWrap)wfEyeletsWrap.classList.toggle('hidden',!(wfEyeletsEnabled && wfEyeletsEnabled.checked));
+  if(wfEyelets)wfEyelets.classList.toggle('hidden',!(wfEyeletsEnabled && wfEyeletsEnabled.checked));
+}
+
+function updateWideFmtControls(){
+  if(!wfType)return;
+  const type=wfType.value||'';
+  const main=getWfMainByType(type);
+  const isBanner=(main==='banner');
+  const isPaper=(main==='paper');
+  const isPhoto=(type.startsWith('paper_photo_'));
+  const isCustom=(!wfPreset || wfPreset.value==='custom');
+
+  if(wfSizeWrap)wfSizeWrap.classList.toggle('hidden',!main);
+  if(wfBannerWrap)wfBannerWrap.classList.toggle('hidden',!isBanner);
+  if(wfPaperWrap)wfPaperWrap.classList.toggle('hidden',!isPaper);
+  if(wfPhotoButtons)wfPhotoButtons.classList.toggle('hidden',!isPaper || !isPhoto);
+  if(wfCustomSize)wfCustomSize.classList.toggle('hidden',!isCustom);
+  if(wfPaperFormatWrap)wfPaperFormatWrap.classList.add('hidden');
+  if(wfPaperFormatLabel)wfPaperFormatLabel.classList.add('hidden');
+
+  if(wfPreset){
+    const a0=[...wfPreset.options].find(o=>o.value==='A0');
+    if(a0)a0.disabled=(isPaper && isPhoto);
+    if(a0 && a0.disabled && wfPreset.value==='A0')wfPreset.value='A1';
+  }
+
+  if(wfQtyLabel){
+    if(isBanner)wfQtyLabel.innerText='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0438\u0437\u0434\u0435\u043b\u0438\u0439';
+    else wfQtyLabel.innerText='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
+  }
+
+  if(wfPaperMainButtons){
+    [...wfPaperMainButtons.querySelectorAll('[data-wfpaper]')].forEach(btn=>{
+      const should=(btn.dataset.wfpaper==='photo')?isPhoto:(type==='paper_plain');
+      btn.classList.toggle('active',should);
+    });
+  }
+
+  syncWideFmtMainButtons();
+  syncWideFmtPostButtons();
+  syncAllChoices();
+}
+
+function updateWideFmtDerivedPrices(){
+  if(!wfWaterA0Plain12 || !wfWaterA0Plain3p || !wfWaterA1Plain12 || !wfWaterA1Plain3p)return;
+  wfWaterA0Plain12.value=String(Math.round(num(wfWaterA1Plain12,200)*2*100)/100);
+  wfWaterA0Plain3p.value=String(Math.round(num(wfWaterA1Plain3p,150)*2*100)/100);
+  wfWaterA0Plain12.disabled=true;
+  wfWaterA0Plain3p.disabled=true;
+}
+
+function roundHalfDown(v){
+  const n=Number(v);
+  if(!Number.isFinite(n))return 0;
+  const f=Math.floor(n);
+  const frac=n-f;
+  if(Math.abs(frac-0.5)<1e-9)return f;
+  return Math.round(n);
+}
+
+function computeWideFmtPrice(){
+  if(!wfType || !wfQty)return null;
+  const type=wfType.value||'';
+  const qty=Math.max(0,num(wfQty,0));
+  if(!type || qty<=0)return null;
+
+  let total=null;
+
+  if(type.startsWith('banner_')){
+    const dims=getWfDims();
+    const area=Math.max(0,dims.w*dims.h);
+    if(area<=0)return null;
+
+    let rate=0;
+    if(type==='banner_440')rate=num(wfBanner440,450);
+    if(type==='banner_cast')rate=num(wfBannerCast,550);
+    if(type==='banner_latex')rate=num(wfBannerLatex,1200);
+    if(rate<=0)return null;
+
+    const perimeter=Math.max(0,2*(dims.w+dims.h));
+    const eyeletStepCm=Math.max(0,num(wfEyelets,0));
+    const hCm=Math.max(0,dims.h*100);
+    const wCm=Math.max(0,dims.w*100);
+    const eyeletsCount=(wfEyeletsEnabled && wfEyeletsEnabled.checked && eyeletStepCm>0)
+      ? Math.max(4,(roundHalfDown(hCm/eyeletStepCm)+roundHalfDown(wCm/eyeletStepCm))*2)
+      : 0;
+    const addEyelets=eyeletsCount*num(wfPostEyelet,20);
+    const addWeld=(wfWeldLen && wfWeldLen.checked)?perimeter*num(wfPostWeld,100):0;
+    const addTrim=(wfTrimLen && wfTrimLen.checked)?perimeter*num(wfPostTrim,30):0;
+
+    total=(area*rate+addEyelets+addWeld+addTrim)*qty;
+  }
+
+  if(type.startsWith('paper_')){
+    const useCustom=(!wfPreset || wfPreset.value==='custom');
+    if(useCustom){
+      const dims=getWfDims();
+      const area=Math.max(0,dims.w*dims.h);
+      if(area<=0)return null;
+      let rate=num(wfWaterCustomPlainM2,300);
+      if(type==='paper_photo_matte' || type==='paper_photo_gloss')rate=num(wfWaterCustomPhotoM2,840);
+      if(type==='paper_photo_satin')rate=num(wfWaterCustomSatinM2,1680);
+      total=area*rate*qty;
+    }else{
+      const format=wfPreset.value;
+      let per=null;
+      if(type==='paper_photo_matte' || type==='paper_photo_gloss' || type==='paper_photo_satin'){
+        if(format==='A1')per=num(wfWaterA1Photo12,420);
+        if(format==='A2')per=(qty>2?num(wfWaterA2Photo3p,210):num(wfWaterA2Photo12,240));
+        if(format==='A3')per=num(wfWaterA3Photo,150);
+        if(format==='A0')per=2*num(wfWaterA1Photo12,420);
+      }
+      if(type==='paper_plain'){
+        if(format==='A1')per=(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
+        if(format==='A2')per=(qty>2?num(wfWaterA2Plain3p,75):num(wfWaterA2Plain12,100));
+        if(format==='A3')per=(qty>2?num(wfWaterA2Plain3p,75):num(wfWaterA2Plain12,100))/2;
+        if(format==='A0')per=2*(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
+      }
+      if(!per)return null;
+      total=per*qty;
+    }
+  }
+
+  if(total===null)return null;
+  return Math.round(total*(1+(num(wfDiscount,0)/100)));
+}
+
 function calc(){
+  updateWideFmtDerivedPrices();
   syncVisitButtons();
   syncAllChoices();
   const visitPrice=computeVisitPrice();
@@ -875,9 +1278,13 @@ function calc(){
   if(bfPriceVal===null){bfPrice.innerText='Цена: -';bfBtn.disabled=true;}else{bfPrice.innerText='Цена: '+bfPriceVal+' ₽';bfBtn.disabled=false;}
 
   const sPriceVal=computeSouvenirPrice();
-  if(sPriceVal===null){sPrice.innerText='Цена: -';sBtn.disabled=true;}else{sPrice.innerText='Цена: '+sPriceVal+' ₽';sBtn.disabled=false;}
+  if(sPriceVal===null){sPrice.innerText='\u0426\u0435\u043d\u0430: -';sBtn.disabled=true;}else{sPrice.innerText='\u0426\u0435\u043d\u0430: '+sPriceVal+' \u20bd';sBtn.disabled=false;}
 
-  wPrice.innerText='Цена: '+computeWidePrice()+' ₽';
+  const widePriceVal=computeWidePrice();
+  if(widePriceVal===null){wPrice.innerText='\u0426\u0435\u043d\u0430: -';wideBtn.disabled=true;}else{wPrice.innerText='\u0426\u0435\u043d\u0430: '+widePriceVal+' \u20bd';wideBtn.disabled=false;}
+
+  const wfPriceVal=computeWideFmtPrice();
+  if(wfPriceVal===null){wfPrice.innerText='\u0426\u0435\u043d\u0430: -';wfBtn.disabled=true;}else{wfPrice.innerText='\u0426\u0435\u043d\u0430: '+wfPriceVal+' \u20bd';wfBtn.disabled=false;}
 }
 
 function saveVisit(){
@@ -910,9 +1317,22 @@ function savePrint(){
 
 function saveWide(){
   const price=computeWidePrice();
-  const desc=`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} шт`;
+  if(price===null)return;
+  const desc=`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} \u0448\u0442`;
   saveItem({type:'wide',title:'\u041b\u0430\u0442\u0435\u043a\u0441\u043d\u0430\u044f \u043f\u0435\u0447\u0430\u0442\u044c',desc,price,
     params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,lam:wLam.checked,cut:wCut.checked}});
+}
+function saveWideFmt(){
+  const price=computeWideFmtPrice();
+  if(price===null)return;
+  const size=(wfPreset && wfPreset.value==='custom')?`${wfWidth.value}x${wfHeight.value} \u043c`:(wfPreset?wfPreset.value:'A0');
+  const desc=`${wfType.options[wfType.selectedIndex].text}, ${size}, ${wfQty.value} \u0448\u0442`;
+  saveItem({type:'widefmt',title:'\u0428\u0438\u0440\u043e\u043a\u043e\u0444\u043e\u0440\u043c\u0430\u0442\u043a\u0430',desc,price,params:{
+    type:wfType.value,qty:wfQty.value,disc:wfDiscount.value,preset:(wfPreset?wfPreset.value:'custom'),
+    w:(wfWidth?wfWidth.value:1),h:(wfHeight?wfHeight.value:1),
+    eye:(wfEyelets?wfEyelets.value:0),eyeOn:!!(wfEyeletsEnabled&&wfEyeletsEnabled.checked),
+    weld:!!(wfWeldLen&&wfWeldLen.checked),trim:!!(wfTrimLen&&wfTrimLen.checked)
+  }});
 }
 function saveLam(){
   const price=computeLaminationPrice();
@@ -957,6 +1377,7 @@ function saveItem(item){
   lamBtn.innerText=bfBtn.innerText=sBtn.innerText='Добавить';
   if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
+  if(wfBtn)wfBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
 }
 
 function editItem(i){
@@ -1001,6 +1422,22 @@ updateCanvasControls();
     updateWideControls();
     wideBtn.innerText='Изменить';
   }
+  if(o.type==='widefmt'){
+    switchTab('widefmt');
+    const p=o.params||{};
+    if(wfType)wfType.value=p.type||wfType.value;
+    if(wfQty)wfQty.value=p.qty||wfQty.value;
+    if(wfDiscount)wfDiscount.value=p.disc||0;
+    if(wfPreset)wfPreset.value=p.preset||'custom';
+    if(wfWidth)wfWidth.value=p.w||1;
+    if(wfHeight)wfHeight.value=p.h||1;
+    if(wfEyelets)wfEyelets.value=p.eye||40;
+    if(wfEyeletsEnabled)wfEyeletsEnabled.checked=!!p.eyeOn;
+    if(wfWeldLen)wfWeldLen.checked=!!p.weld;
+    if(wfTrimLen)wfTrimLen.checked=!!p.trim;
+    updateWideFmtControls();
+    if(wfBtn)wfBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+  }
   if(o.type==='canvas'){
     switchTab('canvas');
     const p=o.params;
@@ -1016,6 +1453,19 @@ updateCanvasControls();
     if(cApply20)cApply20.checked=!!p.apply20;
     updateCanvasControls();
     if(canvasBtn)canvasBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+  }
+  if(o.type==='lam'){
+    switchTab('lam');
+    const p=o.params||{};
+    if(lMode)lMode.value=p.mode||'';
+    updateLaminationControls();
+    lType.value=p.type;
+    updateLaminationControls();
+    lQty.value=p.qty;
+    lSize.value=p.size;
+    lSheets.value=p.sheets;
+    lDiscount.value=p.disc;
+    lamBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
   }
   if(o.type==='design'){
     switchTab('design');
@@ -1094,7 +1544,17 @@ function setupNumericKeypad(){
       applyValue(cur.startsWith('-')?cur.slice(1):('-'+cur));
       return;
     }
-    if(chunk==='.' && cur.includes('.'))return;
+
+    if(chunk===',' || chunk==='.'){
+      if(cur.includes('.'))return;
+      if(cur==='' || cur==='-'){
+        applyValue(`${cur}0.`);
+      }else{
+        applyValue(cur+'.');
+      }
+      return;
+    }
+
     applyValue(cur+chunk);
   };
 
@@ -1303,8 +1763,10 @@ function render(){
 
 function bindCalc(){
   const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,cMode,cSize,cTier,cHeight,cWidth,cRate,cFrame,cFramePrice,cRoundStep,cApply20,cFormulaRate,cFormulaFrame,cFormulaRound,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
-    lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
-    priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem];
+    lMode,lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
+    wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfEyelets,wfEyeletsEnabled,wfWeldLen,wfTrimLen,wfPaperFormat,
+    priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
+    wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA3Photo,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
 
   vType.addEventListener('change',()=>{populateVisitQty();calc();});
@@ -1340,8 +1802,15 @@ function bindCalc(){
   });
   pPaper.addEventListener('change',()=>{updatePrintControls();calc();});
   if(cMode)cMode.addEventListener('change',()=>{updateCanvasControls();calc();});
+  if(cFrameButtons){cFrameButtons.addEventListener('click',(e)=>{const btn=e.target.closest('[data-cframe]');if(!btn||!cFrame)return;cFrame.checked=!cFrame.checked;syncCanvasToggleButtons();calc();});}
+  if(cApply20Buttons){cApply20Buttons.addEventListener('click',(e)=>{const btn=e.target.closest('[data-cdisc20]');if(!btn||!cApply20)return;cApply20.checked=!cApply20.checked;syncCanvasToggleButtons();calc();});}
+  if(wLamBtn){wLamBtn.addEventListener('click',()=>{if(!wLamBtn.disabled && wLam){wLam.checked=!wLam.checked;updateWideControls();calc();}});}
+  if(wCutBtn){wCutBtn.addEventListener('click',()=>{if(!wCutBtn.disabled && wCut){wCut.checked=!wCut.checked;updateWideControls();calc();}});}
   wMaterial.addEventListener('change',()=>{updateWideControls();syncWideMaterialButtons();calc();});
+  if(lMode)lMode.addEventListener('change',()=>{updateLaminationControls();calc();});
   lType.addEventListener('change',()=>{updateLaminationControls();calc();});
+  if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();syncWideFmtMainButtons();calc();});
+  if(wfPreset)wfPreset.addEventListener('change',()=>{updateWideFmtControls();calc();});
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
   sType.addEventListener('change',()=>{updateSouvenirControls();calc();});
 
@@ -1361,6 +1830,7 @@ setupChoice(cMode,cModeButtons,'cmode');
 setupChoice(cSize,cSizeButtons,'csize');
 setupChoice(cTier,cTierButtons,'ctier');
 setupChoice(wPreset,wPresetButtons,'wpreset');
+setupChoice(lMode,lModeButtons,'lmode');
 setupChoice(lType,lTypeButtons,'ltype');
 setupChoice(lSize,lSizeButtons,'lsize');
 setupChoice(bfType,bfTypeButtons,'bftype');
@@ -1371,6 +1841,8 @@ setupChoice(sMugType,sMugTypeButtons,'smug');
 setupChoice(sTshirtType,sTshirtTypeButtons,'stshirt');
 setupChoice(sBadgeSize,sBadgeSizeButtons,'sbadge');
 setupChoice(sMagQty,sMagQtyButtons,'smagqty');
+setupChoice(wfPreset,wfPresetButtons,'wfpreset');
+setupChoice(wfPaperFormat,wfPaperFormatButtons,'wfpformat');
 
 populateVisitQty();
 updatePrintControls();
@@ -1378,6 +1850,7 @@ updateCanvasControls();
 updateLaminationControls();
 populateBfQty();
 updateSouvenirControls();
+updateWideFmtControls();
 
 tabButtons.forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 if(priceBtn)priceBtn.addEventListener('click',openSettings);
@@ -1391,6 +1864,7 @@ bindCalc();
 bindDiscountQuick();
 bindPrintCutQuick();
 bindWideMaterialButtons();
+bindWideFmtTypeButtons();
 bindDesignService();
 bindOrderToggle();
 setupNumericKeypad();
