@@ -233,7 +233,10 @@ function num(el, fallback=0){
 
 function priceInput(id){
   const el=document.getElementById(id);
-  return el?num(el,0):0;
+  if(!el)return null;
+  const raw=String(el.value ?? '').replace(',', '.');
+  const v=parseFloat(raw);
+  return Number.isFinite(v)?v:null;
 }
 
 function rangePrice(ranges, value){
@@ -455,7 +458,7 @@ function computeVisitPrice(){
     if(type==='digital')base=priceInput(`vD${qty}${side==='single'?'S':'D'}`);
     if(type==='digital_mat')base=priceInput(`vLM${qty}${side==='single'?'S':'D'}`);
   }
-  if(!base)return null;
+  if(base===null)return null;
   return Math.round(base*(1+(num(vDiscount,0)/100)));
 }
 
@@ -498,7 +501,7 @@ function computeCanvasPrice(){
     const size=cSize.value;
     const tier=cTier.value;
     const base=priceInput(`c_${size}_${tier}`);
-    if(!base)return null;
+    if(base===null)return null;
     return Math.round(base);
   }
 
@@ -734,7 +737,7 @@ function computeLaminationPrice(){
 
   if(type==='hard_cover'){
     per=priceInput('hard_cover');
-    if(!per)return null;
+    if(per===null)return null;
     return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
@@ -782,7 +785,7 @@ function computeBfPrice(){
     }
   }
 
-  if(!base)return null;
+  if(base===null)return null;
   return Math.round(base*(1+(num(bfDiscount,0)/100)));
 }
 
@@ -831,13 +834,13 @@ function computeSouvenirPrice(){
       if(qty!==1)return null;
       per=priceInput('mugCh_1');
     }
-    if(!per)return null;
+    if(per===null)return null;
     total=per*qty;
   }
 
   if(t==='plate'){
     const per=priceInput('plate_1');
-    if(!per)return null;
+    if(per===null)return null;
     total=per*qty;
   }
 
@@ -848,21 +851,21 @@ function computeSouvenirPrice(){
     if(sTshirtType.value==='sub_2')per=priceInput('tshirt_sub_2');
     if(sTshirtType.value==='dtf_no')per=priceInput('tshirt_dtf_no');
     if(sTshirtType.value==='dtf_with')per=priceInput('tshirt_dtf_with');
-    if(!per)return null;
+    if(per===null)return null;
     total=per*qty;
   }
 
   if(t==='magnet_acrylic'){
     const q=parseInt(sMagQty.value,10);
     const per=priceInput(`magA_${q}`);
-    if(!per)return null;
+    if(per===null)return null;
     total=per*q;
   }
 
   if(t==='magnet_vinyl'){
     const q=parseInt(sMagQty.value,10);
     const per=priceInput(`magV_${q}`);
-    if(!per)return null;
+    if(per===null)return null;
     total=per*q;
   }
 
@@ -877,7 +880,7 @@ function computeSouvenirPrice(){
       {min:300,max:499,price:priceInput(`badge${size}_300_499`)},
       {min:500,max:999,price:priceInput(`badge${size}_500_999`)},
     ],qty);
-    if(!per)return null;
+    if(per===null)return null;
     total=per*qty;
   }
 
@@ -885,7 +888,7 @@ function computeSouvenirPrice(){
     const meters=Math.max(0,parseFloat(sMeters.value)||0);
     const per=priceInput('uvdtf_per_m');
     const min=priceInput('uvdtf_min');
-    if(!per || meters<=0)return null;
+    if(per===null || min===null || meters<=0)return null;
     total=Math.max(per*meters,min);
   }
 
@@ -1246,7 +1249,7 @@ function computeWideFmtPrice(){
         if(format==='A3')per=(qty>2?num(wfWaterA2Plain3p,75):num(wfWaterA2Plain12,100))/2;
         if(format==='A0')per=2*(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
       }
-      if(!per)return null;
+      if(per===null)return null;
       total=per*qty;
     }
   }
@@ -1399,7 +1402,6 @@ function editItem(i){
     pPaper.value=o.params.paper;
     pColor.value=o.params.color;
     updatePrintControls();
-updateCanvasControls();
     pFormat.value=o.params.format;
     pQty.value=o.params.qty;
     pSide.value=o.params.side;
