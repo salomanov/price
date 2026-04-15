@@ -70,13 +70,24 @@ const wideBtn=document.getElementById('wideBtn');
 const wMainButtons=document.getElementById('wMainButtons');
 const wFilmGroup=document.getElementById('wFilmGroup');
 const wPlasticGroup=document.getElementById('wPlasticGroup');
-const wPlotterGroup=document.getElementById('wPlotterGroup');
 const wSizeWrap=document.getElementById('wSizeWrap');
 const wFilmButtons=document.getElementById('wFilmButtons');
 const wPlasticButtons=document.getElementById('wPlasticButtons');
-const wCutFilmButtons=document.getElementById('wCutFilmButtons');
 const wPresetButtons=document.getElementById('wPresetButtons');
 const customSize=document.getElementById('customSize');
+
+const plotterMaterial=document.getElementById('plotterMaterial');
+const plotterMaterialButtons=document.getElementById('plotterMaterialButtons');
+const plotterPreset=document.getElementById('plotterPreset');
+const plotterPresetButtons=document.getElementById('plotterPresetButtons');
+const plotterSizeWrap=document.getElementById('plotterSizeWrap');
+const plotterCustomSize=document.getElementById('plotterCustomSize');
+const plotterWidth=document.getElementById('plotterWidth');
+const plotterHeight=document.getElementById('plotterHeight');
+const plotterQty=document.getElementById('plotterQty');
+const plotterDiscount=document.getElementById('plotterDiscount');
+const plotterPrice=document.getElementById('plotterPrice');
+const plotterBtn=document.getElementById('plotterBtn');
 
 const lMode=document.getElementById('lMode');
 const lType=document.getElementById('lType');
@@ -919,7 +930,6 @@ function getWideMainByMaterial(mat){
   if(!mat)return '';
   if(mat.startsWith('film_'))return 'film';
   if(mat.startsWith('plastic_'))return 'plastic';
-  if(mat.startsWith('plotter_'))return 'plotter';
   if(mat==='latex_backlit')return 'backlit';
   if(mat==='latex_canvas')return 'canvas';
   return '';
@@ -961,8 +971,7 @@ function bindWideMaterialButtons(){
         film:'film_gloss',
         plastic:'plastic_3',
         backlit:'latex_backlit',
-        canvas:'latex_canvas',
-        plotter:'plotter_white_oracal'
+        canvas:'latex_canvas'
       };
       wMaterial.value=map[btn.dataset.wmain]||'';
       updateWideControls();
@@ -972,7 +981,7 @@ function bindWideMaterialButtons(){
     });
   }
 
-  [wFilmButtons,wPlasticButtons,wCutFilmButtons].forEach(container=>{
+  [wFilmButtons,wPlasticButtons].forEach(container=>{
     if(!container)return;
     container.addEventListener('click',(e)=>{
       const btn=e.target.closest('[data-wmaterial]');
@@ -995,7 +1004,6 @@ function updateWideControls(){
 
   if(wFilmGroup)wFilmGroup.classList.toggle('hidden',main!=='film');
   if(wPlasticGroup)wPlasticGroup.classList.toggle('hidden',main!=='plastic');
-  if(wPlotterGroup)wPlotterGroup.classList.toggle('hidden',main!=='plotter');
   if(wSizeWrap)wSizeWrap.classList.toggle('hidden',!mat);
 
   const allowLam=(main==='film' || main==='plastic');
@@ -1012,6 +1020,43 @@ function updateWideControls(){
 
   syncWideMainButtons();
   syncWideToggleButtons();
+}
+
+function getPlotterDims(){
+  if(plotterPreset && plotterPreset.value==='custom')return {w:num(plotterWidth,1),h:num(plotterHeight,1)};
+  if(plotterPreset && plotterPreset.value==='A0')return {w:0.841,h:1.189};
+  if(plotterPreset && plotterPreset.value==='A1')return {w:0.594,h:0.841};
+  if(plotterPreset && plotterPreset.value==='A2')return {w:0.420,h:0.594};
+  return {w:1,h:1};
+}
+
+function updatePlotterControls(){
+  const hasMaterial=!!(plotterMaterial && plotterMaterial.value);
+  if(plotterSizeWrap)plotterSizeWrap.classList.toggle('hidden',!hasMaterial);
+  if(plotterCustomSize)plotterCustomSize.classList.toggle('hidden',!hasMaterial || !plotterPreset || plotterPreset.value!=='custom');
+  syncAllChoices();
+}
+
+function getPlotterMaterialRate(){
+  switch(plotterMaterial?.value){
+    case 'plotter_white_china': return num(priceWidePlotterWhiteChina,1700);
+    case 'plotter_white_oracal': return num(priceWidePlotterWhiteOracal,2000);
+    case 'plotter_color_oracal': return num(priceWidePlotterColorOracal,2000);
+    default: return 0;
+  }
+}
+
+function computePlotterPrice(){
+  updatePlotterControls();
+  if(!plotterMaterial || !plotterMaterial.value)return null;
+  const dims=getPlotterDims();
+  const area=Math.max(0,dims.w*dims.h);
+  const qty=Math.max(1,parseInt(plotterQty.value,10)||1);
+  const rate=getPlotterMaterialRate();
+  if(area<=0 || rate<=0)return null;
+  const minPerItem=num(priceWideMinItem,300);
+  const total=Math.max(area*rate,minPerItem)*qty;
+  return Math.round(total*(1+(num(plotterDiscount,0)/100)));
 }
 
 function getWideMaterialRate(){
@@ -1296,6 +1341,11 @@ function calc(){
   const widePriceVal=computeWidePrice();
   if(widePriceVal===null){wPrice.innerText='\u0426\u0435\u043d\u0430: -';wideBtn.disabled=true;}else{wPrice.innerText='\u0426\u0435\u043d\u0430: '+widePriceVal+' \u20bd';wideBtn.disabled=false;}
 
+  const plotterPriceVal=computePlotterPrice();
+  if(plotterPrice && plotterBtn){
+    if(plotterPriceVal===null){plotterPrice.innerText='\u0426\u0435\u043d\u0430: -';plotterBtn.disabled=true;}else{plotterPrice.innerText='\u0426\u0435\u043d\u0430: '+plotterPriceVal+' \u20bd';plotterBtn.disabled=false;}
+  }
+
   const wfPriceVal=computeWideFmtPrice();
   if(wfPriceVal===null){wfPrice.innerText='\u0426\u0435\u043d\u0430: -';wfBtn.disabled=true;}else{wfPrice.innerText='\u0426\u0435\u043d\u0430: '+wfPriceVal+' \u20bd';wfBtn.disabled=false;}
 }
@@ -1334,6 +1384,14 @@ function saveWide(){
   const desc=`${wMaterial.options[wMaterial.selectedIndex].text}, ${wQty.value} \u0448\u0442`;
   saveItem({type:'wide',title:'\u041b\u0430\u0442\u0435\u043a\u0441\u043d\u0430\u044f \u043f\u0435\u0447\u0430\u0442\u044c',desc,price,
     params:{material:wMaterial.value,preset:wPreset.value,w:wWidth.value,h:wHeight.value,qty:wQty.value,disc:wDiscount.value,lam:wLam.checked,cut:wCut.checked}});
+}
+function savePlotter(){
+  const price=computePlotterPrice();
+  if(price===null)return;
+  const desc=`${plotterMaterial.options[plotterMaterial.selectedIndex].text}, ${plotterQty.value} \u0448\u0442`;
+  saveItem({type:'plotter',title:'\u041f\u043b\u043e\u0442\u0442\u0435\u0440\u043a\u0430',desc,price,params:{
+    material:plotterMaterial.value,preset:plotterPreset.value,w:plotterWidth.value,h:plotterHeight.value,qty:plotterQty.value,disc:plotterDiscount.value
+  }});
 }
 function saveWideFmt(){
   const price=computeWideFmtPrice();
@@ -1388,6 +1446,7 @@ function saveItem(item){
   editIndex=null;
   visitBtn.innerText=printBtn.innerText=wideBtn.innerText='Добавить';
   lamBtn.innerText=bfBtn.innerText=sBtn.innerText='Добавить';
+  if(plotterBtn)plotterBtn.innerText='Добавить';
   if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(wfBtn)wfBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
@@ -1420,19 +1479,43 @@ function editItem(i){
     printBtn.innerText='Изменить';
   }
   if(o.type==='wide'){
-    switchTab('wide');
     const p=o.params;
-    wMaterial.value=p.material;
-    wPreset.value=p.preset;
-    wWidth.value=p.w;
-    wHeight.value=p.h;
-    wQty.value=p.qty;
-    wDiscount.value=p.disc;
-    if(wLam)wLam.checked=!!p.lam;
-    if(wCut)wCut.checked=!!p.cut;
-    toggleCustom();
-    updateWideControls();
-    wideBtn.innerText='Изменить';
+    if((p.material||'').startsWith('plotter_')){
+      switchTab('contour');
+      if(plotterMaterial)plotterMaterial.value=p.material;
+      if(plotterPreset)plotterPreset.value=p.preset||'custom';
+      if(plotterWidth)plotterWidth.value=p.w;
+      if(plotterHeight)plotterHeight.value=p.h;
+      if(plotterQty)plotterQty.value=p.qty;
+      if(plotterDiscount)plotterDiscount.value=p.disc;
+      updatePlotterControls();
+      if(plotterBtn)plotterBtn.innerText='Изменить';
+    }else{
+      switchTab('wide');
+      wMaterial.value=p.material;
+      wPreset.value=p.preset;
+      wWidth.value=p.w;
+      wHeight.value=p.h;
+      wQty.value=p.qty;
+      wDiscount.value=p.disc;
+      if(wLam)wLam.checked=!!p.lam;
+      if(wCut)wCut.checked=!!p.cut;
+      toggleCustom();
+      updateWideControls();
+      wideBtn.innerText='Изменить';
+    }
+  }
+  if(o.type==='plotter'){
+    switchTab('contour');
+    const p=o.params||{};
+    if(plotterMaterial)plotterMaterial.value=p.material||'';
+    if(plotterPreset)plotterPreset.value=p.preset||'custom';
+    if(plotterWidth)plotterWidth.value=p.w||1;
+    if(plotterHeight)plotterHeight.value=p.h||1;
+    if(plotterQty)plotterQty.value=p.qty||1;
+    if(plotterDiscount)plotterDiscount.value=p.disc||0;
+    updatePlotterControls();
+    if(plotterBtn)plotterBtn.innerText='Изменить';
   }
   if(o.type==='widefmt'){
     switchTab('widefmt');
@@ -1775,6 +1858,7 @@ function render(){
 
 function bindCalc(){
   const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,cMode,cSize,cTier,cHeight,cWidth,cRate,cFrame,cFramePrice,cRoundStep,cApply20,cFormulaRate,cFormulaFrame,cFormulaRound,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
+    plotterMaterial,plotterPreset,plotterWidth,plotterHeight,plotterQty,plotterDiscount,
     lMode,lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
     wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfEyelets,wfEyeletsEnabled,wfWeldLen,wfTrimLen,wfPaperFormat,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
@@ -1819,6 +1903,8 @@ function bindCalc(){
   if(wLamBtn){wLamBtn.addEventListener('click',()=>{if(!wLamBtn.disabled && wLam){wLam.checked=!wLam.checked;updateWideControls();calc();}});}
   if(wCutBtn){wCutBtn.addEventListener('click',()=>{if(!wCutBtn.disabled && wCut){wCut.checked=!wCut.checked;updateWideControls();calc();}});}
   wMaterial.addEventListener('change',()=>{updateWideControls();syncWideMaterialButtons();calc();});
+  if(plotterMaterial)plotterMaterial.addEventListener('change',()=>{updatePlotterControls();calc();});
+  if(plotterPreset)plotterPreset.addEventListener('change',()=>{updatePlotterControls();calc();});
   if(lMode)lMode.addEventListener('change',()=>{updateLaminationControls();calc();});
   lType.addEventListener('change',()=>{updateLaminationControls();calc();});
   if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();syncWideFmtMainButtons();calc();});
@@ -1842,6 +1928,8 @@ setupChoice(cMode,cModeButtons,'cmode');
 setupChoice(cSize,cSizeButtons,'csize');
 setupChoice(cTier,cTierButtons,'ctier');
 setupChoice(wPreset,wPresetButtons,'wpreset');
+setupChoice(plotterMaterial,plotterMaterialButtons,'plottermaterial');
+setupChoice(plotterPreset,plotterPresetButtons,'plotterpreset');
 setupChoice(lMode,lModeButtons,'lmode');
 setupChoice(lType,lTypeButtons,'ltype');
 setupChoice(lSize,lSizeButtons,'lsize');
@@ -1862,6 +1950,7 @@ updateCanvasControls();
 updateLaminationControls();
 populateBfQty();
 updateSouvenirControls();
+updatePlotterControls();
 updateWideFmtControls();
 
 tabButtons.forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
