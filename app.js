@@ -19,6 +19,7 @@ const pColor=document.getElementById('pColor');
 const pFormat=document.getElementById('pFormat');
 const pQty=document.getElementById('pQty');
 const pSide=document.getElementById('pSide');
+const pSideWrap=document.getElementById('pSideWrap');
 const pCut=document.getElementById('pCut');
 const pCutQuick=document.getElementById('pCutQuick');
 const pPaperButtons=document.getElementById('pPaperButtons');
@@ -278,6 +279,7 @@ function syncChoice(binding){
     const opt=[...selectEl.options].find(o=>o.value===val);
     btn.classList.toggle('active',val===current);
     btn.disabled=!!(opt && opt.disabled);
+    btn.classList.toggle('hidden',!!(opt && opt.hidden));
   });
 }
 
@@ -550,6 +552,8 @@ function saveCanvas(){
 function updatePrintControls(){
   const paper=pPaper.value;
   const a3Option=[...pFormat.options].find(o=>o.value==='A3');
+  const doubleSideOption=[...pSide.options].find(o=>o.value==='2');
+  const isSelf=paper==='self';
   if(paper==='80'){
     pColor.disabled=false;
     if(a3Option)a3Option.disabled=true;
@@ -558,6 +562,12 @@ function updatePrintControls(){
     pColor.value='color';
     pColor.disabled=true;
     if(a3Option)a3Option.disabled=false;
+  }
+  if(pSideWrap)pSideWrap.classList.toggle('hidden',isSelf);
+  if(doubleSideOption){
+    doubleSideOption.disabled=isSelf;
+    doubleSideOption.hidden=isSelf;
+    if(isSelf && pSide.value==='2')pSide.value='1';
   }
   syncAllChoices();
 }
