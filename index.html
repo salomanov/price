@@ -21,8 +21,8 @@
 <button class="tab-btn" data-tab="print">Печать</button>
 <button class="tab-btn" data-tab="canvas">Печать на холсте</button>
 <button class="tab-btn" data-tab="wide">Латексная печать</button>
+<button class="tab-btn" data-tab="contour">Плоттерка</button>
 <button class="tab-btn" data-tab="widefmt">Широкоформатка</button>
-<button class="tab-btn" data-tab="contour">Печать + контурная резка</button>
 <button class="tab-btn" data-tab="lam">Ламинация/переплёт</button>
 <button class="tab-btn" data-tab="bf">Офсет</button>
 <button class="tab-btn" data-tab="souvenir">Сувенирка</button>
@@ -93,8 +93,10 @@
 <div id="pFormatButtons" class="choice-row"></div>
 <select id="pFormat" class="hidden"><option value="A4">A4</option><option value="A3">A3</option></select>
 <label>Количество</label><input id="pQty" type="number" value="1">
+<div id="pSideWrap">
 <label>Стороны</label>
 <div id="pSideButtons" class="choice-row"></div>
+</div>
 <select id="pSide" class="hidden"><option value="1">1</option><option value="2">2</option></select>
 <label>Резка по размеру, руб</label><input id="pCut" type="number" value="0" step="any" min="0">
 <div id="pCutQuick" class="choice-row">
@@ -178,7 +180,6 @@
 <button type="button" class="choice-btn" data-wmain="plastic">Пластик</button>
 <button type="button" class="choice-btn" data-wmain="backlit">Беклит</button>
 <button type="button" class="choice-btn" data-wmain="canvas">Холст</button>
-<button type="button" class="choice-btn" data-wmain="plotter">Плоттерка</button>
 </div>
 
 <div id="wFilmGroup" class="wide-group hidden">
@@ -198,15 +199,6 @@
 </div>
 </div>
 
-<div id="wPlotterGroup" class="wide-group hidden">
-<div class="wide-group-title">Плоттерка / резка по контуру</div>
-<div id="wCutFilmButtons" class="choice-row">
-<button type="button" class="choice-btn" data-wmaterial="plotter_white_china">Белая (Китай)</button>
-<button type="button" class="choice-btn" data-wmaterial="plotter_white_oracal">Белая (ORACAL)</button>
-<button type="button" class="choice-btn" data-wmaterial="plotter_color_oracal">Цветная (ORACAL)</button>
-</div>
-</div>
-
 <select id="wMaterial" class="hidden">
 <option value="" selected>Выберите материал</option>
 <option value="film_gloss">Пленка глянцевая</option>
@@ -216,9 +208,6 @@
 <option value="latex_canvas">Холст (только печать)</option>
 <option value="plastic_3">Печать на пластике 3 мм</option>
 <option value="plastic_5">Печать на пластике 5 мм</option>
-<option value="plotter_white_china">Плоттерка: белая пленка (Китай)</option>
-<option value="plotter_white_oracal">Плоттерка: белая пленка (ORACAL)</option>
-<option value="plotter_color_oracal">Плоттерка: цветная пленка (ORACAL)</option>
 </select>
 
 <div id="wPostWrap" class="hidden">
@@ -339,8 +328,38 @@
 </section>
 
 <section id="tab-contour" class="tab-panel">
-<h3>Печать + контурная резка</h3>
-<div class="price">Раздел подготовлен. Заполним параметры отдельно.</div>
+<h3>Плоттерка</h3>
+<label>Материал</label>
+<div id="plotterMaterialButtons" class="choice-row"></div>
+<select id="plotterMaterial" class="hidden">
+<option value="" selected>Выберите материал</option>
+<option value="plotter_white_china">Белая (Китай)</option>
+<option value="plotter_white_oracal">Белая (ORACAL)</option>
+<option value="plotter_color_oracal">Цветная (ORACAL)</option>
+</select>
+
+<div id="plotterSizeWrap" class="hidden">
+<label>Размер</label>
+<div id="plotterPresetButtons" class="choice-row"></div>
+<select id="plotterPreset" class="hidden"><option value="custom" selected>Произвольный</option><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option></select>
+<div id="plotterCustomSize"><label>Ширина (м)</label><input id="plotterWidth" type="number" value="1" step="0.01"><label>Высота (м)</label><input id="plotterHeight" type="number" value="1" step="0.01"></div>
+</div>
+
+<label>Количество</label><input id="plotterQty" type="number" value="1">
+<label>Скидка / наценка %</label><input id="plotterDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="plotterDiscount">
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="plotterPrice" class="price"></div>
+<div class="row"><button id="plotterBtn" onclick="savePlotter()">Добавить</button></div>
 </section>
 
 <section id="tab-lam" class="tab-panel">
@@ -735,6 +754,8 @@
 <label>Пластик 3 мм с ламинацией ₽/м²</label><input id="priceWidePlastic3Lam" type="number" value="3900">
 <label>Пластик 5 мм без ламинации ₽/м²</label><input id="priceWidePlastic5" type="number" value="4300">
 <label>Пластик 5 мм с ламинацией ₽/м²</label><input id="priceWidePlastic5Lam" type="number" value="5000">
+<br>
+<b>Плоттерка</b>
 <label>Резка пленки: белая (Китай) ₽/м²</label><input id="priceWidePlotterWhiteChina" type="number" value="1700">
 <label>Резка пленки: белая (ORACAL) ₽/м²</label><input id="priceWidePlotterWhiteOracal" type="number" value="2000">
 <label>Резка пленки: цветная (ORACAL) ₽/м²</label><input id="priceWidePlotterColorOracal" type="number" value="2000">
