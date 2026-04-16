@@ -1031,9 +1031,8 @@ function getPlotterDims(){
 }
 
 function updatePlotterControls(){
-  const hasMaterial=!!(plotterMaterial && plotterMaterial.value);
-  if(plotterSizeWrap)plotterSizeWrap.classList.toggle('hidden',!hasMaterial);
-  if(plotterCustomSize)plotterCustomSize.classList.toggle('hidden',!hasMaterial || !plotterPreset || plotterPreset.value!=='custom');
+  if(plotterSizeWrap)plotterSizeWrap.classList.remove('hidden');
+  if(plotterCustomSize)plotterCustomSize.classList.toggle('hidden',!plotterPreset || plotterPreset.value!=='custom');
   syncAllChoices();
 }
 
