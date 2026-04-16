@@ -681,6 +681,13 @@ function updateLaminationControls(){
   }
 
   if(lTypeButtons)lTypeButtons.classList.toggle('hidden',!hasMode);
+  if(lType){
+    [...lType.options].forEach(opt=>{
+      const show=hasMode && allowed.includes(opt.value);
+      opt.hidden=!show;
+      opt.disabled=!show;
+    });
+  }
   if(lTypeButtons){
     [...lTypeButtons.querySelectorAll('[data-choice-ltype]')].forEach(btn=>{
       const show=hasMode && allowed.includes(btn.dataset.choiceLtype);
@@ -699,6 +706,13 @@ function updateLaminationControls(){
   if(!allowed.includes(lType.value))lType.value=allowed[0];
   const type=lType.value;
   const isSpiral=(type==='spiral_plastic' || type==='spiral_metal');
+  const ltA4Option=lSize?[...lSize.options].find(o=>o.value==='ltA4'):null;
+  const allowLtA4=(mode==='lam' && type==='lam_gloss');
+  if(ltA4Option){
+    ltA4Option.hidden=!allowLtA4;
+    ltA4Option.disabled=!allowLtA4;
+    if(!allowLtA4 && lSize.value==='ltA4')lSize.value='A4';
+  }
   lSizeWrap.classList.toggle('hidden',type==='hard_cover');
   lSize.disabled=(type==='hard_cover');
   lSheetsWrap.classList.toggle('hidden',!isSpiral);
