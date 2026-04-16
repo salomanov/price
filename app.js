@@ -673,6 +673,12 @@ function updateLaminationControls(){
   const mode=(lMode?lMode.value:'');
   const hasMode=(mode==='lam' || mode==='bind');
   const allowed=(mode==='lam')?['lam_gloss','lam_matte']:['spiral_plastic','spiral_metal','hard_cover'];
+  const editingLam=(editIndex!==null && orders[editIndex] && orders[editIndex].type==='lam');
+
+  if(lamBtn){
+    if(mode==='bind')lamBtn.innerText=editingLam?'Изменить переплёт':'Добавить переплёт';
+    else lamBtn.innerText=editingLam?'Изменить ламинацию':'Добавить ламинацию';
+  }
 
   if(lTypeButtons)lTypeButtons.classList.toggle('hidden',!hasMode);
   if(lTypeButtons){
@@ -1451,11 +1457,12 @@ function saveItem(item){
   render();
   editIndex=null;
   visitBtn.innerText=printBtn.innerText=wideBtn.innerText='Добавить';
-  lamBtn.innerText=bfBtn.innerText=sBtn.innerText='Добавить';
+  bfBtn.innerText=sBtn.innerText='Добавить';
   if(plotterBtn)plotterBtn.innerText='Добавить';
   if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(wfBtn)wfBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
+  updateLaminationControls();
 }
 
 function editItem(i){
@@ -1568,7 +1575,7 @@ function editItem(i){
     lSize.value=p.size;
     lSheets.value=p.sheets;
     lDiscount.value=p.disc;
-    lamBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+    updateLaminationControls();
   }
   if(o.type==='design'){
     switchTab('design');
