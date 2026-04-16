@@ -1423,7 +1423,8 @@ function saveLam(){
   const qty=lQty.value;
   const sizeLabel=lType.value==='hard_cover'?'':`, ${lSize.options[lSize.selectedIndex].text}`;
   const sheetsLabel=lSheetsWrap.classList.contains('hidden')?'':`, листов: ${lSheets.value}`;
-  const title=lType.options[lType.selectedIndex].text;
+  const modeTitle=(lMode && lMode.value==='bind')?'Переплёт':'Ламинация';
+  const title=`${modeTitle}: ${lType.options[lType.selectedIndex].text}`;
   const desc=`${qty} шт${sizeLabel}${sheetsLabel}`;
   saveItem({type:'lam',title,desc,price,params:{mode:(lMode?lMode.value:''),type:lType.value,qty,size:lSize.value,sheets:lSheets.value,disc:lDiscount.value}});
 }
