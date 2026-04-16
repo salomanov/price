@@ -160,8 +160,6 @@ const priceWidePlotterColorOracal=document.getElementById('priceWidePlotterColor
 const priceWideCut=document.getElementById('priceWideCut');
 const priceWideMinItem=document.getElementById('priceWideMinItem');
 
-const wfMainButtons=document.getElementById('wfMainButtons');
-const wfBannerWrap=document.getElementById('wfBannerWrap');
 const wfPaperWrap=document.getElementById('wfPaperWrap');
 const wfType=document.getElementById('wfType');
 const wfQty=document.getElementById('wfQty');
@@ -169,7 +167,6 @@ const wfQtyLabel=document.getElementById('wfQtyLabel');
 const wfDiscount=document.getElementById('wfDiscount');
 const wfPrice=document.getElementById('wfPrice');
 const wfBtn=document.getElementById('wfBtn');
-const wfBannerButtons=document.getElementById('wfBannerButtons');
 const wfPaperMainButtons=document.getElementById('wfPaperMainButtons');
 const wfPhotoButtons=document.getElementById('wfPhotoButtons');
 const wfPreset=document.getElementById('wfPreset');
@@ -178,18 +175,30 @@ const wfSizeWrap=document.getElementById('wfSizeWrap');
 const wfCustomSize=document.getElementById('wfCustomSize');
 const wfWidth=document.getElementById('wfWidth');
 const wfHeight=document.getElementById('wfHeight');
-const wfEyeletsWrap=document.getElementById('wfEyeletsWrap');
-const wfEyelets=document.getElementById('wfEyelets');
-const wfEyeletsEnabled=document.getElementById('wfEyeletsEnabled');
-const wfWeldLen=document.getElementById('wfWeldLen');
-const wfTrimLen=document.getElementById('wfTrimLen');
-const wfEyeletsBtn=document.getElementById('wfEyeletsBtn');
-const wfWeldBtn=document.getElementById('wfWeldBtn');
-const wfTrimBtn=document.getElementById('wfTrimBtn');
 const wfPaperFormat=document.getElementById('wfPaperFormat');
 const wfPaperFormatButtons=document.getElementById('wfPaperFormatButtons');
 const wfPaperFormatWrap=document.getElementById('wfPaperFormatWrap');
 const wfPaperFormatLabel=document.getElementById('wfPaperFormatLabel');
+
+const solventType=document.getElementById('solventType');
+const solventTypeButtons=document.getElementById('solventTypeButtons');
+const solventPreset=document.getElementById('solventPreset');
+const solventPresetButtons=document.getElementById('solventPresetButtons');
+const solventCustomSize=document.getElementById('solventCustomSize');
+const solventWidth=document.getElementById('solventWidth');
+const solventHeight=document.getElementById('solventHeight');
+const solventQty=document.getElementById('solventQty');
+const solventDiscount=document.getElementById('solventDiscount');
+const solventPrice=document.getElementById('solventPrice');
+const solventBtn=document.getElementById('solventBtn');
+const solventEyeletsWrap=document.getElementById('solventEyeletsWrap');
+const solventEyelets=document.getElementById('solventEyelets');
+const solventEyeletsEnabled=document.getElementById('solventEyeletsEnabled');
+const solventWeldLen=document.getElementById('solventWeldLen');
+const solventTrimLen=document.getElementById('solventTrimLen');
+const solventEyeletsBtn=document.getElementById('solventEyeletsBtn');
+const solventWeldBtn=document.getElementById('solventWeldBtn');
+const solventTrimBtn=document.getElementById('solventTrimBtn');
 
 const wfBanner440=document.getElementById('wf_banner_440');
 const wfBannerCast=document.getElementById('wf_banner_cast');
@@ -1116,20 +1125,13 @@ function getWfDims(){
   return {w:1,h:1};
 }
 
-function getWfMainByType(type){
-  if(!type)return '';
-  if(type.startsWith('banner_'))return 'banner';
-  if(type.startsWith('paper_'))return 'paper';
-  return '';
-}
-
-function syncWideFmtMainButtons(){
-  const main=getWfMainByType(wfType?wfType.value:'');
-  if(wfMainButtons){
-    [...wfMainButtons.querySelectorAll('[data-wfmain]')].forEach(btn=>{
-      btn.classList.toggle('active',btn.dataset.wfmain===main);
-    });
-  }
+function getSolventDims(){
+  if(!solventPreset || solventPreset.value==='custom')return {w:num(solventWidth,1),h:num(solventHeight,1)};
+  if(solventPreset.value==='A0')return {w:0.841,h:1.189};
+  if(solventPreset.value==='A1')return {w:0.594,h:0.841};
+  if(solventPreset.value==='A2')return {w:0.420,h:0.594};
+  if(solventPreset.value==='A3')return {w:0.297,h:0.420};
+  return {w:1,h:1};
 }
 
 function syncWideFmtTypeButtons(){
@@ -1141,82 +1143,65 @@ function syncWideFmtTypeButtons(){
 }
 
 function bindWideFmtTypeButtons(){
-  if(wfMainButtons){
-    wfMainButtons.addEventListener('click',(e)=>{
-      const btn=e.target.closest('[data-wfmain]');
-      if(!btn)return;
-      wfType.value=(btn.dataset.wfmain==='banner')?'banner_440':'paper_plain';
-      updateWideFmtControls();
-      syncWideFmtMainButtons();
-      syncWideFmtTypeButtons();
-      calc();
-    });
-  }
-
   if(wfPaperMainButtons){
     wfPaperMainButtons.addEventListener('click',(e)=>{
       const btn=e.target.closest('[data-wfpaper]');
       if(!btn)return;
       wfType.value=(btn.dataset.wfpaper==='plain')?'paper_plain':'paper_photo_matte';
       updateWideFmtControls();
-      syncWideFmtMainButtons();
       syncWideFmtTypeButtons();
       calc();
     });
   }
 
-  [wfBannerButtons,wfPhotoButtons].forEach(container=>{
-    if(!container)return;
-    container.addEventListener('click',(e)=>{
+  if(wfPhotoButtons){
+    wfPhotoButtons.addEventListener('click',(e)=>{
       const btn=e.target.closest('[data-wftype]');
       if(!btn)return;
       wfType.value=btn.dataset.wftype;
       updateWideFmtControls();
-      syncWideFmtMainButtons();
       syncWideFmtTypeButtons();
       calc();
     });
-  });
+  }
 
-  syncWideFmtMainButtons();
   syncWideFmtTypeButtons();
 }
 
-function syncWideFmtPostButtons(){
-  if(wfEyeletsBtn && wfEyeletsEnabled)wfEyeletsBtn.classList.toggle('active',!!wfEyeletsEnabled.checked);
-  if(wfWeldBtn && wfWeldLen)wfWeldBtn.classList.toggle('active',!!wfWeldLen.checked);
-  if(wfTrimBtn && wfTrimLen)wfTrimBtn.classList.toggle('active',!!wfTrimLen.checked);
-  if(wfEyeletsWrap)wfEyeletsWrap.classList.toggle('hidden',!(wfEyeletsEnabled && wfEyeletsEnabled.checked));
-  if(wfEyelets)wfEyelets.classList.toggle('hidden',!(wfEyeletsEnabled && wfEyeletsEnabled.checked));
+function syncSolventPostButtons(){
+  if(solventEyeletsBtn && solventEyeletsEnabled)solventEyeletsBtn.classList.toggle('active',!!solventEyeletsEnabled.checked);
+  if(solventWeldBtn && solventWeldLen)solventWeldBtn.classList.toggle('active',!!solventWeldLen.checked);
+  if(solventTrimBtn && solventTrimLen)solventTrimBtn.classList.toggle('active',!!solventTrimLen.checked);
+  if(solventEyeletsWrap)solventEyeletsWrap.classList.toggle('hidden',!(solventEyeletsEnabled && solventEyeletsEnabled.checked));
+  if(solventEyelets)solventEyelets.classList.toggle('hidden',!(solventEyeletsEnabled && solventEyeletsEnabled.checked));
+}
+
+function updateSolventControls(){
+  if(solventCustomSize)solventCustomSize.classList.toggle('hidden',!solventPreset || solventPreset.value!=='custom');
+  syncSolventPostButtons();
+  syncAllChoices();
 }
 
 function updateWideFmtControls(){
   if(!wfType)return;
   const type=wfType.value||'';
-  const main=getWfMainByType(type);
-  const isBanner=(main==='banner');
-  const isPaper=(main==='paper');
-  const isPhoto=(type.startsWith('paper_photo_'));
+  const isPhoto=type.startsWith('paper_photo_');
   const isCustom=(!wfPreset || wfPreset.value==='custom');
 
-  if(wfSizeWrap)wfSizeWrap.classList.toggle('hidden',!main);
-  if(wfBannerWrap)wfBannerWrap.classList.toggle('hidden',!isBanner);
-  if(wfPaperWrap)wfPaperWrap.classList.toggle('hidden',!isPaper);
-  if(wfPhotoButtons)wfPhotoButtons.classList.toggle('hidden',!isPaper || !isPhoto);
+  if(wfSizeWrap)wfSizeWrap.classList.remove('hidden');
+  if(wfPaperWrap)wfPaperWrap.classList.remove('hidden');
+  if(wfPhotoButtons)wfPhotoButtons.classList.toggle('hidden',!isPhoto);
   if(wfCustomSize)wfCustomSize.classList.toggle('hidden',!isCustom);
   if(wfPaperFormatWrap)wfPaperFormatWrap.classList.add('hidden');
   if(wfPaperFormatLabel)wfPaperFormatLabel.classList.add('hidden');
 
   if(wfPreset){
     const a0=[...wfPreset.options].find(o=>o.value==='A0');
-    if(a0)a0.disabled=(isPaper && isPhoto);
+    if(a0)a0.disabled=isPhoto;
     if(a0 && a0.disabled && wfPreset.value==='A0')wfPreset.value='A1';
   }
 
-  if(wfQtyLabel){
-    if(isBanner)wfQtyLabel.innerText='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0438\u0437\u0434\u0435\u043b\u0438\u0439';
-    else wfQtyLabel.innerText='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
-  }
+  if(wfQtyLabel)wfQtyLabel.innerText='Количество';
 
   if(wfPaperMainButtons){
     [...wfPaperMainButtons.querySelectorAll('[data-wfpaper]')].forEach(btn=>{
@@ -1224,9 +1209,6 @@ function updateWideFmtControls(){
       btn.classList.toggle('active',should);
     });
   }
-
-  syncWideFmtMainButtons();
-  syncWideFmtPostButtons();
   syncAllChoices();
 }
 
@@ -1251,34 +1233,9 @@ function computeWideFmtPrice(){
   if(!wfType || !wfQty)return null;
   const type=wfType.value||'';
   const qty=Math.max(0,num(wfQty,0));
-  if(!type || qty<=0)return null;
+  if(!type || qty<=0 || !type.startsWith('paper_'))return null;
 
   let total=null;
-
-  if(type.startsWith('banner_')){
-    const dims=getWfDims();
-    const area=Math.max(0,dims.w*dims.h);
-    if(area<=0)return null;
-
-    let rate=0;
-    if(type==='banner_440')rate=num(wfBanner440,450);
-    if(type==='banner_cast')rate=num(wfBannerCast,550);
-    if(type==='banner_latex')rate=num(wfBannerLatex,1200);
-    if(rate<=0)return null;
-
-    const perimeter=Math.max(0,2*(dims.w+dims.h));
-    const eyeletStepCm=Math.max(0,num(wfEyelets,0));
-    const hCm=Math.max(0,dims.h*100);
-    const wCm=Math.max(0,dims.w*100);
-    const eyeletsCount=(wfEyeletsEnabled && wfEyeletsEnabled.checked && eyeletStepCm>0)
-      ? Math.max(4,(roundHalfDown(hCm/eyeletStepCm)+roundHalfDown(wCm/eyeletStepCm))*2)
-      : 0;
-    const addEyelets=eyeletsCount*num(wfPostEyelet,20);
-    const addWeld=(wfWeldLen && wfWeldLen.checked)?perimeter*num(wfPostWeld,100):0;
-    const addTrim=(wfTrimLen && wfTrimLen.checked)?perimeter*num(wfPostTrim,30):0;
-
-    total=(area*rate+addEyelets+addWeld+addTrim)*qty;
-  }
 
   if(type.startsWith('paper_')){
     const useCustom=(!wfPreset || wfPreset.value==='custom');
@@ -1312,6 +1269,36 @@ function computeWideFmtPrice(){
 
   if(total===null)return null;
   return Math.round(total*(1+(num(wfDiscount,0)/100)));
+}
+
+function computeSolventPrice(){
+  if(!solventType || !solventQty)return null;
+  const type=solventType.value||'';
+  const qty=Math.max(0,num(solventQty,0));
+  if(!type || qty<=0)return null;
+
+  const dims=getSolventDims();
+  const area=Math.max(0,dims.w*dims.h);
+  if(area<=0)return null;
+
+  let rate=0;
+  if(type==='banner_440')rate=num(wfBanner440,450);
+  if(type==='banner_cast')rate=num(wfBannerCast,550);
+  if(type==='banner_latex')rate=num(wfBannerLatex,1200);
+  if(rate<=0)return null;
+
+  const perimeter=Math.max(0,2*(dims.w+dims.h));
+  const eyeletStepCm=Math.max(0,num(solventEyelets,0));
+  const hCm=Math.max(0,dims.h*100);
+  const wCm=Math.max(0,dims.w*100);
+  const eyeletsCount=(solventEyeletsEnabled && solventEyeletsEnabled.checked && eyeletStepCm>0)
+    ? Math.max(4,(roundHalfDown(hCm/eyeletStepCm)+roundHalfDown(wCm/eyeletStepCm))*2)
+    : 0;
+  const addEyelets=eyeletsCount*num(wfPostEyelet,20);
+  const addWeld=(solventWeldLen && solventWeldLen.checked)?perimeter*num(wfPostWeld,100):0;
+  const addTrim=(solventTrimLen && solventTrimLen.checked)?perimeter*num(wfPostTrim,30):0;
+  const total=(area*rate+addEyelets+addWeld+addTrim)*qty;
+  return Math.round(total*(1+(num(solventDiscount,0)/100)));
 }
 
 function calc(){
@@ -1356,6 +1343,11 @@ function calc(){
 
   const wfPriceVal=computeWideFmtPrice();
   if(wfPriceVal===null){wfPrice.innerText='\u0426\u0435\u043d\u0430: -';wfBtn.disabled=true;}else{wfPrice.innerText='\u0426\u0435\u043d\u0430: '+wfPriceVal+' \u20bd';wfBtn.disabled=false;}
+
+  const solventPriceVal=computeSolventPrice();
+  if(solventPrice && solventBtn){
+    if(solventPriceVal===null){solventPrice.innerText='Цена: -';solventBtn.disabled=true;}else{solventPrice.innerText='Цена: '+solventPriceVal+' ₽';solventBtn.disabled=false;}
+  }
 }
 
 function saveVisit(){
@@ -1408,9 +1400,25 @@ function saveWideFmt(){
   const desc=`${wfType.options[wfType.selectedIndex].text}, ${size}, ${wfQty.value} \u0448\u0442`;
   saveItem({type:'widefmt',title:'\u0428\u0438\u0440\u043e\u043a\u043e\u0444\u043e\u0440\u043c\u0430\u0442\u043a\u0430',desc,price,params:{
     type:wfType.value,qty:wfQty.value,disc:wfDiscount.value,preset:(wfPreset?wfPreset.value:'custom'),
-    w:(wfWidth?wfWidth.value:1),h:(wfHeight?wfHeight.value:1),
-    eye:(wfEyelets?wfEyelets.value:0),eyeOn:!!(wfEyeletsEnabled&&wfEyeletsEnabled.checked),
-    weld:!!(wfWeldLen&&wfWeldLen.checked),trim:!!(wfTrimLen&&wfTrimLen.checked)
+    w:(wfWidth?wfWidth.value:1),h:(wfHeight?wfHeight.value:1)
+  }});
+}
+
+function saveSolvent(){
+  const price=computeSolventPrice();
+  if(price===null)return;
+  const size=(solventPreset && solventPreset.value==='custom')?`${solventWidth.value}x${solventHeight.value} м`:(solventPreset?solventPreset.value:'A0');
+  const services=[];
+  if(solventEyeletsEnabled && solventEyeletsEnabled.checked)services.push(`люверсы ${solventEyelets.value} см`);
+  if(solventWeldLen && solventWeldLen.checked)services.push('проклейка');
+  if(solventTrimLen && solventTrimLen.checked)services.push('обрезка');
+  const servicesText=services.length?`, ${services.join(', ')}`:'';
+  const desc=`${solventType.options[solventType.selectedIndex].text}, ${size}, ${solventQty.value} шт${servicesText}`;
+  saveItem({type:'solvent',title:'Сольвент',desc,price,params:{
+    type:solventType.value,qty:solventQty.value,disc:solventDiscount.value,preset:(solventPreset?solventPreset.value:'custom'),
+    w:(solventWidth?solventWidth.value:1),h:(solventHeight?solventHeight.value:1),
+    eye:(solventEyelets?solventEyelets.value:0),eyeOn:!!(solventEyeletsEnabled&&solventEyeletsEnabled.checked),
+    weld:!!(solventWeldLen&&solventWeldLen.checked),trim:!!(solventTrimLen&&solventTrimLen.checked)
   }});
 }
 function saveLamination(){
@@ -1469,6 +1477,7 @@ function saveItem(item){
   if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(wfBtn)wfBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
+  if(solventBtn)solventBtn.innerText='Добавить';
   updateLaminationControls();
   updateBindingControls();
 }
@@ -1539,20 +1548,48 @@ function editItem(i){
     if(plotterBtn)plotterBtn.innerText='Изменить';
   }
   if(o.type==='widefmt'){
-    switchTab('widefmt');
     const p=o.params||{};
-    if(wfType)wfType.value=p.type||wfType.value;
-    if(wfQty)wfQty.value=p.qty||wfQty.value;
-    if(wfDiscount)wfDiscount.value=p.disc||0;
-    if(wfPreset)wfPreset.value=p.preset||'custom';
-    if(wfWidth)wfWidth.value=p.w||1;
-    if(wfHeight)wfHeight.value=p.h||1;
-    if(wfEyelets)wfEyelets.value=p.eye||40;
-    if(wfEyeletsEnabled)wfEyeletsEnabled.checked=!!p.eyeOn;
-    if(wfWeldLen)wfWeldLen.checked=!!p.weld;
-    if(wfTrimLen)wfTrimLen.checked=!!p.trim;
-    updateWideFmtControls();
-    if(wfBtn)wfBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+    if((p.type||'').startsWith('banner_')){
+      switchTab('solvent');
+      if(solventType)solventType.value=p.type||solventType.value;
+      if(solventQty)solventQty.value=p.qty||solventQty.value;
+      if(solventDiscount)solventDiscount.value=p.disc||0;
+      if(solventPreset)solventPreset.value=p.preset||'custom';
+      if(solventWidth)solventWidth.value=p.w||1;
+      if(solventHeight)solventHeight.value=p.h||1;
+      if(solventEyelets)solventEyelets.value=p.eye||40;
+      if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
+      if(solventWeldLen)solventWeldLen.checked=!!p.weld;
+      if(solventTrimLen)solventTrimLen.checked=!!p.trim;
+      updateSolventControls();
+      if(solventBtn)solventBtn.innerText='Изменить';
+    }else{
+      switchTab('widefmt');
+      if(wfType)wfType.value=p.type||wfType.value;
+      if(wfQty)wfQty.value=p.qty||wfQty.value;
+      if(wfDiscount)wfDiscount.value=p.disc||0;
+      if(wfPreset)wfPreset.value=p.preset||'custom';
+      if(wfWidth)wfWidth.value=p.w||1;
+      if(wfHeight)wfHeight.value=p.h||1;
+      updateWideFmtControls();
+      if(wfBtn)wfBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
+    }
+  }
+  if(o.type==='solvent'){
+    switchTab('solvent');
+    const p=o.params||{};
+    if(solventType)solventType.value=p.type||solventType.value;
+    if(solventQty)solventQty.value=p.qty||solventQty.value;
+    if(solventDiscount)solventDiscount.value=p.disc||0;
+    if(solventPreset)solventPreset.value=p.preset||'custom';
+    if(solventWidth)solventWidth.value=p.w||1;
+    if(solventHeight)solventHeight.value=p.h||1;
+    if(solventEyelets)solventEyelets.value=p.eye||40;
+    if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
+    if(solventWeldLen)solventWeldLen.checked=!!p.weld;
+    if(solventTrimLen)solventTrimLen.checked=!!p.trim;
+    updateSolventControls();
+    if(solventBtn)solventBtn.innerText='Изменить';
   }
   if(o.type==='canvas'){
     switchTab('canvas');
@@ -1889,7 +1926,8 @@ function bindCalc(){
   const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,cMode,cSize,cTier,cHeight,cWidth,cRate,cFrame,cFramePrice,cRoundStep,cApply20,cFormulaRate,cFormulaFrame,cFormulaRound,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
     plotterMaterial,plotterPreset,plotterWidth,plotterHeight,plotterQty,plotterDiscount,
     lamType,lamSize,lamQty,lamDiscount,bindType,bindSize,bindQty,bindSheets,bindDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
-    wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfEyelets,wfEyeletsEnabled,wfWeldLen,wfTrimLen,wfPaperFormat,
+    wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfPaperFormat,
+    solventType,solventPreset,solventWidth,solventHeight,solventQty,solventDiscount,solventEyelets,solventEyeletsEnabled,solventWeldLen,solventTrimLen,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
     wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA3Photo,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
@@ -1936,8 +1974,13 @@ function bindCalc(){
   if(plotterPreset)plotterPreset.addEventListener('change',()=>{updatePlotterControls();calc();});
   if(lamType)lamType.addEventListener('change',()=>{updateLaminationControls();calc();});
   if(bindType)bindType.addEventListener('change',()=>{updateBindingControls();calc();});
-  if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();syncWideFmtMainButtons();calc();});
+  if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();calc();});
   if(wfPreset)wfPreset.addEventListener('change',()=>{updateWideFmtControls();calc();});
+  if(solventType)solventType.addEventListener('change',()=>{updateSolventControls();calc();});
+  if(solventPreset)solventPreset.addEventListener('change',()=>{updateSolventControls();calc();});
+  if(solventEyeletsBtn)solventEyeletsBtn.addEventListener('click',()=>{if(solventEyeletsEnabled){solventEyeletsEnabled.checked=!solventEyeletsEnabled.checked;updateSolventControls();calc();}});
+  if(solventWeldBtn)solventWeldBtn.addEventListener('click',()=>{if(solventWeldLen){solventWeldLen.checked=!solventWeldLen.checked;updateSolventControls();calc();}});
+  if(solventTrimBtn)solventTrimBtn.addEventListener('click',()=>{if(solventTrimLen){solventTrimLen.checked=!solventTrimLen.checked;updateSolventControls();calc();}});
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
   sType.addEventListener('change',()=>{updateSouvenirControls();calc();});
 
@@ -1973,6 +2016,8 @@ setupChoice(sBadgeSize,sBadgeSizeButtons,'sbadge');
 setupChoice(sMagQty,sMagQtyButtons,'smagqty');
 setupChoice(wfPreset,wfPresetButtons,'wfpreset');
 setupChoice(wfPaperFormat,wfPaperFormatButtons,'wfpformat');
+setupChoice(solventType,solventTypeButtons,'solventtype');
+setupChoice(solventPreset,solventPresetButtons,'solventpreset');
 
 populateVisitQty();
 updatePrintControls();
@@ -1983,6 +2028,7 @@ populateBfQty();
 updateSouvenirControls();
 updatePlotterControls();
 updateWideFmtControls();
+updateSolventControls();
 
 tabButtons.forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 if(priceBtn)priceBtn.addEventListener('click',openSettings);

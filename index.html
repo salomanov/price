@@ -23,6 +23,7 @@
 <button class="tab-btn" data-tab="wide">Латексная печать</button>
 <button class="tab-btn" data-tab="contour">Плоттерка</button>
 <button class="tab-btn" data-tab="widefmt">Широкоформатка</button>
+<button class="tab-btn" data-tab="solvent">Сольвент</button>
 <button class="tab-btn" data-tab="lam">Ламинация</button>
 <button class="tab-btn" data-tab="bind">Переплёт</button>
 <button class="tab-btn" data-tab="bf">Офсет</button>
@@ -247,31 +248,7 @@
 
 <section id="tab-widefmt" class="tab-panel">
 <h3>Широкоформатка</h3>
-<label>Тип</label>
-<div id="wfMainButtons" class="choice-row">
-<button type="button" class="choice-btn" data-wfmain="banner">&#1041;&#1072;&#1085;&#1085;&#1077;&#1088;</button>
-<button type="button" class="choice-btn" data-wfmain="paper">&#1041;&#1091;&#1084;&#1072;&#1075;&#1072;</button>
-</div>
-<div id="wfBannerWrap" class="hidden">
-<div class="wide-group-title">&#1041;&#1072;&#1085;&#1085;&#1077;&#1088;</div>
-<div id="wfBannerButtons" class="choice-row">
-<button type="button" class="choice-btn" data-wftype="banner_440">440 (&#1050;&#1080;&#1090;&#1072;&#1081;)</button>
-<button type="button" class="choice-btn" data-wftype="banner_cast">&#1051;&#1080;&#1090;&#1086;&#1081;</button>
-<button type="button" class="choice-btn" data-wftype="banner_latex">&#1051;&#1072;&#1090;&#1077;&#1082;&#1089;</button>
-</div>
-<div class="wide-group-title" style="margin-top:8px">&#1059;&#1089;&#1083;&#1091;&#1075;&#1080; &#1082; &#1073;&#1072;&#1085;&#1085;&#1077;&#1088;&#1091;</div>
-<div class="choice-row">
-<button type="button" id="wfEyeletsBtn" class="choice-btn cta-toggle">&#1051;&#1102;&#1074;&#1077;&#1088;&#1089;&#1099;</button>
-<button type="button" id="wfWeldBtn" class="choice-btn cta-toggle">&#1055;&#1088;&#1086;&#1082;&#1083;&#1077;&#1081;&#1082;&#1072;</button>
-<button type="button" id="wfTrimBtn" class="choice-btn cta-toggle">&#1054;&#1073;&#1088;&#1077;&#1079;&#1082;&#1072;</button>
-</div>
-<label id="wfEyeletsWrap" class="hidden">&#1064;&#1072;&#1075; &#1083;&#1102;&#1074;&#1077;&#1088;&#1089;&#1086;&#1074;, &#1089;&#1084;</label><input id="wfEyelets" class="hidden" type="number" value="40" step="1" min="0">
-<input id="wfEyeletsEnabled" type="checkbox" class="hidden">
-<input id="wfWeldLen" type="checkbox" class="hidden">
-<input id="wfTrimLen" type="checkbox" class="hidden">
-</div>
-
-<div id="wfPaperWrap" class="hidden">
+<div id="wfPaperWrap">
 <div class="wide-group-title">&#1041;&#1091;&#1084;&#1072;&#1075;&#1072;</div>
 <label>&#1058;&#1080;&#1087; &#1073;&#1091;&#1084;&#1072;&#1075;&#1080;</label>
 <div id="wfPaperMainButtons" class="choice-row">
@@ -295,9 +272,6 @@
 
 <select id="wfType" class="hidden">
 <option value="" selected>Выберите тип</option>
-<option value="banner_440">Баннер сольвентный 440 (Китай)</option>
-<option value="banner_cast">Баннер сольвентный литой</option>
-<option value="banner_latex">Баннер интерьерный латексный</option>
 <option value="paper_photo_matte">Фотобумага матовая</option>
 <option value="paper_photo_gloss">Фотобумага глянцевая</option>
 <option value="paper_photo_satin">Фотобумага сатин</option>
@@ -326,6 +300,50 @@
 </div>
 <div id="wfPrice" class="price"></div>
 <div class="row"><button id="wfBtn" onclick="saveWideFmt()">Добавить</button></div>
+</section>
+
+<section id="tab-solvent" class="tab-panel">
+<h3>Сольвент</h3>
+<label>Тип баннера</label>
+<div id="solventTypeButtons" class="choice-row"></div>
+<select id="solventType" class="hidden">
+<option value="banner_440">440 (Китай)</option>
+<option value="banner_cast">Литой</option>
+<option value="banner_latex">Латекс</option>
+</select>
+
+<div class="wide-group-title" style="margin-top:8px">Услуги к баннеру</div>
+<div class="choice-row">
+<button type="button" id="solventEyeletsBtn" class="choice-btn cta-toggle">Люверсы</button>
+<button type="button" id="solventWeldBtn" class="choice-btn cta-toggle">Проклейка</button>
+<button type="button" id="solventTrimBtn" class="choice-btn cta-toggle">Обрезка</button>
+</div>
+<label id="solventEyeletsWrap" class="hidden">Шаг люверсов, см</label><input id="solventEyelets" class="hidden" type="number" value="40" step="1" min="0">
+<input id="solventEyeletsEnabled" type="checkbox" class="hidden">
+<input id="solventWeldLen" type="checkbox" class="hidden">
+<input id="solventTrimLen" type="checkbox" class="hidden">
+
+<label>Размер</label>
+<div id="solventPresetButtons" class="choice-row"></div>
+<select id="solventPreset" class="hidden"><option value="custom" selected>Произвольный</option><option value="A0">A0</option><option value="A1">A1</option><option value="A2">A2</option><option value="A3">A3</option></select>
+<div id="solventCustomSize"><label>Ширина (м)</label><input id="solventWidth" type="number" value="1" step="0.01"><label>Высота (м)</label><input id="solventHeight" type="number" value="1" step="0.01"></div>
+
+<label>Количество изделий</label>
+<input id="solventQty" type="number" value="1" step="any" min="0">
+<label>Скидка / наценка %</label><input id="solventDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="solventDiscount">
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="solventPrice" class="price"></div>
+<div class="row"><button id="solventBtn" onclick="saveSolvent()">Добавить</button></div>
 </section>
 
 <section id="tab-contour" class="tab-panel">
@@ -791,13 +809,15 @@
 <label>Резка в размер ₽/пог.м</label><input id="priceWideCut" type="number" value="30">
 <label>Минимальная стоимость изделия ₽/шт</label><input id="priceWideMinItem" type="number" value="300">
 <br>
-<b>Широкоформатка (стр. 3)</b>
+<b>Сольвент</b>
 <label>Баннер 440 (Китай) ₽/м²</label><input id="wf_banner_440" type="number" value="450">
 <label>Баннер литой ₽/м²</label><input id="wf_banner_cast" type="number" value="550">
 <label>Баннер интерьерный латекс ₽/м²</label><input id="wf_banner_latex" type="number" value="1200">
 <label>Люверс 10 мм ₽/шт</label><input id="wf_post_eyelet" type="number" value="20">
 <label>Проклейка полотна ₽/пог.м</label><input id="wf_post_weld" type="number" value="100">
 <label>Обрезка по периметру ₽/пог.м</label><input id="wf_post_trim" type="number" value="30">
+<br>
+<b>Широкоформатка</b>
 <label>A1 фотобумага (1-2 шт) ₽/шт</label><input id="wf_water_a1_photo_1_2" type="number" value="420">
 <label>A2 фотобумага (1-2 шт) ₽/шт</label><input id="wf_water_a2_photo_1_2" type="number" value="240">
 <label>A2 фотобумага (от 3 шт) ₽/шт</label><input id="wf_water_a2_photo_3p" type="number" value="210">
