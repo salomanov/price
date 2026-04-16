@@ -90,6 +90,7 @@ const plotterPrice=document.getElementById('plotterPrice');
 const plotterBtn=document.getElementById('plotterBtn');
 
 const lMode=document.getElementById('lMode');
+const lHeading=document.getElementById('lHeading');
 const lType=document.getElementById('lType');
 const lSize=document.getElementById('lSize');
 const lSizeWrap=document.getElementById('lSizeWrap');
@@ -100,7 +101,6 @@ const lSheets=document.getElementById('lSheets');
 const lDiscount=document.getElementById('lDiscount');
 const lPrice=document.getElementById('lPrice');
 const lamBtn=document.getElementById('lamBtn');
-const lModeButtons=document.getElementById('lModeButtons');
 const lTypeButtons=document.getElementById('lTypeButtons');
 const lSizeButtons=document.getElementById('lSizeButtons');
 
@@ -382,8 +382,15 @@ function saveDesign(){
 const tabButtons=[...document.querySelectorAll('.tab-btn')];
 const tabPanels=[...document.querySelectorAll('.tab-panel')];
 function switchTab(name){
+  const actualName=(name==='bind')?'lam':name;
+  if(name==='lam' || name==='bind'){
+    if(lMode)lMode.value=name;
+    if(lHeading)lHeading.textContent=(name==='bind')?'Переплёт':'Ламинация';
+    updateLaminationControls();
+    calc();
+  }
   tabButtons.forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
-  tabPanels.forEach(p=>p.classList.toggle('active',p.id===`tab-${name}`));
+  tabPanels.forEach(p=>p.classList.toggle('active',p.id===`tab-${actualName}`));
 }
 
 
@@ -1412,7 +1419,7 @@ function saveLam(){
   const sheetsLabel=lSheetsWrap.classList.contains('hidden')?'':`, листов: ${lSheets.value}`;
   const title=lType.options[lType.selectedIndex].text;
   const desc=`${qty} шт${sizeLabel}${sheetsLabel}`;
-  saveItem({type:'lam',title,desc,price,params:{type:lType.value,qty,size:lSize.value,sheets:lSheets.value,disc:lDiscount.value}});
+  saveItem({type:'lam',title,desc,price,params:{mode:(lMode?lMode.value:''),type:lType.value,qty,size:lSize.value,sheets:lSheets.value,disc:lDiscount.value}});
 }
 
 function saveBf(){
@@ -1549,9 +1556,11 @@ function editItem(i){
     if(canvasBtn)canvasBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
   }
   if(o.type==='lam'){
-    switchTab('lam');
     const p=o.params||{};
-    if(lMode)lMode.value=p.mode||'';
+    const mode=p.mode || ((p.type==='lam_gloss' || p.type==='lam_matte')?'lam':'bind');
+    switchTab(mode);
+    if(lMode)lMode.value=mode;
+    if(lHeading)lHeading.textContent=(mode==='bind')?'Переплёт':'Ламинация';
     updateLaminationControls();
     lType.value=p.type;
     updateLaminationControls();
@@ -1929,7 +1938,6 @@ setupChoice(cTier,cTierButtons,'ctier');
 setupChoice(wPreset,wPresetButtons,'wpreset');
 setupChoice(plotterMaterial,plotterMaterialButtons,'plottermaterial');
 setupChoice(plotterPreset,plotterPresetButtons,'plotterpreset');
-setupChoice(lMode,lModeButtons,'lmode');
 setupChoice(lType,lTypeButtons,'ltype');
 setupChoice(lSize,lSizeButtons,'lsize');
 setupChoice(bfType,bfTypeButtons,'bftype');
