@@ -364,32 +364,23 @@
 </section>
 
 <section id="tab-lam" class="tab-panel">
-<h3 id="lHeading">Ламинация</h3>
-<select id="lMode" class="hidden">
-<option value="" selected>&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;</option>
-<option value="lam">&#1051;&#1072;&#1084;&#1080;&#1085;&#1072;&#1094;&#1080;&#1103;</option>
-<option value="bind">&#1055;&#1077;&#1088;&#1077;&#1087;&#1083;&#1105;&#1090;</option>
-</select>
+<h3>Ламинация</h3>
 <label>Услуга</label>
-<div id="lTypeButtons" class="choice-row"></div>
-<select id="lType" class="hidden">
+<div id="lamTypeButtons" class="choice-row"></div>
+<select id="lamType" class="hidden">
 <option value="lam_gloss">Глянцевая 100 мкм</option>
 <option value="lam_matte">Матовая 100 мкм</option>
-<option value="spiral_plastic">Пластиковая пружина</option>
-<option value="spiral_metal">Металлическая пружина</option>
-<option value="hard_cover">Твёрдый переплёт</option>
 </select>
-<label id="lSizeWrap">Размер</label>
-<div id="lSizeButtons" class="choice-row"></div>
-<select id="lSize" class="hidden">
+<label>Размер</label>
+<div id="lamSizeButtons" class="choice-row"></div>
+<select id="lamSize" class="hidden">
 <option value="A4">A4</option>
 <option value="A3">A3</option>
 <option value="ltA4">Меньше A4</option>
 </select>
-<label id="lQtyLabel">Количество</label><input id="lQty" type="number" value="1">
-<div id="lSheetsWrap" class="hidden"><label>Листов в изделии</label><input id="lSheets" type="number" value="50"></div>
-<label>Скидка / наценка %</label><input id="lDiscount" type="number" value="0" step="any">
-<div class="choice-row discount-quick" data-target="lDiscount">
+<label>Количество</label><input id="lamQty" type="number" value="1">
+<label>Скидка / наценка %</label><input id="lamDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="lamDiscount">
 <button type="button" class="choice-btn" data-discount="-20">-20%</button>
 <button type="button" class="choice-btn" data-discount="-15">-15%</button>
 <button type="button" class="choice-btn" data-discount="-10">-10%</button>
@@ -400,8 +391,41 @@
 <button type="button" class="choice-btn" data-discount="15">15%</button>
 <button type="button" class="choice-btn" data-discount="20">20%</button>
 </div>
-<div id="lPrice" class="price"></div>
-<div class="row"><button id="lamBtn" onclick="saveLam()">Добавить ламинацию</button></div>
+<div id="lamPrice" class="price"></div>
+<div class="row"><button id="lamBtn" onclick="saveLamination()">Добавить ламинацию</button></div>
+</section>
+
+<section id="tab-bind" class="tab-panel">
+<h3>Переплёт</h3>
+<label>Услуга</label>
+<div id="bindTypeButtons" class="choice-row"></div>
+<select id="bindType" class="hidden">
+<option value="spiral_plastic">Пластиковая пружина</option>
+<option value="spiral_metal">Металлическая пружина</option>
+<option value="hard_cover">Твёрдый переплёт</option>
+</select>
+<label id="bindSizeWrap">Размер</label>
+<div id="bindSizeButtons" class="choice-row"></div>
+<select id="bindSize" class="hidden">
+<option value="A4">A4</option>
+<option value="A3">A3</option>
+</select>
+<label id="bindQtyLabel">Количество</label><input id="bindQty" type="number" value="1">
+<div id="bindSheetsWrap" class="hidden"><label>Листов в изделии</label><input id="bindSheets" type="number" value="50"></div>
+<label>Скидка / наценка %</label><input id="bindDiscount" type="number" value="0" step="any">
+<div class="choice-row discount-quick" data-target="bindDiscount">
+<button type="button" class="choice-btn" data-discount="-20">-20%</button>
+<button type="button" class="choice-btn" data-discount="-15">-15%</button>
+<button type="button" class="choice-btn" data-discount="-10">-10%</button>
+<button type="button" class="choice-btn" data-discount="-5">-5%</button>
+<button type="button" class="choice-btn" data-discount="0">0%</button>
+<button type="button" class="choice-btn" data-discount="5">5%</button>
+<button type="button" class="choice-btn" data-discount="10">10%</button>
+<button type="button" class="choice-btn" data-discount="15">15%</button>
+<button type="button" class="choice-btn" data-discount="20">20%</button>
+</div>
+<div id="bindPrice" class="price"></div>
+<div class="row"><button id="bindBtn" onclick="saveBinding()">Добавить переплёт</button></div>
 </section>
 
 <section id="tab-bf" class="tab-panel">

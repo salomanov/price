@@ -89,20 +89,27 @@ const plotterDiscount=document.getElementById('plotterDiscount');
 const plotterPrice=document.getElementById('plotterPrice');
 const plotterBtn=document.getElementById('plotterBtn');
 
-const lMode=document.getElementById('lMode');
-const lHeading=document.getElementById('lHeading');
-const lType=document.getElementById('lType');
-const lSize=document.getElementById('lSize');
-const lSizeWrap=document.getElementById('lSizeWrap');
-const lQty=document.getElementById('lQty');
-const lQtyLabel=document.getElementById('lQtyLabel');
-const lSheetsWrap=document.getElementById('lSheetsWrap');
-const lSheets=document.getElementById('lSheets');
-const lDiscount=document.getElementById('lDiscount');
-const lPrice=document.getElementById('lPrice');
+const lamType=document.getElementById('lamType');
+const lamSize=document.getElementById('lamSize');
+const lamQty=document.getElementById('lamQty');
+const lamDiscount=document.getElementById('lamDiscount');
+const lamPrice=document.getElementById('lamPrice');
 const lamBtn=document.getElementById('lamBtn');
-const lTypeButtons=document.getElementById('lTypeButtons');
-const lSizeButtons=document.getElementById('lSizeButtons');
+const lamTypeButtons=document.getElementById('lamTypeButtons');
+const lamSizeButtons=document.getElementById('lamSizeButtons');
+
+const bindType=document.getElementById('bindType');
+const bindSize=document.getElementById('bindSize');
+const bindSizeWrap=document.getElementById('bindSizeWrap');
+const bindQty=document.getElementById('bindQty');
+const bindQtyLabel=document.getElementById('bindQtyLabel');
+const bindSheetsWrap=document.getElementById('bindSheetsWrap');
+const bindSheets=document.getElementById('bindSheets');
+const bindDiscount=document.getElementById('bindDiscount');
+const bindPrice=document.getElementById('bindPrice');
+const bindBtn=document.getElementById('bindBtn');
+const bindTypeButtons=document.getElementById('bindTypeButtons');
+const bindSizeButtons=document.getElementById('bindSizeButtons');
 
 const bfType=document.getElementById('bfType');
 const bfQty=document.getElementById('bfQty');
@@ -382,15 +389,8 @@ function saveDesign(){
 const tabButtons=[...document.querySelectorAll('.tab-btn')];
 const tabPanels=[...document.querySelectorAll('.tab-panel')];
 function switchTab(name){
-  const actualName=(name==='bind')?'lam':name;
-  if(name==='lam' || name==='bind'){
-    if(lMode)lMode.value=name;
-    if(lHeading)lHeading.textContent=(name==='bind')?'Переплёт':'Ламинация';
-    updateLaminationControls();
-    calc();
-  }
   tabButtons.forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
-  tabPanels.forEach(p=>p.classList.toggle('active',p.id===`tab-${actualName}`));
+  tabPanels.forEach(p=>p.classList.toggle('active',p.id===`tab-${name}`));
 }
 
 
@@ -670,62 +670,23 @@ function computePrintPrice(){
 
 
 function updateLaminationControls(){
-  const mode=(lMode?lMode.value:'');
-  const hasMode=(mode==='lam' || mode==='bind');
-  const allowed=(mode==='lam')?['lam_gloss','lam_matte']:['spiral_plastic','spiral_metal','hard_cover'];
   const editingLam=(editIndex!==null && orders[editIndex] && orders[editIndex].type==='lam');
+  const type=lamType?lamType.value:'lam_gloss';
+  const ltA4Option=lamSize?[...lamSize.options].find(o=>o.value==='ltA4'):null;
+  const allowLtA4=(type==='lam_gloss');
 
-  if(lamBtn){
-    if(mode==='bind')lamBtn.innerText=editingLam?'Изменить переплёт':'Добавить переплёт';
-    else lamBtn.innerText=editingLam?'Изменить ламинацию':'Добавить ламинацию';
-  }
-
-  if(lTypeButtons)lTypeButtons.classList.toggle('hidden',!hasMode);
-  if(lType){
-    [...lType.options].forEach(opt=>{
-      const show=hasMode && allowed.includes(opt.value);
-      opt.hidden=!show;
-      opt.disabled=!show;
-    });
-  }
-  if(lTypeButtons){
-    [...lTypeButtons.querySelectorAll('[data-choice-ltype]')].forEach(btn=>{
-      const show=hasMode && allowed.includes(btn.dataset.choiceLtype);
-      btn.classList.toggle('hidden',!show);
-    });
-  }
-
-  if(!hasMode){
-    if(lSizeWrap)lSizeWrap.classList.add('hidden');
-    if(lSheetsWrap)lSheetsWrap.classList.add('hidden');
-    if(lQtyLabel)lQtyLabel.textContent='\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
-    syncAllChoices();
-    return;
-  }
-
-  if(!allowed.includes(lType.value))lType.value=allowed[0];
-  const type=lType.value;
-  const isSpiral=(type==='spiral_plastic' || type==='spiral_metal');
-  const ltA4Option=lSize?[...lSize.options].find(o=>o.value==='ltA4'):null;
-  const allowLtA4=(mode==='lam' && type==='lam_gloss');
+  if(lamBtn)lamBtn.innerText=editingLam?'Изменить ламинацию':'Добавить ламинацию';
   if(ltA4Option){
     ltA4Option.hidden=!allowLtA4;
     ltA4Option.disabled=!allowLtA4;
-    if(!allowLtA4 && lSize.value==='ltA4')lSize.value='A4';
+    if(!allowLtA4 && lamSize.value==='ltA4')lamSize.value='A4';
   }
-  lSizeWrap.classList.toggle('hidden',type==='hard_cover');
-  lSize.disabled=(type==='hard_cover');
-  lSheetsWrap.classList.toggle('hidden',!isSpiral);
-  lQtyLabel.textContent=isSpiral?'\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0438\u0437\u0434\u0435\u043b\u0438\u0439':'\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e';
   syncAllChoices();
 }
 function computeLaminationPrice(){
-  const mode=(lMode?lMode.value:'');
-  if(mode!=='lam' && mode!=='bind')return null;
-  const type=lType.value;
-  const qty=Math.max(1,parseInt(lQty.value,10)||1);
-  const sheets=Math.max(1,parseInt(lSheets.value,10)||1);
-  const size=lSize.value;
+  const type=lamType?lamType.value:'';
+  const qty=Math.max(1,parseInt(lamQty.value,10)||1);
+  const size=lamSize?lamSize.value:'A4';
   let per=null;
 
   if(type==='lam_gloss'){
@@ -743,8 +704,6 @@ function computeLaminationPrice(){
         {min:51,max:999999,price:priceInput(`lG_50p_${suf}`)}
       ],qty);
     }
-    if(per===null)return null;
-    return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
   if(type==='lam_matte'){
@@ -755,12 +714,34 @@ function computeLaminationPrice(){
       {min:11,max:50,price:priceInput(`lM_11_50_${suf}`)},
       {min:51,max:999999,price:priceInput(`lM_50p_${suf}`)}
     ],qty);
-    if(per===null)return null;
-    return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
+  if(per===null)return null;
+  return Math.round(per*qty*(1+(num(lamDiscount,0)/100)));
+}
+
+function updateBindingControls(){
+  const editingBind=(editIndex!==null && orders[editIndex] && orders[editIndex].type==='bind');
+  const type=bindType?bindType.value:'spiral_plastic';
+  const isSpiral=(type==='spiral_plastic' || type==='spiral_metal');
+
+  if(bindBtn)bindBtn.innerText=editingBind?'Изменить переплёт':'Добавить переплёт';
+  if(bindSizeWrap)bindSizeWrap.classList.toggle('hidden',type==='hard_cover');
+  if(bindSizeButtons)bindSizeButtons.classList.toggle('hidden',type==='hard_cover');
+  if(bindSize)bindSize.disabled=(type==='hard_cover');
+  if(bindSheetsWrap)bindSheetsWrap.classList.toggle('hidden',!isSpiral);
+  if(bindQtyLabel)bindQtyLabel.textContent=isSpiral?'Количество изделий':'Количество';
+  syncAllChoices();
+}
+
+function computeBindingPrice(){
+  const type=bindType?bindType.value:'';
+  const qty=Math.max(1,parseInt(bindQty.value,10)||1);
+  const sheets=Math.max(1,parseInt(bindSheets.value,10)||1);
+  const size=bindSize?bindSize.value:'A4';
+  let per=null;
+
   if(type==='spiral_plastic'){
-    if(size==='ltA4')return null;
     const suf=size==='A4'?'A4':'A3';
     per=rangePrice([
       {min:1,max:50,price:priceInput(`spP_0_50_${suf}`)},
@@ -768,28 +749,22 @@ function computeLaminationPrice(){
       {min:101,max:200,price:priceInput(`spP_100_200_${suf}`)},
       {min:201,max:300,price:priceInput(`spP_200_300_${suf}`)}
     ],sheets);
-    if(per===null)return null;
-    return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
   if(type==='spiral_metal'){
-    if(size==='ltA4')return null;
     const suf=size==='A4'?'A4':'A3';
     per=rangePrice([
       {min:1,max:50,price:priceInput(`spM_0_50_${suf}`)},
       {min:51,max:100,price:priceInput(`spM_50_100_${suf}`)}
     ],sheets);
-    if(per===null)return null;
-    return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
   if(type==='hard_cover'){
     per=priceInput('hard_cover');
-    if(per===null)return null;
-    return Math.round(per*qty*(1+(num(lDiscount,0)/100)));
   }
 
-  return null;
+  if(per===null)return null;
+  return Math.round(per*qty*(1+(num(bindDiscount,0)/100)));
 }
 
 function populateBfQty(){
@@ -1355,8 +1330,15 @@ function calc(){
   }
 
 
-  const lamPrice=computeLaminationPrice();
-  if(lamPrice===null){lPrice.innerText='Цена: -';lamBtn.disabled=true;}else{lPrice.innerText='Цена: '+lamPrice+' ₽';lamBtn.disabled=false;}
+  const laminationPriceVal=computeLaminationPrice();
+  if(lamPrice && lamBtn){
+    if(laminationPriceVal===null){lamPrice.innerText='Цена: -';lamBtn.disabled=true;}else{lamPrice.innerText='Цена: '+laminationPriceVal+' ₽';lamBtn.disabled=false;}
+  }
+
+  const bindingPriceVal=computeBindingPrice();
+  if(bindPrice && bindBtn){
+    if(bindingPriceVal===null){bindPrice.innerText='Цена: -';bindBtn.disabled=true;}else{bindPrice.innerText='Цена: '+bindingPriceVal+' ₽';bindBtn.disabled=false;}
+  }
 
   const bfPriceVal=computeBfPrice();
   if(bfPriceVal===null){bfPrice.innerText='Цена: -';bfBtn.disabled=true;}else{bfPrice.innerText='Цена: '+bfPriceVal+' ₽';bfBtn.disabled=false;}
@@ -1431,16 +1413,24 @@ function saveWideFmt(){
     weld:!!(wfWeldLen&&wfWeldLen.checked),trim:!!(wfTrimLen&&wfTrimLen.checked)
   }});
 }
-function saveLam(){
+function saveLamination(){
   const price=computeLaminationPrice();
   if(price===null)return;
-  const qty=lQty.value;
-  const sizeLabel=lType.value==='hard_cover'?'':`, ${lSize.options[lSize.selectedIndex].text}`;
-  const sheetsLabel=lSheetsWrap.classList.contains('hidden')?'':`, листов: ${lSheets.value}`;
-  const modeTitle=(lMode && lMode.value==='bind')?'Переплёт':'Ламинация';
-  const title=`${modeTitle}: ${lType.options[lType.selectedIndex].text}`;
+  const qty=lamQty.value;
+  const title=`Ламинация: ${lamType.options[lamType.selectedIndex].text}`;
+  const desc=`${qty} шт, ${lamSize.options[lamSize.selectedIndex].text}`;
+  saveItem({type:'lam',title,desc,price,params:{type:lamType.value,qty,size:lamSize.value,disc:lamDiscount.value}});
+}
+
+function saveBinding(){
+  const price=computeBindingPrice();
+  if(price===null)return;
+  const qty=bindQty.value;
+  const sizeLabel=(bindType.value==='hard_cover')?'':`, ${bindSize.options[bindSize.selectedIndex].text}`;
+  const sheetsLabel=bindSheetsWrap.classList.contains('hidden')?'':`, листов: ${bindSheets.value}`;
+  const title=`Переплёт: ${bindType.options[bindType.selectedIndex].text}`;
   const desc=`${qty} шт${sizeLabel}${sheetsLabel}`;
-  saveItem({type:'lam',title,desc,price,params:{mode:(lMode?lMode.value:''),type:lType.value,qty,size:lSize.value,sheets:lSheets.value,disc:lDiscount.value}});
+  saveItem({type:'bind',title,desc,price,params:{type:bindType.value,qty,size:bindSize.value,sheets:bindSheets.value,disc:bindDiscount.value}});
 }
 
 function saveBf(){
@@ -1473,11 +1463,14 @@ function saveItem(item){
   editIndex=null;
   visitBtn.innerText=printBtn.innerText=wideBtn.innerText='Добавить';
   bfBtn.innerText=sBtn.innerText='Добавить';
+  if(lamBtn)lamBtn.innerText='Добавить ламинацию';
+  if(bindBtn)bindBtn.innerText='Добавить переплёт';
   if(plotterBtn)plotterBtn.innerText='Добавить';
   if(designAddBtn)designAddBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(canvasBtn)canvasBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   if(wfBtn)wfBtn.innerText='\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c';
   updateLaminationControls();
+  updateBindingControls();
 }
 
 function editItem(i){
@@ -1577,20 +1570,26 @@ function editItem(i){
     updateCanvasControls();
     if(canvasBtn)canvasBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
   }
-  if(o.type==='lam'){
+  if(o.type==='lam' && !(o.params && (o.params.mode==='bind' || ['spiral_plastic','spiral_metal','hard_cover'].includes(o.params.type)))){
     const p=o.params||{};
-    const mode=p.mode || ((p.type==='lam_gloss' || p.type==='lam_matte')?'lam':'bind');
-    switchTab(mode);
-    if(lMode)lMode.value=mode;
-    if(lHeading)lHeading.textContent=(mode==='bind')?'Переплёт':'Ламинация';
+    switchTab('lam');
+    if(lamType)lamType.value=p.type||'lam_gloss';
+    if(lamQty)lamQty.value=p.qty||1;
+    if(lamSize)lamSize.value=p.size||'A4';
+    if(lamDiscount)lamDiscount.value=p.disc||0;
     updateLaminationControls();
-    lType.value=p.type;
-    updateLaminationControls();
-    lQty.value=p.qty;
-    lSize.value=p.size;
-    lSheets.value=p.sheets;
-    lDiscount.value=p.disc;
-    updateLaminationControls();
+    if(lamBtn)lamBtn.innerText='Изменить ламинацию';
+  }
+  if(o.type==='bind' || (o.type==='lam' && o.params && (o.params.mode==='bind' || ['spiral_plastic','spiral_metal','hard_cover'].includes(o.params.type)))){
+    const p=o.params||{};
+    switchTab('bind');
+    if(bindType)bindType.value=p.type||'spiral_plastic';
+    if(bindQty)bindQty.value=p.qty||1;
+    if(bindSize)bindSize.value=p.size||'A4';
+    if(bindSheets)bindSheets.value=p.sheets||50;
+    if(bindDiscount)bindDiscount.value=p.disc||0;
+    updateBindingControls();
+    if(bindBtn)bindBtn.innerText='Изменить переплёт';
   }
   if(o.type==='design'){
     switchTab('design');
@@ -1889,7 +1888,7 @@ function render(){
 function bindCalc(){
   const inputs=[vType,vQty,vSide,vLamCheck,vDiscount,pPaper,pColor,pFormat,pQty,pSide,pCut,pDiscount,cMode,cSize,cTier,cHeight,cWidth,cRate,cFrame,cFramePrice,cRoundStep,cApply20,cFormulaRate,cFormulaFrame,cFormulaRound,wMaterial,wLam,wCut,wPreset,wWidth,wHeight,wQty,wDiscount,
     plotterMaterial,plotterPreset,plotterWidth,plotterHeight,plotterQty,plotterDiscount,
-    lMode,lType,lSize,lQty,lSheets,lDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
+    lamType,lamSize,lamQty,lamDiscount,bindType,bindSize,bindQty,bindSheets,bindDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
     wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfEyelets,wfEyeletsEnabled,wfWeldLen,wfTrimLen,wfPaperFormat,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
     wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA3Photo,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
@@ -1935,8 +1934,8 @@ function bindCalc(){
   wMaterial.addEventListener('change',()=>{updateWideControls();syncWideMaterialButtons();calc();});
   if(plotterMaterial)plotterMaterial.addEventListener('change',()=>{updatePlotterControls();calc();});
   if(plotterPreset)plotterPreset.addEventListener('change',()=>{updatePlotterControls();calc();});
-  if(lMode)lMode.addEventListener('change',()=>{updateLaminationControls();calc();});
-  lType.addEventListener('change',()=>{updateLaminationControls();calc();});
+  if(lamType)lamType.addEventListener('change',()=>{updateLaminationControls();calc();});
+  if(bindType)bindType.addEventListener('change',()=>{updateBindingControls();calc();});
   if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();syncWideFmtMainButtons();calc();});
   if(wfPreset)wfPreset.addEventListener('change',()=>{updateWideFmtControls();calc();});
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
@@ -1960,8 +1959,10 @@ setupChoice(cTier,cTierButtons,'ctier');
 setupChoice(wPreset,wPresetButtons,'wpreset');
 setupChoice(plotterMaterial,plotterMaterialButtons,'plottermaterial');
 setupChoice(plotterPreset,plotterPresetButtons,'plotterpreset');
-setupChoice(lType,lTypeButtons,'ltype');
-setupChoice(lSize,lSizeButtons,'lsize');
+setupChoice(lamType,lamTypeButtons,'lamtype');
+setupChoice(lamSize,lamSizeButtons,'lamsize');
+setupChoice(bindType,bindTypeButtons,'bindtype');
+setupChoice(bindSize,bindSizeButtons,'bindsize');
 setupChoice(bfType,bfTypeButtons,'bftype');
 setupChoice(bfQty,bfQtyButtons,'bfqty');
 setupChoice(bfSide,bfSideButtons,'bfside');
@@ -1977,6 +1978,7 @@ populateVisitQty();
 updatePrintControls();
 updateCanvasControls();
 updateLaminationControls();
+updateBindingControls();
 populateBfQty();
 updateSouvenirControls();
 updatePlotterControls();
