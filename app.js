@@ -1688,6 +1688,12 @@ function setupNumericKeypad(){
   let dragOffsetY=0;
   let movedManually=false;
   const isMobileDevice=()=>window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const hasPendingDecimal=(input=activeInput)=>!!(input && input.dataset && input.dataset.numPadDecimalPending==='1');
+  const setPendingDecimal=(state,input=activeInput)=>{
+    if(!input)return;
+    if(state)input.dataset.numPadDecimalPending='1';
+    else delete input.dataset.numPadDecimalPending;
+  };
 
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
 
@@ -1718,6 +1724,7 @@ function setupNumericKeypad(){
     }
     if(!input || input.disabled || input.readOnly)return;
     const changedInput=activeInput!==input;
+    if(changedInput && activeInput)setPendingDecimal(false,activeInput);
     activeInput=input;
     if(changedInput)movedManually=false;
     numPad.classList.remove('hidden');
@@ -1728,6 +1735,7 @@ function setupNumericKeypad(){
   };
 
   const hide=()=>{
+    if(activeInput)setPendingDecimal(false,activeInput);
     activeInput=null;
     dragging=false;
     numPad.classList.add('hidden');
@@ -1749,18 +1757,23 @@ function setupNumericKeypad(){
   const insert=(chunk)=>{
     if(!activeInput)return;
     const cur=String(activeInput.value||'');
+    const pendingDecimal=hasPendingDecimal();
     if(chunk==='-'){
       applyValue(cur.startsWith('-')?cur.slice(1):('-'+cur));
       return;
     }
 
     if(chunk===',' || chunk==='.'){
-      if(cur.includes('.'))return;
-      if(cur==='' || cur==='-'){
-        applyValue(`${cur}0.`);
-      }else{
-        applyValue(cur+'.');
-      }
+      if(cur.includes('.') || pendingDecimal)return;
+      if(cur==='' || cur==='-')applyValue(`${cur}0`);
+      setPendingDecimal(true);
+      return;
+    }
+
+    if(pendingDecimal){
+      const base=(cur==='' || cur==='-')?`${cur}0`:cur;
+      setPendingDecimal(false);
+      applyValue(`${base}.${chunk}`);
       return;
     }
 
@@ -1834,10 +1847,15 @@ function setupNumericKeypad(){
     if(!btn || !activeInput)return;
     const key=btn.dataset.numkey;
     if(key==='back'){
+      if(hasPendingDecimal()){
+        setPendingDecimal(false);
+        return;
+      }
       applyValue(String(activeInput.value||'').slice(0,-1));
       return;
     }
     if(key==='clear'){
+      setPendingDecimal(false);
       applyValue('');
       return;
     }
