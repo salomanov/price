@@ -1765,15 +1765,15 @@ function setupNumericKeypad(){
 
     if(chunk===',' || chunk==='.'){
       if(cur.includes('.') || pendingDecimal)return;
-      if(cur==='' || cur==='-')applyValue(`${cur}0`);
+      const base=(cur==='' || cur==='-')?`${cur}0`:cur;
+      applyValue(`${base}.0`);
       setPendingDecimal(true);
       return;
     }
 
     if(pendingDecimal){
-      const base=(cur==='' || cur==='-')?`${cur}0`:cur;
       setPendingDecimal(false);
-      applyValue(`${base}.${chunk}`);
+      applyValue(`${cur.slice(0,-1)}${chunk}`);
       return;
     }
 
@@ -1848,6 +1848,7 @@ function setupNumericKeypad(){
     const key=btn.dataset.numkey;
     if(key==='back'){
       if(hasPendingDecimal()){
+        applyValue(String(activeInput.value||'').slice(0,-2));
         setPendingDecimal(false);
         return;
       }
