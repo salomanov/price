@@ -182,8 +182,6 @@ const wfPaperFormatLabel=document.getElementById('wfPaperFormatLabel');
 
 const solventType=document.getElementById('solventType');
 const solventTypeButtons=document.getElementById('solventTypeButtons');
-const solventPreset=document.getElementById('solventPreset');
-const solventPresetButtons=document.getElementById('solventPresetButtons');
 const solventCustomSize=document.getElementById('solventCustomSize');
 const solventWidth=document.getElementById('solventWidth');
 const solventHeight=document.getElementById('solventHeight');
@@ -1131,12 +1129,21 @@ function getWfDims(){
 }
 
 function getSolventDims(){
-  if(!solventPreset || solventPreset.value==='custom')return {w:num(solventWidth,1),h:num(solventHeight,1)};
-  if(solventPreset.value==='A0')return {w:0.841,h:1.189};
-  if(solventPreset.value==='A1')return {w:0.594,h:0.841};
-  if(solventPreset.value==='A2')return {w:0.420,h:0.594};
-  if(solventPreset.value==='A3')return {w:0.297,h:0.420};
-  return {w:1,h:1};
+  return {w:num(solventWidth,1),h:num(solventHeight,1)};
+}
+
+function getLegacySheetDims(preset){
+  if(preset==='A0')return {w:0.841,h:1.189};
+  if(preset==='A1')return {w:0.594,h:0.841};
+  if(preset==='A2')return {w:0.420,h:0.594};
+  if(preset==='A3')return {w:0.297,h:0.420};
+  return null;
+}
+
+function getStoredSolventDims(params={}){
+  const presetDims=getLegacySheetDims(params.preset);
+  if(presetDims)return presetDims;
+  return {w:(params.w||1),h:(params.h||1)};
 }
 
 function syncWideFmtTypeButtons(){
@@ -1182,7 +1189,7 @@ function syncSolventPostButtons(){
 }
 
 function updateSolventControls(){
-  if(solventCustomSize)solventCustomSize.classList.toggle('hidden',!solventPreset || solventPreset.value!=='custom');
+  if(solventCustomSize)solventCustomSize.classList.remove('hidden');
   syncSolventPostButtons();
   syncAllChoices();
 }
@@ -1408,7 +1415,7 @@ function saveWideFmt(){
 function saveSolvent(){
   const price=computeSolventPrice();
   if(price===null)return;
-  const size=(solventPreset && solventPreset.value==='custom')?`${solventWidth.value}x${solventHeight.value} м`:(solventPreset?solventPreset.value:'A0');
+  const size=`${solventWidth.value}x${solventHeight.value} м`;
   const services=[];
   if(solventEyeletsEnabled && solventEyeletsEnabled.checked)services.push(`люверсы ${solventEyelets.value} см`);
   if(solventWeldLen && solventWeldLen.checked)services.push('проклейка');
@@ -1416,7 +1423,7 @@ function saveSolvent(){
   const servicesText=services.length?`, ${services.join(', ')}`:'';
   const desc=`${solventType.options[solventType.selectedIndex].text}, ${size}, ${solventQty.value} шт${servicesText}`;
   saveItem({type:'solvent',title:'Сольвент',desc,price,params:{
-    type:solventType.value,qty:solventQty.value,disc:solventDiscount.value,preset:(solventPreset?solventPreset.value:'custom'),
+    type:solventType.value,qty:solventQty.value,disc:solventDiscount.value,preset:'custom',
     w:(solventWidth?solventWidth.value:1),h:(solventHeight?solventHeight.value:1),
     eye:(solventEyelets?solventEyelets.value:0),eyeOn:!!(solventEyeletsEnabled&&solventEyeletsEnabled.checked),
     weld:!!(solventWeldLen&&solventWeldLen.checked),trim:!!(solventTrimLen&&solventTrimLen.checked)
@@ -1565,12 +1572,12 @@ function editItem(i){
       if(wideBtn)wideBtn.innerText='Изменить';
     }else if((p.type||'').startsWith('banner_')){
       switchTab('solvent');
+      const dims=getStoredSolventDims(p);
       if(solventType)solventType.value=p.type||solventType.value;
       if(solventQty)solventQty.value=p.qty||solventQty.value;
       if(solventDiscount)solventDiscount.value=p.disc||0;
-      if(solventPreset)solventPreset.value=p.preset||'custom';
-      if(solventWidth)solventWidth.value=p.w||1;
-      if(solventHeight)solventHeight.value=p.h||1;
+      if(solventWidth)solventWidth.value=dims.w;
+      if(solventHeight)solventHeight.value=dims.h;
       if(solventEyelets)solventEyelets.value=p.eye||40;
       if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
       if(solventWeldLen)solventWeldLen.checked=!!p.weld;
@@ -1607,12 +1614,12 @@ function editItem(i){
       if(wideBtn)wideBtn.innerText='Изменить';
     }else{
       switchTab('solvent');
+      const dims=getStoredSolventDims(p);
       if(solventType)solventType.value=p.type||solventType.value;
       if(solventQty)solventQty.value=p.qty||solventQty.value;
       if(solventDiscount)solventDiscount.value=p.disc||0;
-      if(solventPreset)solventPreset.value=p.preset||'custom';
-      if(solventWidth)solventWidth.value=p.w||1;
-      if(solventHeight)solventHeight.value=p.h||1;
+      if(solventWidth)solventWidth.value=dims.w;
+      if(solventHeight)solventHeight.value=dims.h;
       if(solventEyelets)solventEyelets.value=p.eye||40;
       if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
       if(solventWeldLen)solventWeldLen.checked=!!p.weld;
@@ -1957,7 +1964,7 @@ function bindCalc(){
     plotterMaterial,plotterPreset,plotterWidth,plotterHeight,plotterQty,plotterDiscount,
     lamType,lamSize,lamQty,lamDiscount,bindType,bindSize,bindQty,bindSheets,bindDiscount,bfType,bfQty,bfSide,bfDiscount,sType,sMugType,sTshirtType,sBadgeSize,sMagQty,sQty,sMeters,sDiscount,
     wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfPaperFormat,
-    solventType,solventPreset,solventWidth,solventHeight,solventQty,solventDiscount,solventEyelets,solventEyeletsEnabled,solventWeldLen,solventTrimLen,
+    solventType,solventWidth,solventHeight,solventQty,solventDiscount,solventEyelets,solventEyeletsEnabled,solventWeldLen,solventTrimLen,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
     wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA1Satin12,wfWaterA2Satin12,wfWaterA2Satin3p,wfWaterA0Satin,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
@@ -2007,7 +2014,6 @@ function bindCalc(){
   if(wfType)wfType.addEventListener('change',()=>{updateWideFmtControls();syncWideFmtTypeButtons();calc();});
   if(wfPreset)wfPreset.addEventListener('change',()=>{updateWideFmtControls();calc();});
   if(solventType)solventType.addEventListener('change',()=>{updateSolventControls();calc();});
-  if(solventPreset)solventPreset.addEventListener('change',()=>{updateSolventControls();calc();});
   if(solventEyeletsBtn)solventEyeletsBtn.addEventListener('click',()=>{if(solventEyeletsEnabled){solventEyeletsEnabled.checked=!solventEyeletsEnabled.checked;updateSolventControls();calc();}});
   if(solventWeldBtn)solventWeldBtn.addEventListener('click',()=>{if(solventWeldLen){solventWeldLen.checked=!solventWeldLen.checked;updateSolventControls();calc();}});
   if(solventTrimBtn)solventTrimBtn.addEventListener('click',()=>{if(solventTrimLen){solventTrimLen.checked=!solventTrimLen.checked;updateSolventControls();calc();}});
@@ -2047,7 +2053,6 @@ setupChoice(sMagQty,sMagQtyButtons,'smagqty');
 setupChoice(wfPreset,wfPresetButtons,'wfpreset');
 setupChoice(wfPaperFormat,wfPaperFormatButtons,'wfpformat');
 setupChoice(solventType,solventTypeButtons,'solventtype');
-setupChoice(solventPreset,solventPresetButtons,'solventpreset');
 
 populateVisitQty();
 updatePrintControls();
