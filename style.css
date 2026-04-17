@@ -559,3 +559,9 @@ button:disabled {
     }
 }
 
+@media (hover: none) and (pointer: coarse) {
+    .num-pad {
+        display: none !important
+    }
+}
+

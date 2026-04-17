@@ -1681,11 +1681,13 @@ function delItem(i){
 function setupNumericKeypad(){
   if(!numPad)return;
   const dragHandle=document.getElementById('numPadDrag');
+  const closeBtn=document.getElementById('numPadClose');
   let activeInput=null;
   let dragging=false;
   let dragOffsetX=0;
   let dragOffsetY=0;
   let movedManually=false;
+  const isMobileDevice=()=>window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
 
@@ -1710,6 +1712,10 @@ function setupNumericKeypad(){
   };
 
   const show=(input)=>{
+    if(isMobileDevice()){
+      hide();
+      return;
+    }
     if(!input || input.disabled || input.readOnly)return;
     const changedInput=activeInput!==input;
     activeInput=input;
@@ -1727,6 +1733,11 @@ function setupNumericKeypad(){
     numPad.classList.add('hidden');
     numPad.setAttribute('aria-hidden','true');
   };
+
+  if(isMobileDevice()){
+    hide();
+    return;
+  }
 
   const applyValue=(next)=>{
     if(!activeInput)return;
@@ -1770,6 +1781,18 @@ function setupNumericKeypad(){
     if(!numPad.contains(e.target) && !e.target.closest('input[type="number"]'))hide();
   });
 
+  if(closeBtn){
+    closeBtn.addEventListener('mousedown',(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    closeBtn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      hide();
+    });
+  }
+
   if(dragHandle){
     dragHandle.addEventListener('mousedown',(e)=>{
       if(numPad.classList.contains('hidden'))return;
@@ -1797,6 +1820,10 @@ function setupNumericKeypad(){
   }
 
   window.addEventListener('resize',()=>{
+    if(isMobileDevice()){
+      hide();
+      return;
+    }
     if(activeInput && !numPad.classList.contains('hidden') && !movedManually){
       placeNearInput(activeInput);
     }
