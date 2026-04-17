@@ -941,6 +941,7 @@ function getWideMainByMaterial(mat){
   if(!mat)return '';
   if(mat.startsWith('film_'))return 'film';
   if(mat.startsWith('plastic_'))return 'plastic';
+  if(mat==='latex_banner')return 'banner';
   if(mat==='latex_backlit')return 'backlit';
   if(mat==='latex_canvas')return 'canvas';
   return '';
@@ -981,6 +982,7 @@ function bindWideMaterialButtons(){
       const map={
         film:'film_gloss',
         plastic:'plastic_3',
+        banner:'latex_banner',
         backlit:'latex_backlit',
         canvas:'latex_canvas'
       };
@@ -1074,6 +1076,7 @@ function getWideMaterialRate(){
     case 'film_gloss': return {rate:num(priceWideFilmGloss,1000), lamAddRate:num(priceWideLamFilm,650)};
     case 'film_clear': return {rate:num(priceWideFilmClear,1000), lamAddRate:num(priceWideLamFilm,650)};
     case 'film_perf': return {rate:num(priceWideFilmPerf,2000), lamAddRate:num(priceWideLamFilm,650)};
+    case 'latex_banner': return {rate:num(wfBannerLatex,1200), lamAddRate:0};
     case 'latex_backlit': return {rate:num(priceWideFilmBacklit,2000), lamAddRate:0};
     case 'latex_canvas': return {rate:num(priceWideCanvas,3000), lamAddRate:0};
     case 'plastic_3': {
@@ -1284,7 +1287,6 @@ function computeSolventPrice(){
   let rate=0;
   if(type==='banner_440')rate=num(wfBanner440,450);
   if(type==='banner_cast')rate=num(wfBannerCast,550);
-  if(type==='banner_latex')rate=num(wfBannerLatex,1200);
   if(rate<=0)return null;
 
   const perimeter=Math.max(0,2*(dims.w+dims.h));
@@ -1549,7 +1551,20 @@ function editItem(i){
   }
   if(o.type==='widefmt'){
     const p=o.params||{};
-    if((p.type||'').startsWith('banner_')){
+    if(p.type==='banner_latex'){
+      switchTab('wide');
+      if(wMaterial)wMaterial.value='latex_banner';
+      if(wPreset)wPreset.value=p.preset||'custom';
+      if(wWidth)wWidth.value=p.w||1;
+      if(wHeight)wHeight.value=p.h||1;
+      if(wQty)wQty.value=p.qty||1;
+      if(wDiscount)wDiscount.value=p.disc||0;
+      if(wLam)wLam.checked=false;
+      if(wCut)wCut.checked=false;
+      toggleCustom();
+      updateWideControls();
+      if(wideBtn)wideBtn.innerText='Изменить';
+    }else if((p.type||'').startsWith('banner_')){
       switchTab('solvent');
       if(solventType)solventType.value=p.type||solventType.value;
       if(solventQty)solventQty.value=p.qty||solventQty.value;
@@ -1576,20 +1591,35 @@ function editItem(i){
     }
   }
   if(o.type==='solvent'){
-    switchTab('solvent');
     const p=o.params||{};
-    if(solventType)solventType.value=p.type||solventType.value;
-    if(solventQty)solventQty.value=p.qty||solventQty.value;
-    if(solventDiscount)solventDiscount.value=p.disc||0;
-    if(solventPreset)solventPreset.value=p.preset||'custom';
-    if(solventWidth)solventWidth.value=p.w||1;
-    if(solventHeight)solventHeight.value=p.h||1;
-    if(solventEyelets)solventEyelets.value=p.eye||40;
-    if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
-    if(solventWeldLen)solventWeldLen.checked=!!p.weld;
-    if(solventTrimLen)solventTrimLen.checked=!!p.trim;
-    updateSolventControls();
-    if(solventBtn)solventBtn.innerText='Изменить';
+    if(p.type==='banner_latex'){
+      switchTab('wide');
+      if(wMaterial)wMaterial.value='latex_banner';
+      if(wPreset)wPreset.value=p.preset||'custom';
+      if(wWidth)wWidth.value=p.w||1;
+      if(wHeight)wHeight.value=p.h||1;
+      if(wQty)wQty.value=p.qty||1;
+      if(wDiscount)wDiscount.value=p.disc||0;
+      if(wLam)wLam.checked=false;
+      if(wCut)wCut.checked=false;
+      toggleCustom();
+      updateWideControls();
+      if(wideBtn)wideBtn.innerText='Изменить';
+    }else{
+      switchTab('solvent');
+      if(solventType)solventType.value=p.type||solventType.value;
+      if(solventQty)solventQty.value=p.qty||solventQty.value;
+      if(solventDiscount)solventDiscount.value=p.disc||0;
+      if(solventPreset)solventPreset.value=p.preset||'custom';
+      if(solventWidth)solventWidth.value=p.w||1;
+      if(solventHeight)solventHeight.value=p.h||1;
+      if(solventEyelets)solventEyelets.value=p.eye||40;
+      if(solventEyeletsEnabled)solventEyeletsEnabled.checked=!!p.eyeOn;
+      if(solventWeldLen)solventWeldLen.checked=!!p.weld;
+      if(solventTrimLen)solventTrimLen.checked=!!p.trim;
+      updateSolventControls();
+      if(solventBtn)solventBtn.innerText='Изменить';
+    }
   }
   if(o.type==='canvas'){
     switchTab('canvas');

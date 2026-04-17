@@ -180,6 +180,7 @@
 <div id="wMainButtons" class="choice-row">
 <button type="button" class="choice-btn" data-wmain="film">Пленка</button>
 <button type="button" class="choice-btn" data-wmain="plastic">Пластик</button>
+<button type="button" class="choice-btn" data-wmain="banner">Баннер</button>
 <button type="button" class="choice-btn" data-wmain="backlit">Беклит</button>
 <button type="button" class="choice-btn" data-wmain="canvas">Холст</button>
 </div>
@@ -206,6 +207,7 @@
 <option value="film_gloss">Пленка глянцевая</option>
 <option value="film_clear">Пленка прозрачная</option>
 <option value="film_perf">Пленка перфорированная</option>
+<option value="latex_banner">Баннер</option>
 <option value="latex_backlit">Беклит</option>
 <option value="latex_canvas">Холст (только печать)</option>
 <option value="plastic_3">Печать на пластике 3 мм</option>
@@ -309,7 +311,6 @@
 <select id="solventType" class="hidden">
 <option value="banner_440">440 (Китай)</option>
 <option value="banner_cast">Литой</option>
-<option value="banner_latex">Латекс</option>
 </select>
 
 <div class="wide-group-title" style="margin-top:8px">Услуги к баннеру</div>
@@ -794,6 +795,7 @@
 <label>Плёнка глянцевая ₽/м²</label><input id="priceWideFilmGloss" type="number" value="1000">
 <label>Плёнка прозрачная ₽/м²</label><input id="priceWideFilmClear" type="number" value="1000">
 <label>Плёнка перфорированная ₽/м²</label><input id="priceWideFilmPerf" type="number" value="2000">
+<label>Баннер латексный ₽/м²</label><input id="wf_banner_latex" type="number" value="1200">
 <label>Бэклит (латекс) ₽/м²</label><input id="priceWideFilmBacklit" type="number" value="2000">
 <label>Холст (латекс) ₽/м²</label><input id="priceWideCanvas" type="number" value="3000">
 <label>Ламинация плёнки ₽/м²</label><input id="priceWideLamFilm" type="number" value="650">
@@ -812,7 +814,6 @@
 <b>Сольвент</b>
 <label>Баннер 440 (Китай) ₽/м²</label><input id="wf_banner_440" type="number" value="450">
 <label>Баннер литой ₽/м²</label><input id="wf_banner_cast" type="number" value="550">
-<label>Баннер интерьерный латекс ₽/м²</label><input id="wf_banner_latex" type="number" value="1200">
 <label>Люверс 10 мм ₽/шт</label><input id="wf_post_eyelet" type="number" value="20">
 <label>Проклейка полотна ₽/пог.м</label><input id="wf_post_weld" type="number" value="100">
 <label>Обрезка по периметру ₽/пог.м</label><input id="wf_post_trim" type="number" value="30">
