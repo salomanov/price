@@ -209,7 +209,6 @@ const wfPostTrim=document.getElementById('wf_post_trim');
 const wfWaterA1Photo12=document.getElementById('wf_water_a1_photo_1_2');
 const wfWaterA2Photo12=document.getElementById('wf_water_a2_photo_1_2');
 const wfWaterA2Photo3p=document.getElementById('wf_water_a2_photo_3p');
-const wfWaterA3Photo=document.getElementById('wf_water_a3_photo');
 const wfWaterA1Plain12=document.getElementById('wf_water_a1_plain_1_2');
 const wfWaterA1Plain3p=document.getElementById('wf_water_a1_plain_3p');
 const wfWaterA2Plain12=document.getElementById('wf_water_a2_plain_1_2');
@@ -1124,7 +1123,6 @@ function getWfDims(){
   if(wfPreset.value==='A0')return {w:0.841,h:1.189};
   if(wfPreset.value==='A1')return {w:0.594,h:0.841};
   if(wfPreset.value==='A2')return {w:0.420,h:0.594};
-  if(wfPreset.value==='A3')return {w:0.297,h:0.420};
   return {w:1,h:1};
 }
 
@@ -1256,13 +1254,11 @@ function computeWideFmtPrice(){
       if(type==='paper_photo_matte' || type==='paper_photo_gloss' || type==='paper_photo_satin'){
         if(format==='A1')per=num(wfWaterA1Photo12,420);
         if(format==='A2')per=(qty>2?num(wfWaterA2Photo3p,210):num(wfWaterA2Photo12,240));
-        if(format==='A3')per=num(wfWaterA3Photo,150);
         if(format==='A0')per=2*num(wfWaterA1Photo12,420);
       }
       if(type==='paper_plain'){
         if(format==='A1')per=(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
         if(format==='A2')per=(qty>2?num(wfWaterA2Plain3p,75):num(wfWaterA2Plain12,100));
-        if(format==='A3')per=(qty>2?num(wfWaterA2Plain3p,75):num(wfWaterA2Plain12,100))/2;
         if(format==='A0')per=2*(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
       }
       if(per===null)return null;
@@ -1583,9 +1579,10 @@ function editItem(i){
       if(wfType)wfType.value=p.type||wfType.value;
       if(wfQty)wfQty.value=p.qty||wfQty.value;
       if(wfDiscount)wfDiscount.value=p.disc||0;
-      if(wfPreset)wfPreset.value=p.preset||'custom';
-      if(wfWidth)wfWidth.value=p.w||1;
-      if(wfHeight)wfHeight.value=p.h||1;
+      const legacyA3=(p.preset==='A3');
+      if(wfPreset)wfPreset.value=legacyA3?'custom':(p.preset||'custom');
+      if(wfWidth)wfWidth.value=legacyA3?0.297:(p.w||1);
+      if(wfHeight)wfHeight.value=legacyA3?0.420:(p.h||1);
       updateWideFmtControls();
       if(wfBtn)wfBtn.innerText='\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c';
     }
@@ -1959,7 +1956,7 @@ function bindCalc(){
     wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfPaperFormat,
     solventType,solventPreset,solventWidth,solventHeight,solventQty,solventDiscount,solventEyelets,solventEyeletsEnabled,solventWeldLen,solventTrimLen,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
-    wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA3Photo,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
+    wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
 
   vType.addEventListener('change',()=>{populateVisitQty();calc();});
