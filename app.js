@@ -1200,12 +1200,6 @@ function updateWideFmtControls(){
   if(wfPaperFormatWrap)wfPaperFormatWrap.classList.add('hidden');
   if(wfPaperFormatLabel)wfPaperFormatLabel.classList.add('hidden');
 
-  if(wfPreset){
-    const a0=[...wfPreset.options].find(o=>o.value==='A0');
-    if(a0)a0.disabled=isPhoto;
-    if(a0 && a0.disabled && wfPreset.value==='A0')wfPreset.value='A1';
-  }
-
   if(wfQtyLabel)wfQtyLabel.innerText='Количество';
 
   if(wfPaperMainButtons){
