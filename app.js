@@ -209,6 +209,10 @@ const wfPostTrim=document.getElementById('wf_post_trim');
 const wfWaterA1Photo12=document.getElementById('wf_water_a1_photo_1_2');
 const wfWaterA2Photo12=document.getElementById('wf_water_a2_photo_1_2');
 const wfWaterA2Photo3p=document.getElementById('wf_water_a2_photo_3p');
+const wfWaterA1Satin12=document.getElementById('wf_water_a1_satin_1_2');
+const wfWaterA2Satin12=document.getElementById('wf_water_a2_satin_1_2');
+const wfWaterA2Satin3p=document.getElementById('wf_water_a2_satin_3p');
+const wfWaterA0Satin=document.getElementById('wf_water_a0_satin');
 const wfWaterA1Plain12=document.getElementById('wf_water_a1_plain_1_2');
 const wfWaterA1Plain3p=document.getElementById('wf_water_a1_plain_3p');
 const wfWaterA2Plain12=document.getElementById('wf_water_a2_plain_1_2');
@@ -1251,10 +1255,15 @@ function computeWideFmtPrice(){
     }else{
       const format=wfPreset.value;
       let per=null;
-      if(type==='paper_photo_matte' || type==='paper_photo_gloss' || type==='paper_photo_satin'){
+      if(type==='paper_photo_matte' || type==='paper_photo_gloss'){
         if(format==='A1')per=num(wfWaterA1Photo12,420);
         if(format==='A2')per=(qty>2?num(wfWaterA2Photo3p,210):num(wfWaterA2Photo12,240));
         if(format==='A0')per=2*num(wfWaterA1Photo12,420);
+      }
+      if(type==='paper_photo_satin'){
+        if(format==='A1')per=num(wfWaterA1Satin12,840);
+        if(format==='A2')per=(qty>2?num(wfWaterA2Satin3p,420):num(wfWaterA2Satin12,480));
+        if(format==='A0')per=num(wfWaterA0Satin,1680);
       }
       if(type==='paper_plain'){
         if(format==='A1')per=(qty>2?num(wfWaterA1Plain3p,150):num(wfWaterA1Plain12,200));
@@ -1956,7 +1965,7 @@ function bindCalc(){
     wfType,wfQty,wfDiscount,wfPreset,wfWidth,wfHeight,wfPaperFormat,
     solventType,solventPreset,solventWidth,solventHeight,solventQty,solventDiscount,solventEyelets,solventEyeletsEnabled,solventWeldLen,solventTrimLen,
     priceWideFilmGloss,priceWideFilmClear,priceWideFilmPerf,priceWideFilmBacklit,priceWideLamFilm,priceWidePlastic3,priceWidePlastic3Lam,priceWidePlastic5,priceWidePlastic5Lam,priceWidePlotterWhiteChina,priceWidePlotterWhiteOracal,priceWidePlotterColorOracal,priceWideCut,priceWideMinItem,
-    wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
+    wfBanner440,wfBannerCast,wfBannerLatex,wfPostEyelet,wfPostWeld,wfPostTrim,wfWaterA1Photo12,wfWaterA2Photo12,wfWaterA2Photo3p,wfWaterA1Satin12,wfWaterA2Satin12,wfWaterA2Satin3p,wfWaterA0Satin,wfWaterA1Plain12,wfWaterA1Plain3p,wfWaterA2Plain12,wfWaterA2Plain3p,wfWaterA0Plain12,wfWaterA0Plain3p,wfWaterCustomPlainM2,wfWaterCustomPhotoM2,wfWaterCustomSatinM2];
   inputs.forEach(el=>{if(!el)return;el.addEventListener('input',calc);el.addEventListener('change',calc);});
 
   vType.addEventListener('change',()=>{populateVisitQty();calc();});
