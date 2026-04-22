@@ -558,7 +558,19 @@
 <div class="row"><button id="designAddBtn" type="button">Добавить</button></div>
 </section>
 <div class="settings-modal" id="settingsModal">
-<div class="settings-content">
+<div class="settings-content price-editor">
+<div class="price-editor-actions">
+<div class="price-editor-buttons">
+<button id="priceImportBtn" type="button">Импорт JSON</button>
+<button id="priceExportBtn" type="button">Экспорт JSON</button>
+<button id="priceReloadBtn" type="button">Загрузить prices.json</button>
+<button id="pricePrintBtn" type="button">PDF / Печать</button>
+<button id="priceCloseBtn" type="button" onclick="closeSettings()">Закрыть</button>
+</div>
+<div id="priceStatus" class="price-editor-status">Редактируйте прайс, выгружайте файл prices.json, загружайте его на сайт и печатайте из браузера.</div>
+<input id="priceJsonImport" type="file" accept=".json,application/json" class="hidden">
+</div>
+<div id="priceEditorContent" class="price-editor-body">
 <h3>Прейскурант</h3>
 <b>Визитки. Цифровая печать. Мелованная бумага 300 г</b>
 <div class="price-grid grid-3">
@@ -839,7 +851,7 @@
 <label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1086;&#1073;&#1099;&#1095;&#1085;&#1072;&#1103; &#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_plain_m2" type="number" value="300">
 <label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1092;&#1086;&#1090;&#1086;&#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#1084;&#1072;&#1090;/&#1075;&#1083;&#1103;&#1085;&#1077;&#1094; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_photo_m2" type="number" value="840">
 <label>&#1055;&#1088;&#1086;&#1080;&#1079;&#1074;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;: &#1092;&#1086;&#1090;&#1086;&#1073;&#1091;&#1084;&#1072;&#1075;&#1072; &#1089;&#1072;&#1090;&#1080;&#1085; &#8381;/&#1084;&#178;</label><input id="wf_water_custom_satin_m2" type="number" value="1680">
-<div class="row"><button onclick="closeSettings()">Закрыть</button></div>
+</div>
 </div>
 </div>
 

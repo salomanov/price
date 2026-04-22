@@ -1,6 +1,13 @@
 ﻿const priceBtn=document.getElementById('priceBtn');
 const themeBtn=document.getElementById('themeBtn');
 const settingsModal=document.getElementById('settingsModal');
+const priceEditorContent=document.getElementById('priceEditorContent');
+const priceImportBtn=document.getElementById('priceImportBtn');
+const priceExportBtn=document.getElementById('priceExportBtn');
+const priceReloadBtn=document.getElementById('priceReloadBtn');
+const pricePrintBtn=document.getElementById('pricePrintBtn');
+const priceStatus=document.getElementById('priceStatus');
+const priceJsonImport=document.getElementById('priceJsonImport');
 
 const vType=document.getElementById('vType');
 const vQty=document.getElementById('vQty');
@@ -439,6 +446,279 @@ function openSettings(){
 
 function closeSettings(){
   if(settingsModal)settingsModal.classList.remove('active');
+}
+
+function getPriceFormControls(){
+  if(!priceEditorContent)return [];
+  return [...priceEditorContent.querySelectorAll('input,select,textarea')].filter(el=>el.id);
+}
+
+function setPriceStatus(message,tone='info'){
+  if(!priceStatus)return;
+  priceStatus.textContent=message||'';
+  priceStatus.classList.remove('is-success','is-error');
+  if(tone==='success')priceStatus.classList.add('is-success');
+  if(tone==='error')priceStatus.classList.add('is-error');
+}
+
+function serializePriceValue(el){
+  const raw=String(el?.value ?? '').trim();
+  if(raw==='')return null;
+  if(el.type==='number'){
+    const normalized=raw.replace(',','.');
+    const numeric=Number(normalized);
+    return Number.isFinite(numeric)?numeric:raw;
+  }
+  return raw;
+}
+
+function normalizePricePayload(payload){
+  if(!payload || typeof payload!=='object')return null;
+  if(payload.values && typeof payload.values==='object')return payload.values;
+  return payload;
+}
+
+function collectPriceData(){
+  const values={};
+  getPriceFormControls().forEach(el=>{
+    values[el.id]=serializePriceValue(el);
+  });
+  return {
+    version:1,
+    title:'Прейскурант',
+    updatedAt:new Date().toISOString(),
+    values
+  };
+}
+
+function refreshPriceDrivenUi(){
+  updatePrintControls();
+  updateCanvasControls();
+  updateLaminationControls();
+  updateBindingControls();
+  populateBfQty();
+  updateSouvenirControls();
+  updatePlotterControls();
+  updateWideFmtControls();
+  updateSolventControls();
+  calc();
+}
+
+function applyPriceData(payload,{silent=false}={}){
+  const values=normalizePricePayload(payload);
+  if(!values)throw new Error('Некорректный формат JSON прайса');
+  let applied=0;
+  Object.entries(values).forEach(([id,value])=>{
+    const el=document.getElementById(id);
+    if(!el || !priceEditorContent || !priceEditorContent.contains(el))return;
+    el.value=(value ?? '');
+    applied++;
+  });
+  refreshPriceDrivenUi();
+  if(!silent){
+    if(applied>0)setPriceStatus(`Загружено ${applied} значений прайса.`, 'success');
+    else setPriceStatus('В JSON нет совпадающих полей прайса.', 'error');
+  }
+  return applied;
+}
+
+function downloadTextFile(filename, content, mimeType='application/octet-stream'){
+  const blob=new Blob([content],{type:mimeType});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function exportPriceJson(){
+  const payload=collectPriceData();
+  downloadTextFile('prices.json',JSON.stringify(payload,null,2),'application/json');
+  setPriceStatus('Файл prices.json выгружен. Его можно загрузить на сайт.', 'success');
+}
+
+async function importPriceJsonFile(file){
+  if(!file)return;
+  const text=await file.text();
+  const payload=JSON.parse(text);
+  applyPriceData(payload);
+}
+
+async function loadPriceDataFromSite({showStatus=false}={}){
+  try{
+    const response=await fetch(`prices.json?ts=${Date.now()}`,{cache:'no-store'});
+    if(!response.ok){
+      if(response.status===404)throw new Error('Файл prices.json на сайте не найден.');
+      throw new Error(`Не удалось загрузить prices.json (${response.status}).`);
+    }
+    const payload=await response.json();
+    const applied=applyPriceData(payload,{silent:true});
+    if(showStatus){
+      if(applied>0)setPriceStatus(`Загружено ${applied} значений из prices.json.`, 'success');
+      else setPriceStatus('Файл prices.json загружен, но подходящие поля не найдены.', 'error');
+    }
+    return applied;
+  }catch(err){
+    if(showStatus)setPriceStatus(err.message||'Не удалось загрузить prices.json.', 'error');
+    return 0;
+  }
+}
+
+function escapeHtml(value){
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function getControlDisplayValue(el){
+  const value=String(el?.value ?? '').trim();
+  return value===''?'—':value;
+}
+
+function buildPrintGridMarkup(gridEl){
+  const cols=gridEl.classList.contains('grid-4')?4:(gridEl.classList.contains('grid-3')?3:2);
+  const cells=[...gridEl.children].map(child=>{
+    const isField=/^(INPUT|SELECT|TEXTAREA)$/.test(child.tagName);
+    const classes=['price-print-cell'];
+    if(child.classList.contains('head'))classes.push('head');
+    if(isField)classes.push('value');
+    const text=isField?getControlDisplayValue(child):child.textContent.trim();
+    return `<div class="${classes.join(' ')}">${escapeHtml(text)}</div>`;
+  }).join('');
+  return `<div class="price-print-grid cols-${cols}">${cells}</div>`;
+}
+
+function buildPrintFieldRowsMarkup(rows){
+  if(!rows.length)return '';
+  const items=rows.map(row=>`
+    <div class="price-print-field-label">${escapeHtml(row.label)}</div>
+    <div class="price-print-field-value">${escapeHtml(row.value)}</div>
+  `).join('');
+  return `<div class="price-print-fields">${items}</div>`;
+}
+
+function buildPrintablePriceBody(){
+  if(!priceEditorContent)return '';
+  const parts=[];
+  let pendingFields=[];
+  const flushPendingFields=()=>{
+    if(!pendingFields.length)return;
+    parts.push(buildPrintFieldRowsMarkup(pendingFields));
+    pendingFields=[];
+  };
+  const children=[...priceEditorContent.children];
+  for(let index=0;index<children.length;index++){
+    const node=children[index];
+    const tag=node.tagName;
+    if(tag==='LABEL'){
+      const next=children[index+1];
+      if(next && /^(INPUT|SELECT|TEXTAREA)$/.test(next.tagName)){
+        pendingFields.push({label:node.textContent.trim(),value:getControlDisplayValue(next)});
+        index++;
+        continue;
+      }
+    }
+    flushPendingFields();
+    if(tag==='H3'){
+      parts.push(`<div class="price-print-title">${escapeHtml(node.textContent.trim())}</div>`);
+      continue;
+    }
+    if(tag==='B'){
+      parts.push(`<div class="price-print-section">${escapeHtml(node.textContent.trim())}</div>`);
+      continue;
+    }
+    if(tag==='DIV' && node.classList.contains('price-grid')){
+      parts.push(buildPrintGridMarkup(node));
+      continue;
+    }
+    if(tag==='HR'){
+      parts.push('<div class="price-print-divider"></div>');
+    }
+  }
+  flushPendingFields();
+  return parts.join('');
+}
+
+function buildPrintablePriceDocument(){
+  const heading=(document.querySelector('header h1')?.textContent || document.title || 'Прайс').trim();
+  const printedAt=new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  return `<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(heading)} — прайс</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: #e5e7eb; color: #111827; }
+  .print-toolbar { position: sticky; top: 0; z-index: 10; display: flex; gap: 8px; padding: 12px 16px; background: rgba(17,24,39,.96); }
+  .print-toolbar button { border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; }
+  .print-toolbar button:first-child { background: #38bdf8; color: #082f49; }
+  .print-toolbar button:last-child { background: #e5e7eb; color: #111827; }
+  .print-sheet { width: 210mm; min-height: 297mm; margin: 16px auto; background: #ffffff; padding: 14mm 12mm; box-shadow: 0 18px 48px rgba(15,23,42,.22); }
+  .print-header { margin-bottom: 10mm; }
+  .print-company { font-size: 24px; font-weight: 700; }
+  .print-meta { margin-top: 6px; font-size: 12px; color: #475569; }
+  .price-print-title { font-size: 22px; font-weight: 700; margin: 0 0 12px; }
+  .price-print-section { margin: 14px 0 8px; font-size: 15px; font-weight: 700; }
+  .price-print-divider { height: 1px; margin: 14px 0; background: #cbd5e1; }
+  .price-print-grid { display: grid; gap: 0; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .price-print-grid.cols-2 { grid-template-columns: 1.2fr 1fr; }
+  .price-print-grid.cols-3 { grid-template-columns: 1.2fr 1fr 1fr; }
+  .price-print-grid.cols-4 { grid-template-columns: 1.1fr 1fr 1fr 1fr; }
+  .price-print-cell { border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 7px 8px; min-height: 34px; font-size: 12px; display: flex; align-items: center; }
+  .price-print-cell.head { background: #f8fafc; font-weight: 700; }
+  .price-print-cell.value { justify-content: flex-end; font-weight: 600; }
+  .price-print-grid.cols-2 .price-print-cell:nth-child(2n),
+  .price-print-grid.cols-3 .price-print-cell:nth-child(3n),
+  .price-print-grid.cols-4 .price-print-cell:nth-child(4n) { border-right: 0; }
+  .price-print-fields { display: grid; grid-template-columns: 1.8fr 1fr; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+  .price-print-field-label, .price-print-field-value { border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 8px; font-size: 12px; min-height: 34px; display: flex; align-items: center; }
+  .price-print-field-value { justify-content: flex-end; font-weight: 600; border-right: 0; }
+  .price-print-fields .price-print-field-label:last-child,
+  .price-print-fields .price-print-field-value:last-child { border-bottom: 0; }
+  @media print {
+    body { background: #ffffff; }
+    .print-toolbar { display: none !important; }
+    .print-sheet { width: auto; min-height: auto; margin: 0; box-shadow: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="print-toolbar">
+    <button type="button" onclick="window.print()">Сохранить PDF / Печать</button>
+    <button type="button" onclick="window.close()">Закрыть</button>
+  </div>
+  <div class="print-sheet">
+    <div class="print-header">
+      <div class="print-company">${escapeHtml(heading)}</div>
+      <div class="print-meta">Прейскурант · ${escapeHtml(printedAt)}</div>
+    </div>
+    ${buildPrintablePriceBody()}
+  </div>
+</body>
+</html>`;
+}
+
+function openPricePrintView(){
+  const printWindow=window.open('','_blank','noopener,noreferrer');
+  if(!printWindow){
+    setPriceStatus('Браузер заблокировал окно печати. Разрешите всплывающее окно.', 'error');
+    return;
+  }
+  printWindow.document.open();
+  printWindow.document.write(buildPrintablePriceDocument());
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(()=>{
+    try{printWindow.print();}catch(_e){}
+  },250);
 }
 
 function toggleCustom(){
@@ -2124,7 +2404,7 @@ function bindCalc(){
   bfType.addEventListener('change',()=>{populateBfQty();calc();});
   sType.addEventListener('change',()=>{updateSouvenirControls();calc();});
 
-  const priceInputs=[...settingsModal.querySelectorAll('input')];
+  const priceInputs=getPriceFormControls();
   priceInputs.forEach(el=>el.addEventListener('input',calc));
   const formulaInputs=[cFormulaRate,cFormulaFrame,cFormulaRound];
   formulaInputs.forEach(el=>{
@@ -2174,6 +2454,23 @@ if(priceBtn)priceBtn.addEventListener('click',openSettings);
 if(settingsModal){
   settingsModal.addEventListener('click',(e)=>{if(e.target===settingsModal)closeSettings();});
 }
+if(priceImportBtn && priceJsonImport){
+  priceImportBtn.addEventListener('click',()=>priceJsonImport.click());
+  priceJsonImport.addEventListener('change',async ()=>{
+    const file=priceJsonImport.files && priceJsonImport.files[0];
+    if(!file)return;
+    try{
+      await importPriceJsonFile(file);
+    }catch(err){
+      setPriceStatus(err.message||'Не удалось импортировать JSON прайса.', 'error');
+    }finally{
+      priceJsonImport.value='';
+    }
+  });
+}
+if(priceExportBtn)priceExportBtn.addEventListener('click',exportPriceJson);
+if(priceReloadBtn)priceReloadBtn.addEventListener('click',()=>{loadPriceDataFromSite({showStatus:true});});
+if(pricePrintBtn)pricePrintBtn.addEventListener('click',openPricePrintView);
 
 setupThemeToggle();
 switchTab('visit');
@@ -2188,6 +2485,7 @@ setupNumericKeypad();
 if(copyOrderBtn)copyOrderBtn.addEventListener('click',copyOrderText);
 if(copyOrderMailBtn)copyOrderMailBtn.addEventListener('click',copyOrderMail);
 calc();
+loadPriceDataFromSite({showStatus:false});
 
 window.switchTab=switchTab;
 window.openSettings=openSettings;

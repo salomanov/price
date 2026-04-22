@@ -248,6 +248,89 @@ body.light-theme .row button {
     overflow: auto
 }
 
+.price-editor {
+    background: #ffffff;
+    color: #111827;
+    border-color: #d7dee8;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
+    width: 1100px;
+    max-width: 98vw;
+    max-height: 94vh
+}
+
+.price-editor h3,
+.price-editor b,
+.price-editor label,
+.price-editor .price-grid .head {
+    color: #111827
+}
+
+.price-editor input,
+.price-editor select {
+    background: #ffffff;
+    color: #111827;
+    border-color: #cbd5e1
+}
+
+.price-editor .price-grid {
+    background: #f8fafc;
+    border-color: #d7dee8
+}
+
+.price-editor-actions {
+    position: sticky;
+    top: -16px;
+    z-index: 2;
+    background: rgba(255, 255, 255, .96);
+    border-bottom: 1px solid #e2e8f0;
+    margin: -16px -16px 16px;
+    padding: 16px
+}
+
+.price-editor-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+}
+
+.price-editor-buttons button {
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #111827;
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-weight: 600
+}
+
+.price-editor-buttons button:hover {
+    background: #eef2ff
+}
+
+.price-editor-buttons button:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px
+}
+
+.price-editor-status {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #475569
+}
+
+.price-editor-status.is-success {
+    color: #166534
+}
+
+.price-editor-status.is-error {
+    color: #b91c1c
+}
+
+.price-editor-body {
+    color: #111827
+}
+
 label {
     display: block;
     margin-top: 10px;
@@ -436,6 +519,16 @@ button:disabled {
 .price-grid input {
     width: 100%;
     box-sizing: border-box
+}
+
+@media (max-width: 900px) {
+    .price-editor-buttons button {
+        flex: 1 1 calc(50% - 8px)
+    }
+
+    .price-editor-actions {
+        top: -16px
+    }
 }
 
 
