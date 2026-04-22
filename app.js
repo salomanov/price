@@ -315,6 +315,12 @@ function syncAllChoices(){
   choiceBindings.forEach(syncChoice);
 }
 
+function refreshChoice(selectEl){
+  if(!selectEl)return;
+  const binding=choiceBindings.find(item=>item.selectEl===selectEl);
+  if(binding)renderChoice(binding);
+}
+
 function bindDiscountQuick(){
   const blocks=[...document.querySelectorAll('.discount-quick')];
   blocks.forEach(block=>{
@@ -597,6 +603,9 @@ function updatePrintControls(){
     doubleSideOption.hidden=isSelf;
     if(isSelf && pSide.value==='2')pSide.value='1';
   }
+  refreshChoice(pFormat);
+  refreshChoice(pSide);
+  refreshChoice(pColor);
   syncAllChoices();
 }
 
