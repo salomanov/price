@@ -590,8 +590,6 @@ function updatePrintControls(){
   const isSelf=paper==='self';
   if(paper==='80'){
     pColor.disabled=false;
-    if(a3Option)a3Option.disabled=true;
-    if(pFormat.value==='A3')pFormat.value='A4';
   }else{
     pColor.value='color';
     pColor.disabled=true;
@@ -617,21 +615,25 @@ function getPrintPricePerSide(){
   const color=pColor.value;
 
   if(paper==='80'){
-    if(format!=='A4')return null;
+    if(format!=='A4' && format!=='A3')return null;
+    const multiplier=(format==='A3')?2:1;
+    const effectiveQty=qty*multiplier;
     if(color==='bw'){
-      return rangePrice([
+      const perA4=rangePrice([
         {min:1,max:10,price:priceInput('p80_1_10_bw')},
         {min:11,max:50,price:priceInput('p80_11_50_bw')},
         {min:51,max:100,price:priceInput('p80_51_100_bw')},
         {min:101,max:500,price:priceInput('p80_101_500_bw')}
-      ],qty);
+      ],effectiveQty);
+      return perA4===null?null:perA4*multiplier;
     }
-    return rangePrice([
+    const perA4=rangePrice([
       {min:1,max:10,price:priceInput('p80_1_10_c')},
       {min:11,max:50,price:priceInput('p80_11_50_c')},
       {min:51,max:100,price:priceInput('p80_51_100_c')},
       {min:101,max:500,price:priceInput('p80_101_500_c')}
-    ],qty);
+    ],effectiveQty);
+    return perA4===null?null:perA4*multiplier;
   }
 
   if(paper==='115'){
