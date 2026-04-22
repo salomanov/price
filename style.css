@@ -249,9 +249,9 @@ body.light-theme .row button {
 }
 
 .price-editor {
-    background: #ffffff;
-    color: #111827;
-    border-color: #d7dee8;
+    background: #e8ebef;
+    color: #2b2b2b;
+    border-color: #cfd6de;
     box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
     width: 1100px;
     max-width: 98vw;
@@ -281,8 +281,8 @@ body.light-theme .row button {
     position: sticky;
     top: -16px;
     z-index: 2;
-    background: rgba(255, 255, 255, .96);
-    border-bottom: 1px solid #e2e8f0;
+    background: rgba(240, 243, 247, .98);
+    border-bottom: 1px solid #d4dbe4;
     margin: -16px -16px 16px;
     padding: 16px
 }
@@ -295,16 +295,16 @@ body.light-theme .row button {
 
 .price-editor-buttons button {
     border: 1px solid #cbd5e1;
-    background: #f8fafc;
+    background: #ffffff;
     color: #111827;
-    border-radius: 10px;
+    border-radius: 6px;
     padding: 9px 12px;
     cursor: pointer;
     font-weight: 600
 }
 
 .price-editor-buttons button:hover {
-    background: #eef2ff
+    background: #f8fafc
 }
 
 .price-editor-buttons button:focus-visible {
@@ -316,7 +316,7 @@ body.light-theme .row button {
     margin-top: 10px;
     font-size: 13px;
     line-height: 1.4;
-    color: #475569
+    color: #4b5563
 }
 
 .price-editor-status.is-success {
@@ -328,7 +328,144 @@ body.light-theme .row button {
 }
 
 .price-editor-body {
-    color: #111827
+    max-width: 860px;
+    margin: 0 auto 24px;
+    padding: 22mm 18mm;
+    background: #ffffff;
+    color: #2b2b2b;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, .14)
+}
+
+.price-sheet-hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 18px;
+    margin-bottom: 6px
+}
+
+.price-editor h3 {
+    margin: 0;
+    text-align: center;
+    align-self: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    color: #2b2b2b
+}
+
+.price-sheet-mark {
+    width: 96px;
+    min-height: 96px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    font-size: 15px;
+    line-height: 1.15;
+    font-weight: 700;
+    color: #2f855a;
+    font-family: Arial, sans-serif
+}
+
+.price-sheet-subtitle {
+    margin: 0 0 16px;
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    font-family: Arial, sans-serif
+}
+
+.price-editor b {
+    display: block;
+    margin: 16px 0 8px;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #2b2b2b
+}
+
+.price-editor hr {
+    border: 0;
+    margin: 22px 0;
+    height: 18px;
+    background: linear-gradient(to bottom, transparent 0, transparent 8px, #d8dde4 8px, #d8dde4 10px, transparent 10px, transparent 100%)
+}
+
+.price-editor .price-grid {
+    background: #ffffff;
+    border: 1px solid #9ca3af;
+    border-radius: 0;
+    padding: 0;
+    gap: 0;
+    box-shadow: none
+}
+
+.price-editor .price-grid > * {
+    min-height: 34px;
+    padding: 6px 8px;
+    border-right: 1px solid #9ca3af;
+    border-bottom: 1px solid #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    line-height: 1.15;
+    color: #2b2b2b
+}
+
+.price-editor .price-grid.grid-2 > :nth-child(2n),
+.price-editor .price-grid.grid-3 > :nth-child(3n),
+.price-editor .price-grid.grid-4 > :nth-child(4n) {
+    border-right: 0
+}
+
+.price-editor .price-grid .head {
+    background: #fafafa;
+    font-weight: 600;
+    color: #4b5563
+}
+
+.price-editor .price-grid input,
+.price-editor .price-grid select {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    line-height: 1.15;
+    color: #2b2b2b;
+    box-shadow: none
+}
+
+.price-editor .price-grid input:focus-visible,
+.price-editor .price-grid select:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: -2px
+}
+
+.price-editor label {
+    margin-top: 0;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    color: #2b2b2b
+}
+
+.price-editor label + input {
+    margin-bottom: 8px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    text-align: center
 }
 
 label {
@@ -528,6 +665,22 @@ button:disabled {
 
     .price-editor-actions {
         top: -16px
+    }
+
+    .price-editor-body {
+        padding: 18px 14px
+    }
+
+    .price-sheet-hero {
+        grid-template-columns: 1fr
+    }
+
+    .price-sheet-mark {
+        margin: 0 auto
+    }
+
+    .price-editor h3 {
+        font-size: 28px
     }
 }
 
