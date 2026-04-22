@@ -745,18 +745,54 @@ function buildPrintablePriceDocument(){
 }
 
 function openPricePrintView(){
-  const printWindow=window.open('','_blank','noopener,noreferrer');
-  if(!printWindow){
-    setPriceStatus('Браузер заблокировал окно печати. Разрешите всплывающее окно.', 'error');
+  const printHtml=buildPrintablePriceDocument();
+  let printWindow=null;
+  try{
+    printWindow=window.open('about:blank','_blank');
+  }catch(_e){
+    printWindow=null;
+  }
+
+  if(printWindow && printWindow.document){
+    printWindow.document.open();
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(()=>{
+      try{printWindow.print();}catch(_e){}
+    },250);
     return;
   }
-  printWindow.document.open();
-  printWindow.document.write(buildPrintablePriceDocument());
-  printWindow.document.close();
-  printWindow.focus();
-  setTimeout(()=>{
-    try{printWindow.print();}catch(_e){}
-  },250);
+
+  try{
+    const frame=document.createElement('iframe');
+    frame.style.position='fixed';
+    frame.style.right='0';
+    frame.style.bottom='0';
+    frame.style.width='0';
+    frame.style.height='0';
+    frame.style.border='0';
+    frame.setAttribute('aria-hidden','true');
+    document.body.appendChild(frame);
+    const frameDoc=frame.contentWindow?.document;
+    if(!frameDoc)throw new Error('Не удалось создать iframe для печати.');
+    frameDoc.open();
+    frameDoc.write(printHtml);
+    frameDoc.close();
+    setTimeout(()=>{
+      try{
+        frame.contentWindow?.focus();
+        frame.contentWindow?.print();
+        setPriceStatus('Открыто системное окно печати.', 'success');
+      }catch(_e){
+        setPriceStatus('Не удалось открыть печать. Разрешите всплывающие окна или печать в браузере.', 'error');
+      }finally{
+        setTimeout(()=>frame.remove(),1000);
+      }
+    },250);
+  }catch(_e){
+    setPriceStatus('Не удалось открыть печать. Разрешите всплывающие окна или печать в браузере.', 'error');
+  }
 }
 
 function toggleCustom(){
