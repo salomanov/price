@@ -616,24 +616,36 @@ function getPrintPricePerSide(){
 
   if(paper==='80'){
     if(format!=='A4' && format!=='A3')return null;
-    const multiplier=(format==='A3')?2:1;
-    const effectiveQty=qty*multiplier;
     if(color==='bw'){
-      const perA4=rangePrice([
-        {min:1,max:10,price:priceInput('p80_1_10_bw')},
-        {min:11,max:50,price:priceInput('p80_11_50_bw')},
-        {min:51,max:100,price:priceInput('p80_51_100_bw')},
-        {min:101,max:500,price:priceInput('p80_101_500_bw')}
-      ],effectiveQty);
-      return perA4===null?null:perA4*multiplier;
+      if(format==='A4'){
+        return rangePrice([
+          {min:1,max:10,price:priceInput('p80_1_10_bw')},
+          {min:11,max:50,price:priceInput('p80_11_50_bw')},
+          {min:51,max:100,price:priceInput('p80_51_100_bw')},
+          {min:101,max:500,price:priceInput('p80_101_500_bw')}
+        ],qty);
+      }
+      return rangePrice([
+        {min:1,max:5,price:priceInput('p80_a3_1_5_bw')},
+        {min:6,max:25,price:priceInput('p80_a3_6_25_bw')},
+        {min:26,max:50,price:priceInput('p80_a3_26_50_bw')},
+        {min:51,max:250,price:priceInput('p80_a3_51_250_bw')}
+      ],qty);
     }
-    const perA4=rangePrice([
-      {min:1,max:10,price:priceInput('p80_1_10_c')},
-      {min:11,max:50,price:priceInput('p80_11_50_c')},
-      {min:51,max:100,price:priceInput('p80_51_100_c')},
-      {min:101,max:500,price:priceInput('p80_101_500_c')}
-    ],effectiveQty);
-    return perA4===null?null:perA4*multiplier;
+    if(format==='A4'){
+      return rangePrice([
+        {min:1,max:10,price:priceInput('p80_1_10_c')},
+        {min:11,max:50,price:priceInput('p80_11_50_c')},
+        {min:51,max:100,price:priceInput('p80_51_100_c')},
+        {min:101,max:500,price:priceInput('p80_101_500_c')}
+      ],qty);
+    }
+    return rangePrice([
+      {min:1,max:5,price:priceInput('p80_a3_1_5_c')},
+      {min:6,max:25,price:priceInput('p80_a3_6_25_c')},
+      {min:26,max:50,price:priceInput('p80_a3_26_50_c')},
+      {min:51,max:250,price:priceInput('p80_a3_51_250_c')}
+    ],qty);
   }
 
   if(paper==='115'){
