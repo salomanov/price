@@ -603,15 +603,39 @@ function buildPrintFieldRowsMarkup(rows){
   return `<div class="price-print-fields">${items}</div>`;
 }
 
-function buildPrintablePriceBody(){
+const PRINT_PAGE_START_PATTERNS=[
+  /^Печать\. Бумага 80 г\/м²$/i,
+  /^Холст \(по файлу Холст\.xlsx\)$/i,
+  /^Ламинация$/i,
+  /^Переплёт$/i,
+  /Буклеты A4\.\s*Офсет/i,
+  /^Кружки 300 мл$/i,
+  /^Латексная печать/i
+];
+
+function shouldStartNewPrintPage(text){
+  const normalized=String(text||'').replace(/\s+/g,' ').trim();
+  return PRINT_PAGE_START_PATTERNS.some(pattern=>pattern.test(normalized));
+}
+
+function buildPrintablePricePages(heading, printedAt){
   if(!priceEditorContent)return '';
-  const parts=[];
+  const pages=[[]];
   let pendingFields=[];
+  const pushMarkup=(markup)=>{
+    if(!markup)return;
+    pages[pages.length-1].push(markup);
+  };
   const flushPendingFields=()=>{
     if(!pendingFields.length)return;
-    parts.push(buildPrintFieldRowsMarkup(pendingFields));
+    pushMarkup(buildPrintFieldRowsMarkup(pendingFields));
     pendingFields=[];
   };
+  const startNewPage=()=>{
+    flushPendingFields();
+    if(pages[pages.length-1].length)pages.push([]);
+  };
+
   const children=[...priceEditorContent.children];
   for(let index=0;index<children.length;index++){
     const node=children[index];
@@ -626,23 +650,38 @@ function buildPrintablePriceBody(){
     }
     flushPendingFields();
     if(tag==='H3'){
-      parts.push(`<div class="price-print-title">${escapeHtml(node.textContent.trim())}</div>`);
+      if(!pages[0].length){
+        pushMarkup(`<div class="price-print-title">${escapeHtml(node.textContent.trim())}</div>`);
+      }
       continue;
     }
     if(tag==='B'){
-      parts.push(`<div class="price-print-section">${escapeHtml(node.textContent.trim())}</div>`);
+      const text=node.textContent.trim();
+      if(shouldStartNewPrintPage(text) && pages[pages.length-1].length){
+        startNewPage();
+      }
+      pushMarkup(`<div class="price-print-section">${escapeHtml(text)}</div>`);
       continue;
     }
     if(tag==='DIV' && node.classList.contains('price-grid')){
-      parts.push(buildPrintGridMarkup(node));
+      pushMarkup(buildPrintGridMarkup(node));
       continue;
     }
     if(tag==='HR'){
-      parts.push('<div class="price-print-divider"></div>');
+      startNewPage();
     }
   }
   flushPendingFields();
-  return parts.join('');
+
+  const normalizedPages=pages.filter(page=>page.length);
+  return normalizedPages.map((content,index)=>`
+  <section class="print-sheet">
+    <div class="print-header">
+      <div class="print-company">${escapeHtml(heading)}</div>
+      <div class="print-meta">Прейскурант · ${escapeHtml(printedAt)} · Стр. ${index+1} / ${normalizedPages.length}</div>
+    </div>
+    ${content.join('')}
+  </section>`).join('');
 }
 
 function buildPrintablePriceDocument(){
@@ -661,14 +700,16 @@ function buildPrintablePriceDocument(){
   .print-toolbar button { border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; }
   .print-toolbar button:first-child { background: #38bdf8; color: #082f49; }
   .print-toolbar button:last-child { background: #e5e7eb; color: #111827; }
-  .print-sheet { width: 210mm; min-height: 297mm; margin: 16px auto; background: #ffffff; padding: 14mm 12mm; box-shadow: 0 18px 48px rgba(15,23,42,.22); }
+  .print-sheets { padding: 16px 0 24px; }
+  .print-sheet { width: 210mm; min-height: 297mm; margin: 16px auto; background: #ffffff; padding: 14mm 12mm; box-shadow: 0 18px 48px rgba(15,23,42,.22); break-after: page; page-break-after: always; }
+  .print-sheet:last-child { break-after: auto; page-break-after: auto; }
   .print-header { margin-bottom: 10mm; }
   .print-company { font-size: 24px; font-weight: 700; }
   .print-meta { margin-top: 6px; font-size: 12px; color: #475569; }
   .price-print-title { font-size: 22px; font-weight: 700; margin: 0 0 12px; }
-  .price-print-section { margin: 14px 0 8px; font-size: 15px; font-weight: 700; }
+  .price-print-section { margin: 14px 0 8px; font-size: 15px; font-weight: 700; break-after: avoid-page; page-break-after: avoid; }
   .price-print-divider { height: 1px; margin: 14px 0; background: #cbd5e1; }
-  .price-print-grid { display: grid; gap: 0; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .price-print-grid { display: grid; gap: 0; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 10px; break-inside: avoid-page; page-break-inside: avoid; }
   .price-print-grid.cols-2 { grid-template-columns: 1.2fr 1fr; }
   .price-print-grid.cols-3 { grid-template-columns: 1.2fr 1fr 1fr; }
   .price-print-grid.cols-4 { grid-template-columns: 1.1fr 1fr 1fr 1fr; }
@@ -678,7 +719,7 @@ function buildPrintablePriceDocument(){
   .price-print-grid.cols-2 .price-print-cell:nth-child(2n),
   .price-print-grid.cols-3 .price-print-cell:nth-child(3n),
   .price-print-grid.cols-4 .price-print-cell:nth-child(4n) { border-right: 0; }
-  .price-print-fields { display: grid; grid-template-columns: 1.8fr 1fr; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+  .price-print-fields { display: grid; grid-template-columns: 1.8fr 1fr; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 12px; break-inside: avoid-page; page-break-inside: avoid; }
   .price-print-field-label, .price-print-field-value { border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 8px; font-size: 12px; min-height: 34px; display: flex; align-items: center; }
   .price-print-field-value { justify-content: flex-end; font-weight: 600; border-right: 0; }
   .price-print-fields .price-print-field-label:last-child,
@@ -686,6 +727,7 @@ function buildPrintablePriceDocument(){
   @media print {
     body { background: #ffffff; }
     .print-toolbar { display: none !important; }
+    .print-sheets { padding: 0; }
     .print-sheet { width: auto; min-height: auto; margin: 0; box-shadow: none; padding: 0; }
   }
 </style>
@@ -695,12 +737,8 @@ function buildPrintablePriceDocument(){
     <button type="button" onclick="window.print()">Сохранить PDF / Печать</button>
     <button type="button" onclick="window.close()">Закрыть</button>
   </div>
-  <div class="print-sheet">
-    <div class="print-header">
-      <div class="print-company">${escapeHtml(heading)}</div>
-      <div class="print-meta">Прейскурант · ${escapeHtml(printedAt)}</div>
-    </div>
-    ${buildPrintablePriceBody()}
+  <div class="print-sheets">
+    ${buildPrintablePricePages(heading, printedAt)}
   </div>
 </body>
 </html>`;
