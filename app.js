@@ -1479,7 +1479,16 @@ function saveSouvenir(){
   if(sType.value==='magnet_vinyl')desc=`${sMagQty.value} шт`;
   if(sType.value==='badge')desc=`${sBadgeSize.value} мм, ${sQty.value} шт`;
   if(sType.value==='uvdtf')desc=`${sMeters.value} пог.м`;
-  saveItem({type:'souvenir',title,desc,price,params:{t:sType.value}});
+  saveItem({type:'souvenir',title,desc,price,params:{
+    t:sType.value,
+    mugType:sMugType.value,
+    tshirtType:sTshirtType.value,
+    badgeSize:sBadgeSize.value,
+    magQty:sMagQty.value,
+    qty:sQty.value,
+    meters:sMeters.value,
+    disc:sDiscount.value
+  }});
 }
 
 function saveItem(item){
@@ -1636,6 +1645,32 @@ function editItem(i){
       updateSolventControls();
       if(solventBtn)solventBtn.innerText='Изменить';
     }
+  }
+  if(o.type==='bf'){
+    const p=o.params||{};
+    switchTab('bf');
+    if(bfType)bfType.value=p.type||'booklet_a4_offset';
+    populateBfQty();
+    if(bfQty)bfQty.value=p.qty||bfQty.value;
+    if(bfSide)bfSide.value=p.side||'single';
+    if(bfDiscount)bfDiscount.value=p.disc||0;
+    populateBfQty();
+    if(bfBtn)bfBtn.innerText='Изменить';
+  }
+  if(o.type==='souvenir'){
+    const p=o.params||{};
+    switchTab('souvenir');
+    if(sType)sType.value=p.t||'mug';
+    if(sMugType)sMugType.value=p.mugType||'white';
+    if(sTshirtType)sTshirtType.value=p.tshirtType||'sub_1';
+    if(sBadgeSize)sBadgeSize.value=p.badgeSize||'37';
+    updateSouvenirControls();
+    if(sMagQty && p.magQty)sMagQty.value=p.magQty;
+    if(sQty)sQty.value=p.qty||1;
+    if(sMeters)sMeters.value=p.meters||1;
+    if(sDiscount)sDiscount.value=p.disc||0;
+    updateSouvenirControls();
+    if(sBtn)sBtn.innerText='Изменить';
   }
   if(o.type==='canvas'){
     switchTab('canvas');
