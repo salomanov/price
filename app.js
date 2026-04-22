@@ -577,13 +577,29 @@ function escapeHtml(value){
 }
 
 function getControlDisplayValue(el){
-  const value=String(el?.value ?? '').trim();
-  return value===''?'—':value;
+  return String(el?.value ?? '').trim();
+}
+
+function isControlFilled(el){
+  return getControlDisplayValue(el)!=='';
 }
 
 function buildPrintGridMarkup(gridEl){
   const cols=gridEl.classList.contains('grid-4')?4:(gridEl.classList.contains('grid-3')?3:2);
-  const cells=[...gridEl.children].map(child=>{
+  const children=[...gridEl.children];
+  const rows=[];
+  const headerCells=children.slice(0,cols);
+  if(headerCells.length)rows.push(headerCells);
+  for(let index=cols;index<children.length;index+=cols){
+    const rowCells=children.slice(index,index+cols);
+    if(!rowCells.length)continue;
+    const fieldCells=rowCells.filter(cell=>/^(INPUT|SELECT|TEXTAREA)$/.test(cell.tagName));
+    const hasFilledField=fieldCells.some(isControlFilled);
+    if(fieldCells.length && !hasFilledField)continue;
+    rows.push(rowCells);
+  }
+  if(rows.length<=1)return '';
+  const cells=rows.flat().map(child=>{
     const isField=/^(INPUT|SELECT|TEXTAREA)$/.test(child.tagName);
     const classes=['price-print-cell'];
     if(child.classList.contains('head'))classes.push('head');
@@ -595,8 +611,9 @@ function buildPrintGridMarkup(gridEl){
 }
 
 function buildPrintFieldRowsMarkup(rows){
-  if(!rows.length)return '';
-  const items=rows.map(row=>`
+  const filledRows=rows.filter(row=>String(row?.value ?? '').trim()!=='');
+  if(!filledRows.length)return '';
+  const items=filledRows.map(row=>`
     <div class="price-print-field-label">${escapeHtml(row.label)}</div>
     <div class="price-print-field-value">${escapeHtml(row.value)}</div>
   `).join('');
@@ -622,8 +639,13 @@ function buildPrintablePricePages(heading, printedAt){
   if(!priceEditorContent)return '';
   const pages=[[]];
   let pendingFields=[];
+  let pendingSectionMarkup='';
   const pushMarkup=(markup)=>{
     if(!markup)return;
+    if(pendingSectionMarkup){
+      pages[pages.length-1].push(pendingSectionMarkup);
+      pendingSectionMarkup='';
+    }
     pages[pages.length-1].push(markup);
   };
   const flushPendingFields=()=>{
@@ -633,6 +655,7 @@ function buildPrintablePricePages(heading, printedAt){
   };
   const startNewPage=()=>{
     flushPendingFields();
+    pendingSectionMarkup='';
     if(pages[pages.length-1].length)pages.push([]);
   };
 
@@ -643,7 +666,9 @@ function buildPrintablePricePages(heading, printedAt){
     if(tag==='LABEL'){
       const next=children[index+1];
       if(next && /^(INPUT|SELECT|TEXTAREA)$/.test(next.tagName)){
-        pendingFields.push({label:node.textContent.trim(),value:getControlDisplayValue(next)});
+        if(isControlFilled(next)){
+          pendingFields.push({label:node.textContent.trim(),value:getControlDisplayValue(next)});
+        }
         index++;
         continue;
       }
@@ -660,7 +685,7 @@ function buildPrintablePricePages(heading, printedAt){
       if(shouldStartNewPrintPage(text) && pages[pages.length-1].length){
         startNewPage();
       }
-      pushMarkup(`<div class="price-print-section">${escapeHtml(text)}</div>`);
+      pendingSectionMarkup=`<div class="price-print-section">${escapeHtml(text)}</div>`;
       continue;
     }
     if(tag==='DIV' && node.classList.contains('price-grid')){
@@ -758,41 +783,10 @@ function openPricePrintView(){
     printWindow.document.write(printHtml);
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(()=>{
-      try{printWindow.print();}catch(_e){}
-    },250);
+    setPriceStatus('Печатное окно открыто. Нажмите кнопку печати внутри него.', 'success');
     return;
   }
-
-  try{
-    const frame=document.createElement('iframe');
-    frame.style.position='fixed';
-    frame.style.right='0';
-    frame.style.bottom='0';
-    frame.style.width='0';
-    frame.style.height='0';
-    frame.style.border='0';
-    frame.setAttribute('aria-hidden','true');
-    document.body.appendChild(frame);
-    const frameDoc=frame.contentWindow?.document;
-    if(!frameDoc)throw new Error('Не удалось создать iframe для печати.');
-    frameDoc.open();
-    frameDoc.write(printHtml);
-    frameDoc.close();
-    setTimeout(()=>{
-      try{
-        frame.contentWindow?.focus();
-        frame.contentWindow?.print();
-        setPriceStatus('Открыто системное окно печати.', 'success');
-      }catch(_e){
-        setPriceStatus('Не удалось открыть печать. Разрешите всплывающие окна или печать в браузере.', 'error');
-      }finally{
-        setTimeout(()=>frame.remove(),1000);
-      }
-    },250);
-  }catch(_e){
-    setPriceStatus('Не удалось открыть печать. Разрешите всплывающие окна или печать в браузере.', 'error');
-  }
+  setPriceStatus('Не удалось открыть окно печати. Разрешите всплывающие окна в браузере.', 'error');
 }
 
 function toggleCustom(){
