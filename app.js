@@ -1408,16 +1408,12 @@ function updateWideControls(){
 }
 
 function getPlotterDims(){
-  if(plotterPreset && plotterPreset.value==='custom')return {w:num(plotterWidth,1),h:num(plotterHeight,1)};
-  if(plotterPreset && plotterPreset.value==='A0')return {w:0.841,h:1.189};
-  if(plotterPreset && plotterPreset.value==='A1')return {w:0.594,h:0.841};
-  if(plotterPreset && plotterPreset.value==='A2')return {w:0.420,h:0.594};
-  return {w:1,h:1};
+  return {w:num(plotterWidth,1),h:num(plotterHeight,1)};
 }
 
 function updatePlotterControls(){
   if(plotterSizeWrap)plotterSizeWrap.classList.remove('hidden');
-  if(plotterCustomSize)plotterCustomSize.classList.toggle('hidden',!plotterPreset || plotterPreset.value!=='custom');
+  if(plotterCustomSize)plotterCustomSize.classList.remove('hidden');
   syncAllChoices();
 }
 
@@ -1512,6 +1508,12 @@ function getLegacySheetDims(preset){
 }
 
 function getStoredSolventDims(params={}){
+  const presetDims=getLegacySheetDims(params.preset);
+  if(presetDims)return presetDims;
+  return {w:(params.w||1),h:(params.h||1)};
+}
+
+function getStoredPlotterDims(params={}){
   const presetDims=getLegacySheetDims(params.preset);
   if(presetDims)return presetDims;
   return {w:(params.w||1),h:(params.h||1)};
@@ -1769,7 +1771,7 @@ function savePlotter(){
   if(price===null)return;
   const desc=`${plotterMaterial.options[plotterMaterial.selectedIndex].text}, ${plotterQty.value} \u0448\u0442`;
   saveItem({type:'plotter',title:'\u041f\u043b\u043e\u0442\u0442\u0435\u0440\u043a\u0430',desc,price,params:{
-    material:plotterMaterial.value,preset:plotterPreset.value,w:plotterWidth.value,h:plotterHeight.value,qty:plotterQty.value,disc:plotterDiscount.value
+    material:plotterMaterial.value,preset:'custom',w:plotterWidth.value,h:plotterHeight.value,qty:plotterQty.value,disc:plotterDiscount.value
   }});
 }
 function saveWideFmt(){
@@ -1900,10 +1902,11 @@ function editItem(i){
     const p=o.params;
     if((p.material||'').startsWith('plotter_')){
       switchTab('contour');
+      const dims=getStoredPlotterDims(p);
       if(plotterMaterial)plotterMaterial.value=p.material;
-      if(plotterPreset)plotterPreset.value=p.preset||'custom';
-      if(plotterWidth)plotterWidth.value=p.w;
-      if(plotterHeight)plotterHeight.value=p.h;
+      if(plotterPreset)plotterPreset.value='custom';
+      if(plotterWidth)plotterWidth.value=dims.w;
+      if(plotterHeight)plotterHeight.value=dims.h;
       if(plotterQty)plotterQty.value=p.qty;
       if(plotterDiscount)plotterDiscount.value=p.disc;
       updatePlotterControls();
@@ -1926,10 +1929,11 @@ function editItem(i){
   if(o.type==='plotter'){
     switchTab('contour');
     const p=o.params||{};
+    const dims=getStoredPlotterDims(p);
     if(plotterMaterial)plotterMaterial.value=p.material||'';
-    if(plotterPreset)plotterPreset.value=p.preset||'custom';
-    if(plotterWidth)plotterWidth.value=p.w||1;
-    if(plotterHeight)plotterHeight.value=p.h||1;
+    if(plotterPreset)plotterPreset.value='custom';
+    if(plotterWidth)plotterWidth.value=dims.w;
+    if(plotterHeight)plotterHeight.value=dims.h;
     if(plotterQty)plotterQty.value=p.qty||1;
     if(plotterDiscount)plotterDiscount.value=p.disc||0;
     updatePlotterControls();
